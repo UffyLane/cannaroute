@@ -1,0 +1,24 @@
+{
+  "name": "@cannaroute/notification-service",
+  "version": "0.1.0",
+  "description": "CannaRoute Notification Service — push (FCM), SMS (Twilio), email (SendGrid)",
+  "main": "src/main.ts",
+  "scripts": {
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "build": "nest build",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@nestjs/common": "^10.0.0",
+    "@nestjs/core": "^10.0.0",
+    "firebase-admin": "^11.10.0",
+    "twilio": "^4.18.0",
+    "@sendgrid/mail": "^7.7.0",
+    "class-validator": "^0.14.0"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^10.0.0",
+    "typescript": "^5.0.0"
+  }
+}
