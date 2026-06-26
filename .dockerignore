@@ -1,0 +1,32 @@
+# node_modules are installed inside the container — never copy from host
+**/node_modules
+**/dist
+
+# Git
+.git
+.gitignore
+
+# Env files with real secrets
+.env.docker.local
+.env.local
+*.env.local
+
+# OS
+.DS_Store
+**/.DS_Store
+
+# Editor
+.vscode
+.idea
+
+# Frontend (not needed for backend builds)
+frontend/
+apps/
+
+# Logs
+*.log
+logs/
+
+# Test output
+coverage/
+.nyc_output/

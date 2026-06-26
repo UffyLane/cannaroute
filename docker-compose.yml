@@ -1,0 +1,218 @@
+version: '3.9'
+
+# ─── CannaRoute Local Dev Stack ───────────────────────────────────────────────
+# Usage:
+#   cp .env.docker .env.docker.local   # fill in real secrets
+#   docker-compose up --build
+#
+# All 7 microservices + PostgreSQL + Redis boot in dependency order.
+# Hot-reload is NOT wired here (this is for integration testing, not coding).
+# For coding: run individual services with `npm run start:dev` in each directory.
+
+services:
+
+  # ─── Infrastructure ─────────────────────────────────────────────────────────
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-cannaroute}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      POSTGRES_DB: ${DB_NAME:-cannaroute_dev}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-cannaroute} -d ${DB_NAME:-cannaroute_dev}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-cannaroute_redis}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-cannaroute_redis}", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # ─── Microservices ───────────────────────────────────────────────────────────
+
+  auth:
+    build:
+      context: .
+      dockerfile: backend/services/auth/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    env_file: .env.docker
+    environment:
+      PORT: 3001
+      DB_HOST: postgres
+      REDIS_HOST: redis
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3001/api/v1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  order:
+    build:
+      context: .
+      dockerfile: backend/services/order/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3002:3002"
+    env_file: .env.docker
+    environment:
+      PORT: 3002
+      DB_HOST: postgres
+      REDIS_HOST: redis
+      DELIVERY_SERVICE_URL: http://delivery:3003
+      INVENTORY_SERVICE_URL: http://inventory:3004
+      COMPLIANCE_SERVICE_URL: http://compliance:3005
+      NOTIFICATION_SERVICE_URL: http://notification:3007
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3002/api/v1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  delivery:
+    build:
+      context: .
+      dockerfile: backend/services/delivery/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3003:3003"
+    env_file: .env.docker
+    environment:
+      PORT: 3003
+      DB_HOST: postgres
+      REDIS_HOST: redis
+      ORDER_SERVICE_URL: http://order:3002
+      COMPLIANCE_SERVICE_URL: http://compliance:3005
+      NOTIFICATION_SERVICE_URL: http://notification:3007
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3003/api/v1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  inventory:
+    build:
+      context: .
+      dockerfile: backend/services/inventory/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3004:3004"
+    env_file: .env.docker
+    environment:
+      PORT: 3004
+      DB_HOST: postgres
+      NOTIFICATION_SERVICE_URL: http://notification:3007
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3004/api/v1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  compliance:
+    build:
+      context: .
+      dockerfile: backend/services/compliance/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3005:3005"
+    env_file: .env.docker
+    environment:
+      PORT: 3005
+      DB_HOST: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3005/api/v1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  grower:
+    build:
+      context: .
+      dockerfile: backend/services/grower/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3006:3006"
+    env_file: .env.docker
+    environment:
+      PORT: 3006
+      DB_HOST: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3006/api/v1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  notification:
+    build:
+      context: .
+      dockerfile: backend/services/notification/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3007:3007"
+    env_file: .env.docker
+    environment:
+      PORT: 3007
+      DB_HOST: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3007/api/v1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+# ─── Volumes ──────────────────────────────────────────────────────────────────
+
+volumes:
+  postgres_data:
+  redis_data:
