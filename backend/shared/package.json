@@ -1,0 +1,14 @@
+{
+  "name": "@cannaroute/shared",
+  "version": "0.1.0",
+  "description": "Shared types, guards, and decorators used across all CannaRoute backend services",
+  "main": "src/index.ts",
+  "dependencies": {
+    "@nestjs/common": "^10.0.0",
+    "@nestjs/core": "^10.0.0",
+    "@nestjs/passport": "^10.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
