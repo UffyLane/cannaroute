@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CannaRoute — Dispensary Dashboard Wireframes</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f0f0; color: #222; font-size: 12px; }
+
+  .page-header { background: #1b5e20; color: white; padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; }
+  .page-header h1 { font-size: 20px; font-weight: 700; }
+  .page-header p  { font-size: 12px; opacity: 0.8; margin-top: 3px; }
+  .badge { background: rgba(255,255,255,0.2); border-radius: 12px; padding: 4px 12px; font-size: 11px; }
+
+  .flow-label { text-align: center; padding: 24px 0 12px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #555; }
+
+  .screen-section { padding: 0 32px 40px; }
+  .screen-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #333; margin-bottom: 10px; }
+  .screen-note { font-size: 11px; color: #777; margin-top: 10px; line-height: 1.5; max-width: 900px; }
+
+  /* Browser shell */
+  .browser { background: white; border: 2px solid #333; border-radius: 8px; box-shadow: 4px 6px 20px rgba(0,0,0,0.12); overflow: hidden; margin-bottom: 6px; }
+  .browser-bar { background: #efefef; border-bottom: 1px solid #ccc; padding: 7px 12px; display: flex; align-items: center; gap: 8px; }
+  .dots { display: flex; gap: 5px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r{background:#ff5f57;} .dot-y{background:#ffbd2e;} .dot-g{background:#28c840;}
+  .url-bar { flex:1; background:white; border:1px solid #ccc; border-radius:4px; padding:3px 10px; font-size:10px; color:#888; }
+
+  /* Dashboard layout */
+  .dash-layout { display: flex; min-height: 480px; }
+  .sidebar { width: 160px; background: #1b5e20; flex-shrink: 0; padding: 16px 0; display: flex; flex-direction: column; }
+  .sidebar-logo { color: white; font-weight: 700; font-size: 13px; padding: 0 14px 14px; border-bottom: 1px solid rgba(255,255,255,0.15); }
+  .sidebar-logo span { font-size: 9px; font-weight: 400; opacity: 0.7; display: block; margin-top: 2px; }
+  .nav-item { padding: 9px 14px; color: rgba(255,255,255,0.7); font-size: 11px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .nav-item.active { background: rgba(255,255,255,0.15); color: white; font-weight: 700; border-left: 3px solid #a5d6a7; }
+  .nav-item:hover { background: rgba(255,255,255,0.08); }
+  .sidebar-section { font-size: 9px; color: rgba(255,255,255,0.4); padding: 12px 14px 4px; text-transform: uppercase; letter-spacing: 0.8px; }
+  .dash-main { flex: 1; padding: 16px 20px; background: #f8f8f8; overflow: auto; }
+
+  /* Components */
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .topbar h2 { font-size: 15px; font-weight: 700; }
+  .topbar-right { display: flex; gap: 8px; align-items: center; }
+  .btn { padding: 6px 14px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; }
+  .btn-green { background: #2e7d32; color: white; }
+  .btn-outline { background: white; border: 1.5px solid #2e7d32; color: #2e7d32; }
+  .btn-gray { background: #eee; color: #555; }
+
+  .stat-row { display: flex; gap: 12px; margin-bottom: 14px; }
+  .stat-card { flex: 1; background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 14px; }
+  .stat-label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.4px; }
+  .stat-val { font-size: 22px; font-weight: 700; color: #1b5e20; margin-top: 3px; }
+  .stat-sub { font-size: 10px; color: #aaa; margin-top: 2px; }
+
+  .card { background: white; border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+  .card-header { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; }
+  .card-header h3 { font-size: 12px; font-weight: 700; }
+  .card-body { padding: 0; }
+
+  /* Order table */
+  table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  th { background: #f5f5f5; padding: 8px 10px; text-align: left; color: #666; font-weight: 700; font-size: 9px; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #e0e0e0; }
+  td { padding: 8px 10px; border-bottom: 1px solid #f5f5f5; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafafa; }
+
+  .status-pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: 700; }
+  .s-pending  { background: #fff3cd; color: #e65c00; }
+  .s-confirm  { background: #e3f2fd; color: #0d47a1; }
+  .s-transit  { background: #f3e5f5; color: #6a1b9a; }
+  .s-done     { background: #e8f5e9; color: #1b5e20; }
+  .s-cancel   { background: #ffebee; color: #c62828; }
+
+  .action-btn { padding: 3px 8px; border-radius: 4px; font-size: 9px; font-weight: 600; }
+  .ab-green { background: #2e7d32; color: white; }
+  .ab-blue  { background: #1565c0; color: white; }
+  .ab-gray  { background: #eee; color: #666; }
+
+  .wf-block { background: #e8e8e8; border: 1px solid #ccc; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #777; text-align: center; }
+  .wf-img { background: #d0d0d0; }
+
+  .mini-chart { background: #f0f7f0; border: 1px solid #c8e6c9; border-radius: 4px; height: 60px; display: flex; align-items: flex-end; padding: 4px 6px; gap: 4px; }
+  .bar-c { background: #4caf50; border-radius: 2px 2px 0 0; flex: 1; }
+
+  .inventory-row { display: flex; gap: 10px; }
+  .inv-item { flex: 1; border: 1px solid #e0e0e0; border-radius: 6px; padding: 8px; }
+  .inv-name { font-size: 10px; font-weight: 700; }
+  .inv-sub { font-size: 9px; color: #888; }
+  .stock-bar-wrap { height: 6px; background: #eee; border-radius: 3px; margin-top: 5px; }
+  .stock-bar { height: 100%; border-radius: 3px; }
+
+  hr.flow-break { border: none; border-top: 2px dashed #ccc; margin: 16px 32px; }
+
+  .tag { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 9px; }
+  .tag-green { background: #e8f5e9; color: #2e7d32; }
+  .tag-blue  { background: #e3f2fd; color: #0d47a1; }
+  .tag-amber { background: #fff3cd; color: #e65c00; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <h1>CannaRoute — Dispensary Dashboard Wireframes</h1>
+    <p>Web App (React.js) · 5 key screens · Order management, inventory, driver dispatch, compliance, analytics</p>
+  </div>
+  <div class="badge">v0.1 Blueprint</div>
+</div>
+
+<!-- ═══════════════════ SCREEN 1: OVERVIEW -->
+<div class="flow-label">Screen 1 — Overview Dashboard (Home)</div>
+<div class="screen-section">
+  <div class="screen-title">1 · Overview — Real-time metrics + active order queue</div>
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <div class="url-bar">app.cannaroute.com/dashboard</div>
+    </div>
+    <div class="dash-layout">
+      <div class="sidebar">
+        <div class="sidebar-logo">CannaRoute<span>Green Leaf Provisioning</span></div>
+        <div class="nav-item active">📊 Overview</div>
+        <div class="nav-item">📋 Orders</div>
+        <div class="sidebar-section">Management</div>
+        <div class="nav-item">📦 Inventory</div>
+        <div class="nav-item">🚗 Drivers</div>
+        <div class="nav-item">🌿 Growers</div>
+        <div class="sidebar-section">Compliance</div>
+        <div class="nav-item">📄 Manifests</div>
+        <div class="nav-item">🔗 Metrc Sync</div>
+        <div class="sidebar-section">Analytics</div>
+        <div class="nav-item">📈 Reports</div>
+        <div class="sidebar-section">Settings</div>
+        <div class="nav-item">⚙️ Settings</div>
+      </div>
+      <div class="dash-main">
+        <div class="topbar">
+          <div>
+            <h2>Good morning, Green Leaf 👋</h2>
+            <div style="font-size:10px;color:#888;">Thursday, June 25 · Open · 9:00am–10:00pm</div>
+          </div>
+          <div class="topbar-right">
+            <div style="font-size:10px;color:#2e7d32;font-weight:700;">● Metrc Connected</div>
+            <div class="btn btn-gray" style="font-size:10px;">⚙ Settings</div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stat-row">
+          <div class="stat-card">
+            <div class="stat-label">Orders Today</div>
+            <div class="stat-val">24</div>
+            <div class="stat-sub">↑ 3 from yesterday</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Active Right Now</div>
+            <div class="stat-val" style="color:#e65c00;">6</div>
+            <div class="stat-sub">3 in transit · 2 prep · 1 pending</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Revenue Today</div>
+            <div class="stat-val">$3,842</div>
+            <div class="stat-sub">Avg order $160 · 24 orders</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg Delivery Time</div>
+            <div class="stat-val">27m</div>
+            <div class="stat-sub">Target: &lt;30 min ✓</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Drivers On Duty</div>
+            <div class="stat-val">4</div>
+            <div class="stat-sub">2 available · 2 in transit</div>
+          </div>
+        </div>
+
+        <!-- Active orders -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Active Orders</h3>
+            <div style="display:flex;gap:6px;">
+              <span class="tag tag-amber">2 need action</span>
+              <a style="font-size:10px;color:#2e7d32;">View all orders →</a>
+            </div>
+          </div>
+          <div class="card-body">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order #</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Driver</th><th>ETA</th><th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:700;">CR-48301</td>
+                  <td>James W.</td>
+                  <td>3 items · 14g</td>
+                  <td>$127.50</td>
+                  <td><span class="status-pill s-pending">● Pending</span></td>
+                  <td style="color:#aaa;">Unassigned</td>
+                  <td style="color:#e65c00;">Needs driver</td>
+                  <td><span class="action-btn ab-green">Confirm + Assign</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:700;">CR-48299</td>
+                  <td>Maria S.</td>
+                  <td>2 items · 7g</td>
+                  <td>$89.00</td>
+                  <td><span class="status-pill s-confirm">● Confirmed</span></td>
+                  <td style="color:#aaa;">Unassigned</td>
+                  <td style="color:#e65c00;">Assign driver</td>
+                  <td><span class="action-btn ab-blue">Assign Driver</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:700;">CR-48295</td>
+                  <td>Devon R.</td>
+                  <td>1 item · 3.5g</td>
+                  <td>$44.00</td>
+                  <td><span class="status-pill s-transit">● In Transit</span></td>
+                  <td>Marcus T.</td>
+                  <td>8 min</td>
+                  <td><span class="action-btn ab-gray">Track</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:700;">CR-48291</td>
+                  <td>Alicia M.</td>
+                  <td>4 items · 21g</td>
+                  <td>$210.00</td>
+                  <td><span class="status-pill s-transit">● In Transit</span></td>
+                  <td>Keisha L.</td>
+                  <td>14 min</td>
+                  <td><span class="action-btn ab-gray">Track</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Driver + Mini chart row -->
+        <div style="display:flex;gap:12px;">
+          <div class="card" style="flex:1;margin-bottom:0;">
+            <div class="card-header"><h3>Driver Status</h3></div>
+            <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px;">
+              <div style="display:flex;gap:8px;align-items:center;">
+                <div class="wf-block wf-img" style="width:28px;height:28px;border-radius:50%;font-size:8px;flex-shrink:0;">M</div>
+                <div style="flex:1;font-size:10px;"><strong>Marcus T.</strong> · In Transit — CR-48295<br><span style="color:#888;">ETA 8 min · 0.8 mi from customer</span></div>
+                <span class="tag tag-amber">1 order</span>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <div class="wf-block wf-img" style="width:28px;height:28px;border-radius:50%;font-size:8px;flex-shrink:0;">K</div>
+                <div style="flex:1;font-size:10px;"><strong>Keisha L.</strong> · In Transit — CR-48291<br><span style="color:#888;">ETA 14 min · 2.1 mi from customer</span></div>
+                <span class="tag tag-amber">1 order</span>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <div class="wf-block wf-img" style="width:28px;height:28px;border-radius:50%;font-size:8px;flex-shrink:0;">J</div>
+                <div style="flex:1;font-size:10px;"><strong>Jordan B.</strong> · Available<br><span style="color:#888;">At dispensary · Ready for dispatch</span></div>
+                <span class="tag tag-green">Available</span>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <div class="wf-block wf-img" style="width:28px;height:28px;border-radius:50%;font-size:8px;flex-shrink:0;">T</div>
+                <div style="flex:1;font-size:10px;"><strong>Tyler N.</strong> · Available<br><span style="color:#888;">At dispensary · Ready for dispatch</span></div>
+                <span class="tag tag-green">Available</span>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="flex:1;margin-bottom:0;">
+            <div class="card-header"><h3>Today's Revenue by Hour</h3></div>
+            <div style="padding:10px 14px;">
+              <div class="mini-chart">
+                <div class="bar-c" style="height:20%;"></div>
+                <div class="bar-c" style="height:35%;"></div>
+                <div class="bar-c" style="height:55%;"></div>
+                <div class="bar-c" style="height:45%;"></div>
+                <div class="bar-c" style="height:70%;"></div>
+                <div class="bar-c" style="height:90%;"></div>
+                <div class="bar-c" style="height:80%;"></div>
+                <div class="bar-c" style="height:100%;background:#1b5e20;"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:9px;color:#aaa;margin-top:4px;">
+                <span>9am</span><span>11am</span><span>1pm</span><span>3pm</span><span>Now</span>
+              </div>
+              <div style="font-size:10px;color:#888;margin-top:8px;">Peak: 3pm–5pm historically</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-note">
+    Overview dashboard loads on login. Stat cards pull from Order Service + Driver Service. Active order table auto-refreshes via WebSocket. "Needs action" badges highlight unconfirmed/unassigned orders to prevent them sitting unnoticed. Metrc connection status always visible.
+  </div>
+</div>
+
+<hr class="flow-break">
+
+<!-- ═══════════════════ SCREEN 2: ORDER DETAIL -->
+<div class="flow-label">Screen 2 — Order Detail + Driver Assignment + Manifest</div>
+<div class="screen-section">
+  <div class="screen-title">2 · Order Detail — Full order view with compliance manifest generation</div>
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <div class="url-bar">app.cannaroute.com/orders/CR-48301</div>
+    </div>
+    <div class="dash-layout">
+      <div class="sidebar">
+        <div class="sidebar-logo">CannaRoute<span>Green Leaf Provisioning</span></div>
+        <div class="nav-item">📊 Overview</div>
+        <div class="nav-item active">📋 Orders</div>
+        <div class="sidebar-section">Management</div>
+        <div class="nav-item">📦 Inventory</div>
+        <div class="nav-item">🚗 Drivers</div>
+        <div class="nav-item">🌿 Growers</div>
+        <div class="sidebar-section">Compliance</div>
+        <div class="nav-item">📄 Manifests</div>
+        <div class="nav-item">🔗 Metrc Sync</div>
+      </div>
+      <div class="dash-main">
+        <div class="topbar">
+          <div>
+            <div style="font-size:11px;color:#888;">← All Orders</div>
+            <h2>Order CR-48301 <span class="status-pill s-pending" style="font-size:12px;vertical-align:middle;">● Pending</span></h2>
+            <div style="font-size:10px;color:#888;">Placed 2:14pm · Adult-use order · James W.</div>
+          </div>
+          <div class="topbar-right">
+            <div class="btn btn-outline">Print Manifest</div>
+            <div class="btn btn-green">Confirm Order</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:14px;">
+          <!-- Left: order items -->
+          <div style="flex:1.4;">
+            <div class="card">
+              <div class="card-header"><h3>Order Items</h3><span style="font-size:10px;color:#888;">3 items · 14g total</span></div>
+              <div class="card-body">
+                <table>
+                  <thead><tr><th>Product</th><th>Grower</th><th>SKU / Batch</th><th>Qty</th><th>Price</th><th>In Stock</th></tr></thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Blue Dream 3.5g</strong><br><span style="color:#888;font-size:9px;">Flower · Sativa · 22% THC</span></td>
+                      <td><span class="tag tag-green">🌿 Sunrise Valley</span></td>
+                      <td style="font-family:monospace;font-size:9px;">MV-2024-0847</td>
+                      <td>1</td>
+                      <td>$38.00</td>
+                      <td><span class="tag tag-green">✓ 47 units</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Wedding Cake 7g</strong><br><span style="color:#888;font-size:9px;">Flower · Hybrid · 25% THC</span></td>
+                      <td><span class="tag tag-green">🌿 Emerald Farms</span></td>
+                      <td style="font-family:monospace;font-size:9px;">EF-2024-1203</td>
+                      <td>1</td>
+                      <td>$62.00</td>
+                      <td><span class="tag tag-green">✓ 12 units</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Mango Haze Gummies 10pk</strong><br><span style="color:#888;font-size:9px;">Edible · 100mg THC</span></td>
+                      <td style="color:#aaa;">—</td>
+                      <td style="font-family:monospace;font-size:9px;">GL-EDI-0039</td>
+                      <td>1</td>
+                      <td>$28.00</td>
+                      <td><span class="tag tag-green">✓ 8 units</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><h3>Compliance Check</h3></div>
+              <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px;font-size:10px;">
+                <div style="display:flex;gap:8px;"><span style="color:#2e7d32;font-weight:700;">✓</span> Customer age verified (ID on file — 28 yrs)</div>
+                <div style="display:flex;gap:8px;"><span style="color:#2e7d32;font-weight:700;">✓</span> Account type: Adult-use (no medical card required)</div>
+                <div style="display:flex;gap:8px;"><span style="color:#2e7d32;font-weight:700;">✓</span> Total cannabis weight: 14g — within 2.5 oz (70.9g) adult-use limit</div>
+                <div style="display:flex;gap:8px;"><span style="color:#2e7d32;font-weight:700;">✓</span> Delivery address in licensed delivery zone (Detroit, MI)</div>
+                <div style="display:flex;gap:8px;"><span style="color:#2e7d32;font-weight:700;">✓</span> Delivery time: 2:14pm — within legal hours (8am–9pm MI)</div>
+                <div style="display:flex;gap:8px;"><span style="color:#2e7d32;font-weight:700;">✓</span> All products have valid COAs on file (non-expired)</div>
+                <div style="margin-top:6px;padding:6px 10px;background:#e8f5e9;border-radius:6px;color:#1b5e20;font-weight:700;">All compliance checks passed — ready to confirm</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: customer + assign driver -->
+          <div style="flex:0.8;display:flex;flex-direction:column;gap:12px;">
+            <div class="card">
+              <div class="card-header"><h3>Customer</h3></div>
+              <div style="padding:10px 14px;font-size:10px;display:flex;flex-direction:column;gap:5px;">
+                <div><strong>James Williams</strong></div>
+                <div style="color:#888;">📞 (313) 555-0192</div>
+                <div style="color:#888;">📍 1842 Woodward Ave, Detroit, MI 48201</div>
+                <div style="color:#888;">4.9★ customer · 12 prior orders</div>
+                <div style="margin-top:6px;">
+                  <span class="tag tag-blue">Adult-Use · 21+</span>
+                  <span class="tag tag-green" style="margin-left:4px;">ID Verified</span>
+                </div>
+                <div style="font-size:9px;color:#aaa;margin-top:4px;">Driver must re-verify ID at door</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><h3>Assign Driver</h3></div>
+              <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px;font-size:10px;">
+                <div style="border:2px solid #2e7d32;border-radius:6px;padding:8px;background:#f9fef9;">
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <div class="wf-block wf-img" style="width:26px;height:26px;border-radius:50%;flex-shrink:0;font-size:8px;">J</div>
+                    <div style="flex:1;"><strong>Jordan B.</strong> — Available<br><span style="color:#888;">At dispensary · 4.9★ · 0 active</span></div>
+                    <span class="tag tag-green">Best match</span>
+                  </div>
+                </div>
+                <div style="border:1px solid #e0e0e0;border-radius:6px;padding:8px;">
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <div class="wf-block wf-img" style="width:26px;height:26px;border-radius:50%;flex-shrink:0;font-size:8px;">T</div>
+                    <div style="flex:1;"><strong>Tyler N.</strong> — Available<br><span style="color:#888;">At dispensary · 4.8★ · 0 active</span></div>
+                  </div>
+                </div>
+                <div class="btn btn-green" style="text-align:center;padding:8px;border-radius:6px;">Assign Jordan B. &amp; Confirm Order</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><h3>Order Summary</h3></div>
+              <div style="padding:10px 14px;font-size:10px;display:flex;flex-direction:column;gap:4px;">
+                <div style="display:flex;justify-content:space-between;"><span>Subtotal</span><span>$128.00</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>Delivery fee</span><span>$3.99</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>Excise tax (10%)</span><span>$12.80</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>Sales tax (6%)</span><span>$7.68</span></div>
+                <div style="display:flex;justify-content:space-between;font-weight:700;border-top:1px solid #eee;padding-top:6px;"><span>Customer Total</span><span>$152.47</span></div>
+                <div style="display:flex;justify-content:space-between;margin-top:4px;color:#2e7d32;"><span>CannaRoute fee (7%)</span><span>−$9.10</span></div>
+                <div style="display:flex;justify-content:space-between;font-weight:700;color:#1b5e20;"><span>Your Net</span><span>$143.37</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-note">
+    Compliance check runs automatically when order is placed — all checks shown explicitly so the budtender can review. Driver assignment suggests best match by proximity + availability. Net revenue shown so dispensary can see CannaRoute's 7% fee transparently. Manifest generates as a state-compliant PDF.
+  </div>
+</div>
+
+<hr class="flow-break">
+
+<!-- ═══════════════════ SCREEN 3: INVENTORY -->
+<div class="flow-label">Screen 3 — Inventory &amp; Menu Management</div>
+<div class="screen-section">
+  <div class="screen-title">3 · Inventory — Product catalog with grower linking + stock management</div>
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <div class="url-bar">app.cannaroute.com/inventory</div>
+    </div>
+    <div class="dash-layout">
+      <div class="sidebar">
+        <div class="sidebar-logo">CannaRoute<span>Green Leaf Provisioning</span></div>
+        <div class="nav-item">📊 Overview</div>
+        <div class="nav-item">📋 Orders</div>
+        <div class="sidebar-section">Management</div>
+        <div class="nav-item active">📦 Inventory</div>
+        <div class="nav-item">🚗 Drivers</div>
+        <div class="nav-item">🌿 Growers</div>
+        <div class="sidebar-section">Compliance</div>
+        <div class="nav-item">📄 Manifests</div>
+        <div class="nav-item">🔗 Metrc Sync</div>
+      </div>
+      <div class="dash-main">
+        <div class="topbar">
+          <h2>Inventory &amp; Menu</h2>
+          <div class="topbar-right">
+            <div class="btn btn-gray">Export CSV</div>
+            <div class="btn btn-outline">Sync from Metrc</div>
+            <div class="btn btn-green">+ Add Product</div>
+          </div>
+        </div>
+        <!-- Filters -->
+        <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;">
+          <div class="wf-block" style="width:180px;height:28px;font-size:10px;background:#fff;border-color:#ccc;">🔍 Search products...</div>
+          <div class="wf-block" style="width:120px;height:28px;font-size:10px;background:#fff;border-color:#ccc;">Category ▾</div>
+          <div class="wf-block" style="width:120px;height:28px;font-size:10px;background:#fff;border-color:#ccc;">Grower ▾</div>
+          <div class="wf-block" style="width:100px;height:28px;font-size:10px;background:#fff;border-color:#ccc;">Status ▾</div>
+          <div style="flex:1;"></div>
+          <div style="font-size:10px;color:#888;">Showing 3 of 48 products</div>
+        </div>
+        <div class="card">
+          <table>
+            <thead>
+              <tr><th>Product</th><th>Category</th><th>THC/CBD</th><th>Grower</th><th>COA</th><th>Price</th><th>Stock</th><th>Menu</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div style="display:flex;gap:6px;align-items:center;">
+                    <div class="wf-block wf-img" style="width:28px;height:28px;border-radius:4px;flex-shrink:0;font-size:7px;">IMG</div>
+                    <div><strong>Blue Dream 3.5g</strong><br><span style="color:#888;font-size:9px;">SKU: GL-BD-35</span></div>
+                  </div>
+                </td>
+                <td>Flower · Sativa</td>
+                <td>22% / 0.4%</td>
+                <td><span class="tag tag-green">🌿 Sunrise Valley</span></td>
+                <td><span class="tag tag-green">✓ Valid</span><br><span style="font-size:9px;color:#888;">Exp 12/2024</span></td>
+                <td>$38.00</td>
+                <td>
+                  <div>47 units</div>
+                  <div class="stock-bar-wrap"><div class="stock-bar" style="width:70%;background:#4caf50;"></div></div>
+                </td>
+                <td><span class="tag tag-green">Live ●</span></td>
+                <td><span class="action-btn ab-blue">Edit</span> <span class="action-btn ab-gray">Hide</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="display:flex;gap:6px;align-items:center;">
+                    <div class="wf-block wf-img" style="width:28px;height:28px;border-radius:4px;flex-shrink:0;font-size:7px;">IMG</div>
+                    <div><strong>OG Kush 3.5g</strong><br><span style="color:#888;font-size:9px;">SKU: GL-OK-35</span></div>
+                  </div>
+                </td>
+                <td>Flower · Indica</td>
+                <td>28% / 0.2%</td>
+                <td><span style="color:#aaa;font-size:10px;">Not linked</span> <span class="action-btn ab-blue" style="font-size:8px;">Link</span></td>
+                <td><span class="tag tag-green">✓ Valid</span></td>
+                <td>$32.00</td>
+                <td>
+                  <div>12 units</div>
+                  <div class="stock-bar-wrap"><div class="stock-bar" style="width:18%;background:#ff9800;"></div></div>
+                </td>
+                <td><span class="tag tag-green">Live ●</span></td>
+                <td><span class="action-btn ab-blue">Edit</span> <span class="action-btn ab-gray">Hide</span></td>
+              </tr>
+              <tr style="opacity:0.7;">
+                <td>
+                  <div style="display:flex;gap:6px;align-items:center;">
+                    <div class="wf-block wf-img" style="width:28px;height:28px;border-radius:4px;flex-shrink:0;font-size:7px;">IMG</div>
+                    <div><strong>Grape Ape 7g</strong><br><span style="color:#888;font-size:9px;">SKU: GL-GA-70</span></div>
+                  </div>
+                </td>
+                <td>Flower · Indica</td>
+                <td>24% / 0.3%</td>
+                <td><span class="tag tag-green">🌿 Emerald Farms</span></td>
+                <td><span class="tag" style="background:#ffebee;color:#c62828;">⚠ Expired</span><br><span style="font-size:9px;color:#c62828;">Upload new COA</span></td>
+                <td>$55.00</td>
+                <td>
+                  <div>0 units</div>
+                  <div class="stock-bar-wrap"><div class="stock-bar" style="width:0%;background:#f44336;"></div></div>
+                </td>
+                <td><span class="tag" style="background:#ffebee;color:#c62828;">Hidden</span></td>
+                <td><span class="action-btn ab-blue">Edit</span> <span class="action-btn ab-green">Upload COA</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="font-size:10px;color:#888;margin-top:6px;">
+          💡 Products with expired COAs are automatically hidden from the customer menu until a valid COA is uploaded.
+          Products without a linked grower show a "Link" prompt — linking is optional but increases customer engagement.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-note">
+    Inventory syncs from Metrc via API — stock levels update automatically when a sale is recorded. Expired COA auto-hides the product from the live menu. "Link" prompt nudges dispensaries to connect products to growers without forcing it. Stock bars show low-stock visually without needing to read numbers.
+  </div>
+</div>
+
+<!-- Footer -->
+<div style="background:#1b5e20;color:white;padding:14px 32px;margin-top:20px;font-size:11px;display:flex;justify-content:space-between;">
+  <span>CannaRoute Dispensary Dashboard — 3 of 5 screens shown (Overview · Order Detail · Inventory) · Driver Dispatch &amp; Compliance omitted for brevity — covered in SQL schema flow</span>
+  <span style="opacity:0.7;">Blueprint v0.1 · Next: Driver App →</span>
+</div>
+
+</body>
+</html>

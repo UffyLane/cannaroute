@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CannaRoute — Customer App Wireframes</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f0f0; color: #222; }
+
+  .page-header {
+    background: #1b5e20; color: white; padding: 24px 40px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .page-header h1 { font-size: 22px; font-weight: 700; }
+  .page-header p  { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+  .badge { background: rgba(255,255,255,0.2); border-radius: 12px; padding: 4px 12px; font-size: 11px; white-space: nowrap; }
+
+  .flow-label {
+    text-align: center; padding: 28px 0 8px;
+    font-size: 13px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: #555;
+  }
+
+  .screens-row {
+    display: flex; flex-wrap: wrap; gap: 32px;
+    padding: 16px 40px 40px; justify-content: flex-start;
+  }
+
+  .screen-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .screen-title {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px; color: #333;
+  }
+  .screen-note { font-size: 11px; color: #888; max-width: 240px; text-align: center; line-height: 1.4; }
+
+  /* Phone shell */
+  .phone {
+    width: 240px; min-height: 480px;
+    background: white; border-radius: 28px;
+    border: 3px solid #333;
+    box-shadow: 4px 4px 16px rgba(0,0,0,0.15);
+    overflow: hidden; display: flex; flex-direction: column;
+    position: relative;
+  }
+  .phone-notch {
+    background: #333; height: 24px; border-radius: 0 0 14px 14px;
+    width: 80px; margin: 0 auto; flex-shrink: 0;
+  }
+  .phone-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .phone-bar {
+    background: #f8f8f8; border-bottom: 1px solid #e0e0e0;
+    padding: 8px 12px; display: flex; align-items: center;
+    justify-content: space-between; flex-shrink: 0;
+  }
+  .phone-bar .bar-title { font-size: 13px; font-weight: 700; }
+  .phone-bar .bar-sub { font-size: 10px; color: #888; }
+  .phone-body { flex: 1; overflow-y: auto; padding: 0; }
+  .phone-nav {
+    background: white; border-top: 1px solid #e0e0e0;
+    display: flex; flex-shrink: 0;
+  }
+  .nav-item {
+    flex: 1; padding: 8px 4px 6px; text-align: center;
+    font-size: 9px; color: #aaa; border-top: 2px solid transparent;
+  }
+  .nav-item.active { color: #2e7d32; border-top-color: #2e7d32; font-weight: 700; }
+  .nav-icon { font-size: 16px; display: block; margin-bottom: 1px; }
+
+  /* Wireframe components */
+  .wf-block {
+    background: #e8e8e8; border: 1px solid #ccc; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #777; text-align: center; line-height: 1.3;
+  }
+  .wf-img { background: #d0d0d0; }
+  .wf-green { background: #c8e6c9; border-color: #81c784; color: #2e7d32; font-weight: 700; }
+  .wf-dark  { background: #333; color: white; font-weight: 700; }
+  .wf-outline { background: white; border: 1.5px solid #2e7d32; color: #2e7d32; font-weight: 700; }
+  .wf-red   { background: #ffcdd2; border-color: #e57373; color: #c62828; }
+  .wf-amber { background: #fff3cd; border-color: #ffc107; color: #e65c00; }
+  .wf-blue  { background: #e3f2fd; border-color: #90caf9; color: #0d47a1; }
+  .wf-input { background: #fafafa; border: 1.5px solid #bbb; border-radius: 4px; text-align: left; padding: 0 8px; color: #aaa; font-style: italic; }
+
+  .section-pad { padding: 10px 12px; }
+  .label { font-size: 10px; font-weight: 700; color: #555; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .sub-label { font-size: 9px; color: #999; }
+  .row { display: flex; gap: 6px; }
+  .divider { height: 1px; background: #eee; margin: 8px 0; }
+  .chip { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 9px; background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+  .chip-gray { background: #eee; color: #666; border-color: #ccc; }
+  .chip-amber { background: #fff3cd; color: #e65c00; border-color: #ffc107; }
+  .badge-verify { display: inline-block; padding: 1px 6px; border-radius: 8px; font-size: 9px; background: #c8e6c9; color: #1b5e20; font-weight: 700; }
+  .badge-pass { background: #c8e6c9; color: #1b5e20; }
+  .badge-warn { background: #fff3cd; color: #e65c00; }
+
+  .arrow-right {
+    font-size: 24px; color: #aaa;
+    display: flex; align-items: center; padding-top: 60px;
+  }
+
+  /* Web shell */
+  .web-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .browser {
+    width: 700px; background: white;
+    border: 2px solid #333; border-radius: 8px;
+    box-shadow: 4px 4px 16px rgba(0,0,0,0.12);
+    overflow: hidden;
+  }
+  .browser-bar {
+    background: #f0f0f0; border-bottom: 1px solid #ccc;
+    padding: 6px 12px; display: flex; align-items: center; gap: 8px;
+  }
+  .browser-dots { display: flex; gap: 5px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #ffbd2e; }
+  .dot-g { background: #28c840; }
+  .browser-url { flex: 1; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 3px 8px; font-size: 10px; color: #888; }
+
+  hr.flow-break { border: none; border-top: 2px dashed #ccc; margin: 20px 40px; }
+
+  .annotation {
+    position: absolute; right: -120px; top: 0;
+    width: 110px; font-size: 9px; color: #555; line-height: 1.4;
+    padding: 4px 6px; background: #fffde7; border: 1px solid #f9a825;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <h1>CannaRoute — Customer App Wireframes</h1>
+    <p>Mobile (React Native · iOS + Android) &nbsp;|&nbsp; 8 key screens &nbsp;|&nbsp; Full user flow from onboarding → delivery complete</p>
+  </div>
+  <div class="badge">v0.1 Blueprint</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ FLOW 1: ONBOARDING -->
+<div class="flow-label">Flow 1 — Onboarding &amp; Account Setup</div>
+<div class="screens-row">
+
+  <!-- SCREEN 1: Welcome / Age Gate -->
+  <div class="screen-wrap">
+    <div class="screen-title">1A · Welcome / Age Gate</div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-content">
+        <div class="phone-body" style="padding:20px 16px; display:flex; flex-direction:column; gap:14px; align-items:center;">
+          <div class="wf-img wf-block" style="width:80px;height:80px;border-radius:16px;">LOGO</div>
+          <div style="text-align:center;">
+            <div style="font-size:16px;font-weight:700;">CannaRoute</div>
+            <div class="sub-label" style="margin-top:2px;">Cannabis delivery &amp; transparency</div>
+          </div>
+          <div class="wf-block" style="width:100%;height:32px;border-radius:20px;font-size:10px;background:#f5f5f5;border-color:#ccc;">
+            Select your state ▾
+          </div>
+          <div class="wf-green wf-block" style="width:100%;height:38px;border-radius:20px;font-size:12px;">
+            I AM 21 OR OLDER — ENTER
+          </div>
+          <div class="wf-block" style="width:100%;height:38px;border-radius:20px;font-size:11px;">
+            I have a Medical Card
+          </div>
+          <div class="divider" style="width:100%;"></div>
+          <div style="font-size:9px;color:#aaa;text-align:center;line-height:1.5;">
+            By entering you confirm you are<br>21+ or a registered medical patient.<br>
+            <span style="color:#2e7d32;">Terms of Service · Privacy Policy</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-note">State selection gates the user to their legal market. Medical card flow branches separately.</div>
+  </div>
+
+  <div class="arrow-right">›</div>
+
+  <!-- SCREEN 1B: ID Verification -->
+  <div class="screen-wrap">
+    <div class="screen-title">1B · ID Scan (Age Verification)</div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-content">
+        <div class="phone-bar">
+          <span class="bar-title">Verify Your Age</span>
+          <span class="bar-sub">Step 1 of 2</span>
+        </div>
+        <div class="phone-body" style="padding:14px 12px; display:flex; flex-direction:column; gap:12px;">
+          <div class="wf-block wf-img" style="width:100%;height:120px;border-radius:8px;font-size:11px;">
+            📷 Camera viewfinder<br><span class="sub-label">Align front of ID in frame</span>
+          </div>
+          <div style="font-size:10px;color:#555;text-align:center;line-height:1.5;">
+            Scan the front of your government-issued ID.<br>We verify age only — data is not stored.
+          </div>
+          <div class="wf-block" style="width:100%;height:28px;font-size:10px;background:#f0f0f0;">
+            ⚡ Scanning... DOB detected: ••/••/••••
+          </div>
+          <div class="wf-green wf-block" style="width:100%;height:36px;border-radius:18px;font-size:11px;">
+            ✓ CONFIRMED — CONTINUE
+          </div>
+          <div class="wf-block wf-outline" style="width:100%;height:34px;border-radius:18px;font-size:11px;">
+            Enter DOB manually instead
+          </div>
+          <div style="font-size:9px;color:#aaa;text-align:center;">
+            Verification uses Stripe Identity / Persona SDK<br>Age check only — no ID data retained
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-note">ID scan at onboarding only. At delivery, driver scans again physically. This is the soft check.</div>
+  </div>
+
+  <div class="arrow-right">›</div>
+
+  <!-- SCREEN 1C: Medical Card (branch) -->
+  <div class="screen-wrap">
+    <div class="screen-title">1C · Medical Card Upload (branch)</div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-content">
+        <div class="phone-bar">
+          <span class="bar-title">Medical Patient</span>
+          <span class="bar-sub">Step 2 of 2</span>
+        </div>
+        <div class="phone-body" style="padding:14px 12px; display:flex; flex-direction:column; gap:10px;">
+          <div class="wf-blue wf-block" style="width:100%;height:28px;font-size:10px;">
+            ℹ️ Medical patients save on excise tax
+          </div>
+          <div class="label">Upload your state medical card</div>
+          <div class="wf-block wf-img" style="width:100%;height:90px;border-radius:8px;font-size:10px;border-style:dashed;border-width:2px;">
+            📎 Tap to upload or take photo<br><span class="sub-label">PNG, JPG or PDF</span>
+          </div>
+          <div class="label" style="margin-top:4px;">Or enter manually</div>
+          <div class="wf-input wf-block" style="width:100%;height:32px;font-size:10px;">Patient registry ID #</div>
+          <div class="wf-input wf-block" style="width:100%;height:32px;font-size:10px;">Card expiry date</div>
+          <div class="wf-block" style="width:100%;height:26px;font-size:9px;background:#f5f5f5;">
+            ⏳ Verifying against MI MMMP registry...
+          </div>
+          <div class="wf-green wf-block" style="width:100%;height:36px;border-radius:18px;font-size:11px;">
+            CONFIRM &amp; CONTINUE
+          </div>
+          <div style="font-size:9px;color:#aaa;text-align:center;line-height:1.4;">
+            Card data stored encrypted. Auto-reminder<br>sent 30 days before card expiry.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-note">Verified via Michigan MMMP registry API. Card number + expiry stored. Renewal reminders sent automatically.</div>
+  </div>
+
+</div>
+
+<hr class="flow-break">
+
+<!-- ═══════════════════════════════════════════════════════════ FLOW 2: BROWSE & ORDER -->
+<div class="flow-label">Flow 2 — Browse, Product Detail &amp; Grower Transparency</div>
+<div class="screens-row">
+
+  <!-- SCREEN 2A: Home / Discovery -->
+  <div class="screen-wrap">
+    <div class="screen-title">2A · Home — Dispensary Discovery</div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-content">
+        <div class="phone-bar">
+          <div>
+            <div class="bar-title">Detroit, MI</div>
+            <div class="bar-sub">Delivering to 123 Main St ▾</div>
+          </div>
+          <div class="wf-block" style="width:28px;height:28px;border-radius:50%;font-size:14px;">🔔</div>
+        </div>
+        <div class="phone-body" style="padding:0;">
+          <!-- Map area -->
+          <div class="wf-block wf-img" style="width:100%;height:110px;border-radius:0;font-size:10px;">
+            📍 Map — dispensaries shown as pins<br>
+            <span class="sub-label">Radius: 10 mi delivery zone</span>
+          </div>
+          <div style="padding:10px 12px 0;">
+            <!-- Filter chips -->
+            <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;">
+              <div class="chip">All</div>
+              <div class="chip-gray chip">Open Now</div>
+              <div class="chip-gray chip">Adult-Use</div>
+              <div class="chip-gray chip">Medical</div>
+              <div class="chip chip" style="background:#e8f5e9;">🌿 Verified Grower</div>
+            </div>
+            <div class="label" style="margin-top:8px;">Nearby Dispensaries</div>
+          </div>
+          <!-- Dispensary cards -->
+          <div style="padding:0 12px; display:flex; flex-direction:column; gap:8px; margin-top:6px;">
+            <div style="border:1px solid #e0e0e0;border-radius:8px;padding:10px;display:flex;gap:10px;align-items:center;">
+              <div class="wf-block wf-img" style="width:44px;height:44px;border-radius:8px;flex-shrink:0;font-size:9px;">LOGO</div>
+              <div style="flex:1;">
+                <div style="font-size:11px;font-weight:700;">Green Leaf Provisioning</div>
+                <div style="font-size:9px;color:#888;">0.8 mi · Est. 22 min · Adult-Use + Medical</div>
+                <div style="margin-top:3px;display:flex;gap:4px;">
+                  <span class="chip">Open</span>
+                  <span class="badge-verify badge-verify">🌿 Grower Data</span>
+                </div>
+              </div>
+              <div style="font-size:10px;color:#888;text-align:center;">4.8★<br><span style="font-size:8px;">(214)</span></div>
+            </div>
+            <div style="border:1px solid #e0e0e0;border-radius:8px;padding:10px;display:flex;gap:10px;align-items:center;">
+              <div class="wf-block wf-img" style="width:44px;height:44px;border-radius:8px;flex-shrink:0;font-size:9px;">LOGO</div>
+              <div style="flex:1;">
+                <div style="font-size:11px;font-weight:700;">Detroit Dispensary Co.</div>
+                <div style="font-size:9px;color:#888;">1.4 mi · Est. 30 min · Adult-Use</div>
+                <div style="margin-top:3px;">
+                  <span class="chip">Open</span>
+                </div>
+              </div>
+              <div style="font-size:10px;color:#888;text-align:center;">4.6★<br><span style="font-size:8px;">(98)</span></div>
+            </div>
+            <div style="border:1px solid #e0e0e0;border-radius:8px;padding:10px;display:flex;gap:10px;align-items:center;opacity:0.5;">
+              <div class="wf-block wf-img" style="width:44px;height:44px;border-radius:8px;flex-shrink:0;font-size:9px;">LOGO</div>
+              <div style="flex:1;">
+                <div style="font-size:11px;font-weight:700;">Midwest Cannabis Market</div>
+                <div style="font-size:9px;color:#888;">2.1 mi · Closed until 9am</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-nav">
+          <div class="nav-item active"><span class="nav-icon">🏠</span>Home</div>
+          <div class="nav-item"><span class="nav-icon">🔍</span>Search</div>
+          <div class="nav-item"><span class="nav-icon">📦</span>Orders</div>
+          <div class="nav-item"><span class="nav-icon">👤</span>Profile</div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-note">Dispensaries filtered by delivery radius. "Grower Data" badge shows which dispensaries have connected grower profiles — key differentiator shown immediately.</div>
+  </div>
+
+  <div class="arrow-right">›</div>
+
+  <!-- SCREEN 2B: Dispensary Menu -->
+  <div class="screen-wrap">
+    <div class="screen-title">2B · Dispensary Menu</div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-content">
+        <div class="phone-bar">
+          <span>← Back</span>
+          <span class="bar-title">Green Leaf</span>
+          <div class="wf-block" style="width:24px;height:24px;border-radius:50%;font-size:12px;">🛒</div>
+        </div>
+        <div class="phone-body">
+          <div class="wf-block wf-img" style="width:100%;height:70px;border-radius:0;font-size:10px;">
+            Dispensary hero image / banner
+          </div>
+          <div style="padding:8px 12px 0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div style="font-size:12px;font-weight:700;">Green Leaf Provisioning</div>
+              <span class="badge-verify badge-verify">Grower Verified</span>
+            </div>
+            <div style="font-size:9px;color:#888;margin-top:2px;">0.8 mi · Open until 10pm · Delivery ~22 min</div>
+            <!-- Category tabs -->
+            <div style="display:flex;gap:0;border-bottom:1px solid #eee;margin-top:10px;overflow-x:auto;">
+              <div style="padding:6px 10px;font-size:10px;font-weight:700;color:#2e7d32;border-bottom:2px solid #2e7d32;">Flower</div>
+              <div style="padding:6px 10px;font-size:10px;color:#aaa;">Edibles</div>
+              <div style="padding:6px 10px;font-size:10px;color:#aaa;">Concentrates</div>
+              <div style="padding:6px 10px;font-size:10px;color:#aaa;">Vapes</div>
+              <div style="padding:6px 10px;font-size:10px;color:#aaa;">Tinctures</div>
+            </div>
+          </div>
+          <!-- Product list -->
+          <div style="padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
+            <!-- Product with grower -->
+            <div style="border:1px solid #c8e6c9;border-radius:8px;padding:8px;display:flex;gap:8px;background:#f9fef9;">
+              <div class="wf-block wf-img" style="width:56px;height:56px;border-radius:6px;flex-shrink:0;font-size:8px;">Product<br>Photo</div>
+              <div style="flex:1;">
+                <div style="font-size:11px;font-weight:700;">Blue Dream (3.5g)</div>
+                <div style="font-size:9px;color:#888;">Sativa · 22% THC · 0.4% CBD</div>
+                <div style="font-size:9px;color:#2e7d32;font-weight:600;margin-top:2px;">🌿 Sunrise Valley Farm · Pesticide-Free</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+                  <span style="font-size:12px;font-weight:700;">$38</span>
+                  <div class="wf-green wf-block" style="width:28px;height:22px;border-radius:4px;font-size:13px;">+</div>
+                </div>
+              </div>
+            </div>
+            <!-- Product no grower -->
+            <div style="border:1px solid #e0e0e0;border-radius:8px;padding:8px;display:flex;gap:8px;">
+              <div class="wf-block wf-img" style="width:56px;height:56px;border-radius:6px;flex-shrink:0;font-size:8px;">Product<br>Photo</div>
+              <div style="flex:1;">
+                <div style="font-size:11px;font-weight:700;">OG Kush (3.5g)</div>
+                <div style="font-size:9px;color:#888;">Indica · 28% THC · 0.2% CBD</div>
+                <div style="font-size:9px;color:#aaa;margin-top:2px;">Grower data not available</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+                  <span style="font-size:12px;font-weight:700;">$32</span>
+                  <div class="wf-green wf-block" style="width:28px;height:22px;border-radius:4px;font-size:13px;">+</div>
+                </div>
+              </div>
+            </div>
+            <!-- Product with grower certified -->
+            <div style="border:1px solid #c8e6c9;border-radius:8px;padding:8px;display:flex;gap:8px;background:#f9fef9;">
+              <div class="wf-block wf-img" style="width:56px;height:56px;border-radius:6px;flex-shrink:0;font-size:8px;">Product<br>Photo</div>
+              <div style="flex:1;">
+                <div style="font-size:11px;font-weight:700;">Wedding Cake (7g)</div>
+                <div style="font-size:9px;color:#888;">Hybrid · 25% THC · 1.1% CBD</div>
+                <div style="font-size:9px;color:#2e7d32;font-weight:600;margin-top:2px;">🌿 Emerald Farms · Clean Green Certified</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+                  <span style="font-size:12px;font-weight:700;">$62</span>
+                  <div class="wf-green wf-block" style="width:28px;height:22px;border-radius:4px;font-size:13px;">+</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-nav">
+          <div class="nav-item active"><span class="nav-icon">🏠</span>Home</div>
+          <div class="nav-item"><span class="nav-icon">🔍</span>Search</div>
+          <div class="nav-item"><span class="nav-icon">📦</span>Orders</div>
+          <div class="nav-item"><span class="nav-icon">👤</span>Profile</div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-note">Products with grower data get a green border + farm name inline. No-grower products shown clearly so customer knows the difference. No hiding it.</div>
+  </div>
+
+  <div class="arrow-right">›</div>
+
+  <!-- SCREEN 2C: Product Detail / Grower Transparency -->
+  <div class="screen-wrap">
+    <div class="screen-title">2C · Product Detail + Grower Transparency</div>
+    <div class="phone" style="min-height:560px;">
+      <div class="phone-notch"></div>
+      <div class="phone-content">
+        <div class="phone-bar">
+          <span>← Back</span>
+          <span class="bar-title">Product Detail</span>
+        </div>
+        <div class="phone-body" style="padding-bottom:60px;">
+          <div class="wf-block wf-img" style="width:100%;height:90px;border-radius:0;font-size:10px;">Product photo</div>
+          <div style="padding:10px 12px;">
+            <div style="font-size:14px;font-weight:700;">Blue Dream (3.5g)</div>
+            <div style="font-size:10px;color:#888;">Sativa · Green Leaf Provisioning</div>
+            <div style="display:flex;gap:8px;margin-top:6px;align-items:center;">
+              <span style="font-size:15px;font-weight:700;">$38.00</span>
+              <span class="chip">22% THC</span>
+              <span class="chip">0.4% CBD</span>
+            </div>
+            <div class="divider"></div>
+
+            <!-- Grower section -->
+            <div style="background:#f9fef9;border:1px solid #c8e6c9;border-radius:8px;padding:10px;margin-bottom:8px;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                <div class="wf-block wf-img" style="width:32px;height:32px;border-radius:50%;flex-shrink:0;font-size:8px;">Farm</div>
+                <div>
+                  <div style="font-size:11px;font-weight:700;color:#1b5e20;">🌿 Sunrise Valley Farm</div>
+                  <div style="font-size:9px;color:#888;">Traverse City, MI · Indoor · Est. 2019</div>
+                </div>
+              </div>
+              <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;">
+                <span class="chip">Pesticide-Free</span>
+                <span class="chip">Indoor</span>
+                <span class="chip">Clean Green Certified</span>
+              </div>
+              <div style="font-size:10px;font-weight:700;margin-bottom:4px;">Pesticide Policy</div>
+              <div class="wf-block" style="width:100%;height:20px;font-size:9px;background:#e8f5e9;border-color:#a5d6a7;color:#1b5e20;">
+                ✓ Zero pesticides used on this crop
+              </div>
+              <div style="font-size:10px;font-weight:700;margin-top:8px;margin-bottom:4px;">Lab Results — Batch #MV-2024-0847</div>
+              <div style="display:flex;gap:4px;">
+                <div class="wf-block" style="flex:1;height:28px;font-size:9px;background:#e8f5e9;border-color:#a5d6a7;">✓ Pesticides: PASS</div>
+                <div class="wf-block" style="flex:1;height:28px;font-size:9px;background:#e8f5e9;border-color:#a5d6a7;">✓ Microbials: PASS</div>
+              </div>
+              <div style="display:flex;gap:4px;margin-top:4px;">
+                <div class="wf-block" style="flex:1;height:28px;font-size:9px;background:#e8f5e9;border-color:#a5d6a7;">✓ Heavy Metals: PASS</div>
+                <div class="wf-block" style="flex:1;height:28px;font-size:9px;">View Full COA ↗</div>
+              </div>
+              <div style="font-size:9px;color:#888;margin-top:6px;">Tested by SC Labs · License #STLM-000001 · 2024-09-14</div>
+              <div style="margin-top:6px;font-size:10px;font-weight:600;color:#2e7d32;text-decoration:underline;">View full farm profile →</div>
+            </div>
+          </div>
+        </div>
+        <!-- Fixed bottom CTA -->
+        <div style="position:sticky;bottom:0;background:white;border-top:1px solid #eee;padding:10px 12px;">
+          <div style="display:flex;gap:8px;align-items:center;">
+            <div class="wf-block" style="width:100px;height:36px;border-radius:8px;font-size:11px;display:flex;gap:8px;">
+              <span>−</span><span>1</span><span>+</span>
+            </div>
+            <div class="wf-green wf-block" style="flex:1;height:36px;border-radius:8px;font-size:12px;">
+              ADD TO CART · $38
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-note">This is the core transparency screen. Pesticide policy, full lab panel (pass/fail + lab license), COA link, batch number traceability. All tied to the verified grower.</div>
+  </div>
+
+</div>
+
+<hr class="flow-break">
+
+<!-- ═══════════════════════════════════════════════════════════ FLOW 3: CHECKOUT & TRACKING -->
+<div class="flow-label">Flow 3 — Checkout, Compliance Check &amp; Order Tracking</div>
+<div class="screens-row">
+
+  <!-- SCREEN 3A: Cart / Checkout -->
+  <div class="screen-wrap">
+    <div class="screen-title">3A · Cart &amp; Checkout</div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-content">
+        <div class="phone-bar">
+          <span>← Menu</span>
+          <span class="bar-title">Your Cart</span>
+        </div>
+        <div class="phone-body" style="padding:12px;">
+          <div class="label">Items (2)</div>
+          <!-- Cart items -->
+          <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px;">
+            <div style="border:1px solid #e0e0e0;border-radius:6px;padding:8px;display:flex;gap:8px;align-items:center;">
+              <div class="wf-block wf-img" style="width:36px;height:36px;border-radius:4px;flex-shrink:0;font-size:8px;">IMG</div>
+              <div style="flex:1;font-size:10px;">
+                <div style="font-weight:700;">Blue Dream 3.5g</div>
+                <div style="color:#888;">1x · $38.00</div>
+              </div>
+              <div style="font-size:10px;color:#888;">✕</div>
+            </div>
+            <div style="border:1px solid #e0e0e0;border-radius:6px;padding:8px;display:flex;gap:8px;align-items:center;">
+              <div class="wf-block wf-img" style="width:36px;height:36px;border-radius:4px;flex-shrink:0;font-size:8px;">IMG</div>
+              <div style="flex:1;font-size:10px;">
+                <div style="font-weight:700;">Wedding Cake 7g</div>
+                <div style="color:#888;">1x · $62.00</div>
+              </div>
+              <div style="font-size:10px;color:#888;">✕</div>
+            </div>
+          </div>
+          <!-- Compliance indicator -->
+          <div class="wf-block" style="width:100%;height:28px;margin-top:10px;font-size:9px;background:#e8f5e9;border-color:#a5d6a7;color:#1b5e20;">
+            ✓ 10.5g — within 2.5 oz limit (70.9g remaining today)
+          </div>
+          <div class="divider" style="margin-top:10px;"></div>
+          <!-- Delivery address -->
+          <div class="label">Delivery Address</div>
+          <div class="wf-input wf-block" style="width:100%;height:32px;font-size:10px;margin-top:4px;">123 Main St, Detroit, MI 48201</div>
+          <!-- Payment -->
+          <div class="label" style="margin-top:8px;">Payment</div>
+          <div style="display:flex;flex-direction:column;gap:4px;margin-top:4px;">
+            <div style="border:2px solid #2e7d32;border-radius:6px;padding:7px 10px;font-size:10px;display:flex;align-items:center;gap:6px;">
+              <span>💳</span><span style="font-weight:700;">Debit Card (PIN)</span><span style="margin-left:auto;font-size:9px;color:#2e7d32;">Selected</span>
+            </div>
+            <div style="border:1px solid #e0e0e0;border-radius:6px;padding:7px 10px;font-size:10px;display:flex;align-items:center;gap:6px;">
+              <span>🏦</span><span>Pay by Bank (ACH)</span>
+            </div>
+            <div style="border:1px solid #e0e0e0;border-radius:6px;padding:7px 10px;font-size:10px;display:flex;align-items:center;gap:6px;">
+              <span>💵</span><span>Cash on Delivery</span>
+            </div>
+          </div>
+          <div class="divider" style="margin-top:10px;"></div>
+          <!-- Order summary -->
+          <div style="font-size:10px;display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;justify-content:space-between;"><span>Subtotal</span><span>$100.00</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Delivery fee</span><span>$3.99</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>MI excise tax (10%)</span><span>$10.00</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Sales tax (6%)</span><span>$6.00</span></div>
+            <div style="display:flex;justify-content:space-between;font-weight:700;font-size:11px;border-top:1px solid #eee;padding-top:4px;"><span>Total</span><span>$119.99</span></div>
+          </div>
+          <div class="wf-green wf-block" style="width:100%;height:38px;border-radius:20px;font-size:12px;margin-top:10px;">
+            PLACE ORDER
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-note">Compliance limit shown inline (purchase limit tracker). Payment methods shown — no credit card option. Tax calculated by account type (medical users see no excise tax).</div>
+  </div>
+
+  <div class="arrow-right">›</div>
+
+  <!-- SCREEN 3B: Order Tracking -->
+  <div class="screen-wrap">
+    <div class="screen-title">3B · Live Order Tracking</div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-content">
+        <div class="phone-bar">
+          <span class="bar-title">Order #CR-48291</span>
+          <span class="bar-sub">In Transit</span>
+        </div>
+        <div class="phone-body">
+          <!-- Map -->
+          <div class="wf-block wf-img" style="width:100%;height:160px;border-radius:0;font-size:10px;">
+            🗺️ Real-time map (Google Maps SDK)<br>
+            <span class="sub-label">Driver pin + route polyline + customer pin</span>
+          </div>
+          <div style="padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
+            <!-- ETA -->
+            <div style="background:#f5f5f5;border-radius:8px;padding:10px;text-align:center;">
+              <div style="font-size:22px;font-weight:700;color:#1b5e20;">8 min</div>
+              <div style="font-size:10px;color:#888;">Estimated arrival</div>
+            </div>
+            <!-- Progress steps -->
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="display:flex;gap:8px;align-items:center;">
+                <div class="wf-green wf-block" style="width:20px;height:20px;border-radius:50%;font-size:10px;flex-shrink:0;">✓</div>
+                <div style="font-size:10px;color:#888;text-decoration:line-through;">Order placed</div>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <div class="wf-green wf-block" style="width:20px;height:20px;border-radius:50%;font-size:10px;flex-shrink:0;">✓</div>
+                <div style="font-size:10px;color:#888;text-decoration:line-through;">Dispensary confirmed</div>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <div class="wf-green wf-block" style="width:20px;height:20px;border-radius:50%;font-size:10px;flex-shrink:0;">✓</div>
+                <div style="font-size:10px;color:#888;text-decoration:line-through;">Driver picked up</div>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <div class="wf-block" style="width:20px;height:20px;border-radius:50%;font-size:10px;flex-shrink:0;background:#2e7d32;color:white;">→</div>
+                <div style="font-size:10px;font-weight:700;">On the way to you</div>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <div class="wf-block" style="width:20px;height:20px;border-radius:50%;font-size:10px;flex-shrink:0;color:#ccc;">○</div>
+                <div style="font-size:10px;color:#aaa;">Delivered</div>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <!-- Driver info -->
+            <div style="display:flex;gap:10px;align-items:center;">
+              <div class="wf-block wf-img" style="width:40px;height:40px;border-radius:50%;flex-shrink:0;font-size:9px;">Photo</div>
+              <div style="flex:1;">
+                <div style="font-size:11px;font-weight:700;">Marcus T.</div>
+                <div style="font-size:9px;color:#888;">Your driver · 4.9★ · 347 deliveries</div>
+              </div>
+              <div class="wf-block" style="width:34px;height:34px;border-radius:50%;font-size:16px;">📞</div>
+              <div class="wf-block" style="width:34px;height:34px;border-radius:50%;font-size:16px;">💬</div>
+            </div>
+            <div style="font-size:9px;color:#aaa;text-align:center;">Have ID ready — driver will verify age at door</div>
+          </div>
+        </div>
+        <div class="phone-nav">
+          <div class="nav-item"><span class="nav-icon">🏠</span>Home</div>
+          <div class="nav-item"><span class="nav-icon">🔍</span>Search</div>
+          <div class="nav-item active"><span class="nav-icon">📦</span>Orders</div>
+          <div class="nav-item"><span class="nav-icon">👤</span>Profile</div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-note">WebSocket connection for real-time GPS updates. Progress steps driven by order.status field. Driver info shown only after pickup confirmed. ID reminder surfaced before arrival.</div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<div style="background:#1b5e20;color:white;padding:16px 40px;margin-top:20px;font-size:11px;display:flex;justify-content:space-between;align-items:center;">
+  <span>CannaRoute Customer App — 8 screens documented (1A · 1B · 1C · 2A · 2B · 2C · 3A · 3B)</span>
+  <span style="opacity:0.7;">Blueprint v0.1 · Next: Dispensary Dashboard →</span>
+</div>
+
+</body>
+</html>

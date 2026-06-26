@@ -1,0 +1,4 @@
+-- Migration 001 — Initial schema
+-- Apply: psql -U cannaroute -d cannaroute_dev -f database/migrations/001_initial.sql
+-- This is the same as schema.sql — the authoritative first migration.
+-- See ../schema.sql for the full DDL.

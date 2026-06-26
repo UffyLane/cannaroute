@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CannaRoute — Driver App, Grower Portal &amp; Admin Panel Wireframes</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f0f0; color: #222; font-size: 12px; }
+
+  .page-header { background: #1b5e20; color: white; padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; }
+  .page-header h1 { font-size: 20px; font-weight: 700; }
+  .page-header p  { font-size: 12px; opacity: 0.8; margin-top: 3px; }
+  .badge { background: rgba(255,255,255,0.2); border-radius: 12px; padding: 4px 12px; font-size: 11px; }
+
+  .app-banner { padding: 16px 32px 4px; font-size: 14px; font-weight: 700; color: #1b5e20; border-bottom: 2px solid #c8e6c9; margin-bottom: 0; }
+  .app-banner span { font-size: 11px; font-weight: 400; color: #888; margin-left: 8px; }
+
+  .flow-label { text-align: center; padding: 20px 0 8px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #555; }
+
+  .screens-row { display: flex; flex-wrap: wrap; gap: 28px; padding: 12px 32px 32px; justify-content: flex-start; align-items: flex-start; }
+  .screen-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .screen-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #333; }
+  .screen-note { font-size: 10px; color: #888; max-width: 220px; text-align: center; line-height: 1.4; }
+
+  /* Phone */
+  .phone { width: 220px; min-height: 440px; background: white; border-radius: 26px; border: 3px solid #333; box-shadow: 4px 4px 14px rgba(0,0,0,0.14); overflow: hidden; display: flex; flex-direction: column; }
+  .phone-notch { background: #333; height: 20px; border-radius: 0 0 12px 12px; width: 70px; margin: 0 auto; flex-shrink: 0; }
+  .phone-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .phone-bar { background: #f8f8f8; border-bottom: 1px solid #e0e0e0; padding: 7px 10px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .phone-bar .t { font-size: 12px; font-weight: 700; }
+  .phone-bar .s { font-size: 9px; color: #888; }
+  .phone-body { flex: 1; overflow-y: auto; }
+  .phone-nav { background: white; border-top: 1px solid #e0e0e0; display: flex; flex-shrink: 0; }
+  .nav-item { flex: 1; padding: 6px 2px 5px; text-align: center; font-size: 8px; color: #aaa; border-top: 2px solid transparent; }
+  .nav-item.active { color: #2e7d32; border-top-color: #2e7d32; font-weight: 700; }
+
+  /* Components */
+  .wf-block { background: #e8e8e8; border: 1px solid #ccc; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #777; text-align: center; line-height: 1.3; }
+  .wf-img   { background: #d0d0d0; }
+  .wf-green { background: #c8e6c9; border-color: #81c784; color: #2e7d32; font-weight: 700; }
+  .wf-dark  { background: #1b5e20; color: white; font-weight: 700; }
+  .wf-red   { background: #ffcdd2; border-color: #e57373; color: #c62828; }
+  .wf-amber { background: #fff3cd; border-color: #ffc107; color: #e65c00; }
+  .wf-blue  { background: #e3f2fd; border-color: #90caf9; color: #0d47a1; }
+  .wf-input { background: #fafafa; border: 1.5px solid #bbb; text-align: left; padding: 0 8px; color: #aaa; font-style: italic; }
+
+  .chip { display: inline-block; padding: 2px 6px; border-radius: 8px; font-size: 8px; background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+  .chip-g { background: #e8f5e9; color: #1b5e20; border-color: #a5d6a7; }
+  .chip-a { background: #fff3cd; color: #e65c00; border-color: #ffc107; }
+  .chip-r { background: #ffebee; color: #c62828; border-color: #ef9a9a; }
+  .badge-v { display: inline-block; padding: 1px 5px; border-radius: 6px; font-size: 8px; background: #c8e6c9; color: #1b5e20; font-weight: 700; }
+
+  .divider { height: 1px; background: #eee; margin: 6px 0; }
+  .label { font-size: 9px; font-weight: 700; color: #555; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .arrow { font-size: 20px; color: #bbb; display: flex; align-items: center; padding-top: 50px; }
+
+  /* Browser */
+  .browser { background: white; border: 2px solid #333; border-radius: 8px; box-shadow: 4px 4px 16px rgba(0,0,0,0.1); overflow: hidden; }
+  .browser-bar { background: #efefef; border-bottom: 1px solid #ccc; padding: 6px 10px; display: flex; align-items: center; gap: 7px; }
+  .dots { display: flex; gap: 4px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .dot-r{background:#ff5f57;} .dot-y{background:#ffbd2e;} .dot-g{background:#28c840;}
+  .url-bar { flex:1; background:white; border:1px solid #ccc; border-radius:3px; padding:2px 8px; font-size:9px; color:#888; }
+
+  /* Web dash small */
+  .dash-sm { display: flex; min-height: 360px; }
+  .sidebar-sm { width: 130px; background: #1b5e20; flex-shrink: 0; padding: 10px 0; }
+  .sidebar-sm .logo { color: white; font-weight: 700; font-size: 11px; padding: 0 10px 10px; border-bottom: 1px solid rgba(255,255,255,0.15); }
+  .sidebar-sm .logo span { font-size: 8px; font-weight: 400; opacity: 0.7; display: block; }
+  .sn { padding: 7px 10px; color: rgba(255,255,255,0.7); font-size: 9px; display: flex; align-items: center; gap: 6px; }
+  .sn.active { background: rgba(255,255,255,0.15); color: white; font-weight: 700; border-left: 2px solid #a5d6a7; }
+  .dash-body { flex: 1; padding: 12px 14px; background: #f8f8f8; }
+
+  .card { background: white; border: 1px solid #e0e0e0; border-radius: 6px; margin-bottom: 10px; overflow: hidden; }
+  .card-h { padding: 8px 12px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; }
+  .card-h h3 { font-size: 11px; font-weight: 700; }
+  .card-b { padding: 10px 12px; font-size: 10px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 9px; }
+  th { background: #f5f5f5; padding: 6px 8px; text-align: left; color: #666; font-weight: 700; font-size: 8px; text-transform: uppercase; border-bottom: 1px solid #e0e0e0; }
+  td { padding: 6px 8px; border-bottom: 1px solid #f5f5f5; }
+  tr:last-child td { border-bottom: none; }
+
+  .btn-sm { padding: 3px 8px; border-radius: 4px; font-size: 9px; font-weight: 600; cursor: pointer; display: inline-block; }
+  .btn-g { background: #2e7d32; color: white; }
+  .btn-b { background: #1565c0; color: white; }
+  .btn-o { background: white; border: 1.5px solid #2e7d32; color: #2e7d32; }
+  .btn-gr { background: #eee; color: #666; }
+
+  .stat-sm { flex: 1; background: white; border: 1px solid #e0e0e0; border-radius: 6px; padding: 8px 10px; }
+  .stat-sm .lbl { font-size: 8px; color: #888; text-transform: uppercase; }
+  .stat-sm .val { font-size: 18px; font-weight: 700; color: #1b5e20; }
+  .stat-sm .sub { font-size: 8px; color: #aaa; }
+
+  hr.sep { border: none; border-top: 2px dashed #ccc; margin: 10px 32px; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <h1>CannaRoute — Driver App, Grower Portal &amp; Admin Panel</h1>
+    <p>Wireframes for remaining 3 apps · Driver (mobile) · Grower Portal (web) · Admin/Compliance Panel (web)</p>
+  </div>
+  <div class="badge">v0.1 Blueprint</div>
+</div>
+
+<!-- ═══════════════════════════════════ DRIVER APP -->
+<div class="app-banner">Driver App <span>React Native (mobile) · Dispensary-employed or CannaRoute W-2 drivers</span></div>
+
+<div class="flow-label">Driver Flow — Job Queue → Active Delivery → ID Verification → Complete</div>
+<div class="screens-row">
+
+  <!-- DRIVER 1: Job queue -->
+  <div class="screen-wrap">
+    <div class="screen-title">D1 · Job Queue</div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-content">
+        <div class="phone-bar">
+          <div><div class="t">Jobs</div><div class="s">Green Leaf · On duty</div></div>
+          <div class="wf-block wf-green" style="padding:3px 8px;border-radius:10px;font-size:9px;">● Online</div>
+        </div>
+        <div class="phone-body" style="padding:10px;">
+          <!-- Incoming job card -->
+          <div style="border:2px solid #2e7d32;border-radius:8px;background:#f9fef9;padding:10px;margin-bottom:8px;">
+            <div style="font-size:10px;font-weight:700;color:#1b5e20;margin-bottom:4px;">🔔 New Delivery — CR-48301</div>
+            <div style="font-size:9px;color:#555;margin-bottom:6px;">
+              1.2 mi to dispensary<br>
+              3.8 mi to customer · Est. 28 min total<br>
+              1842 Woodward Ave, Detroit
+            </div>
+            <div style="display:flex;gap:4px;margin-bottom:6px;">
+              <span class="chip chip-g">3 items</span>
+              <span class="chip chip-g">14g</span>
+              <span class="chip chip-a">Adult-Use</span>
+            </div>
+            <div style="font-size:9px;color:#888;margin-bottom:8px;">Pay: $5.00 base + tip</div>
+            <div style="display:flex;gap:6px;">
+              <div class="wf-block wf-red" style="flex:1;height:32px;border-radius:6px;font-size:10px;font-weight:700;">DECLINE</div>
+              <div class="wf-block wf-dark" style="flex:1;height:32px;border-radius:6px;font-size:10px;font-weight:700;">ACCEPT</div>
+            </div>
+            <div style="font-size:8px;color:#aaa;text-align:center;margin-top:4px;">Auto-declines in 45s if no response</div>
+          </div>
+          <!-- Stats -->
+          <div style="display:flex;gap:6px;margin-bottom:8px;">
+            <div style="flex:1;background:#f5f5f5;border-radius:6px;padding:7px;text-align:center;">
+              <div style="font-size:16px;font-weight:700;color:#1b5e20;">6</div>
+              <div style="font-size:8px;color:#888;">Deliveries today</div>
+            </div>
+            <div style="flex:1;background:#f5f5f5;border-radius:6px;padding:7px;text-align:center;">
+              <div style="font-size:16px;font-weight:700;color:#1b5e20;">$54</div>
+              <div style="font-size:8px;color:#888;">Earned today</div>
+            </div>
+          </div>
+          <!-- Compliance reminder -->
+          <div class="wf-block wf-amber" style="width:100%;padding:7px;border-radius:6px;font-size:9px;height:auto;">
+            ⚠️ Carry limit: 15 oz max per trip<br>This order: 14g — OK
+          </div>
+        </div>
+        <div class="phone-nav">
+          <div class="nav-item active">📋 Jobs</div>
+          <div class="nav-item">🗺️ Map</div>
+          <div class="nav-item">💰 Earnings</div>
+          <div class="nav-item">👤 Profile</div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-note">Job card shows distance to dispensary + customer, item count, weight vs carry limit, and estimated pay. Auto-decline timeout prevents blocking the queue.</div>
+  </div>
+
+  <div class="arrow">›</div>
+
+  <!-- DRIVER 2: Active navigation -->
+  <div class="screen-wrap">
+    <div class="screen-title">D2 · Active Delivery</div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-content">
+        <div class="phone-bar">
+          <div><div class="t">CR-48301</div><div class="s">In Transit · 3.8 mi</div></div>
+          <div style="font-size:9px;color:#e65c00;font-weight:700;">● LIVE</div>
+        </div>
+        <div class="phone-body" style="padding:0;">
+          <div class="wf-block wf-img" style="width:100%;height:160px;border-radius:0;font-size:10px;">
+            🗺️ Google Maps turn-by-turn navigation<br>
+            <span style="font-size:8px;">Route polyline · Customer pin · Driver pin</span>
+          </div>
+          <div style="padding:8px 10px;">
+            <!-- Steps -->
+            <div style="background:#1b5e20;color:white;border-radius:6px;padding:8px;font-size:10px;margin-bottom:8px;">
+              📍 Turn right on Woodward Ave<br>
+              <span style="font-size:8px;opacity:0.8;">0.3 mi · Destination in 8 min</span>
+            </div>
+            <!-- Order summary -->
+            <div class="label">Order Details</div>
+            <div style="border:1px solid #e0e0e0;border-radius:6px;padding:8px;font-size:9px;display:flex;flex-direction:column;gap:3px;">
+              <div><strong>James Williams</strong> · (313) 555-0192</div>
+              <div>1842 Woodward Ave, Detroit, MI 48201</div>
+              <div style="margin-top:4px;display:flex;gap:4px;">
+                <span class="chip chip-a">Verify ID at door</span>
+                <span class="chip chip-g">Adult-Use · 21+</span>
+              </div>
+            </div>
+            <!-- Items checklist -->
+            <div class="label" style="margin-top:8px;">Items to Deliver</div>
+            <div style="border:1px solid #e0e0e0;border-radius:6px;padding:8px;font-size:9px;display:flex;flex-direction:column;gap:4px;">
+              <div style="display:flex;gap:6px;align-items:center;"><span style="color:#2e7d32;">✓</span><span>Blue Dream 3.5g</span></div>
+              <div style="display:flex;gap:6px;align-items:center;"><span style="color:#2e7d32;">✓</span><span>Wedding Cake 7g</span></div>
+              <div style="display:flex;gap:6px;align-items:center;"><span style="color:#2e7d32;">✓</span><span>Mango Haze Gummies 10pk</span></div>
+            </div>
+            <div class="wf-block wf-dark" style="width:100%;height:34px;border-radius:18px;font-size:11px;margin-top:10px;">ARRIVED AT CUSTOMER</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-note">Google Maps SDK embedded. "Arrived" button triggers the ID verification flow. Items checklist pre-populated from order. Phone number tap-to-call.</div>
+  </div>
+
+  <div class="arrow">›</div>
+
+  <!-- DRIVER 3: ID verification -->
+  <div class="screen-wrap">
+    <div class="screen-title">D3 · ID Verification at Door</div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-content">
+        <div class="phone-bar"><div class="t">Verify Customer ID</div></div>
+        <div class="phone-body" style="padding:10px;display:flex;flex-direction:column;gap:8px;">
+          <div class="wf-block wf-amber" style="width:100%;padding:7px;border-radius:6px;font-size:9px;height:auto;">
+            ⚠️ Required before handing over order
+          </div>
+          <!-- Camera scan -->
+          <div class="label">Scan Customer ID</div>
+          <div class="wf-block wf-img" style="width:100%;height:90px;border-radius:6px;font-size:10px;border-width:2px;border-style:dashed;">
+            📷 Aim camera at customer's ID<br>
+            <span style="font-size:8px;">Front of government-issued ID</span>
+          </div>
+          <!-- Auto-extracted -->
+          <div style="border:1px solid #c8e6c9;border-radius:6px;padding:8px;background:#f9fef9;font-size:9px;">
+            <div style="color:#2e7d32;font-weight:700;margin-bottom:4px;">✓ ID Scanned</div>
+            <div>Name: <strong>James A. Williams</strong></div>
+            <div>DOB: <strong>••/••/1996</strong></div>
+            <div>Age: <strong>28 years old</strong></div>
+            <div>ID Expires: <strong>2027</strong></div>
+            <div style="margin-top:4px;" class="chip chip-g">✓ 21+ Confirmed</div>
+          </div>
+          <!-- Manual fallback -->
+          <div style="font-size:9px;color:#888;text-align:center;">Can't scan? <span style="color:#2e7d32;text-decoration:underline;">Enter DOB manually</span></div>
+          <!-- Signature -->
+          <div class="label">Customer Signature</div>
+          <div class="wf-block wf-input" style="width:100%;height:56px;border-style:dashed;font-size:9px;align-items:flex-start;padding-top:6px;">
+            Customer signs here with finger ✍️
+          </div>
+          <!-- Photo -->
+          <div class="label">Proof of Delivery Photo</div>
+          <div class="wf-block wf-img" style="width:100%;height:48px;font-size:9px;border-style:dashed;border-width:2px;">
+            📷 Take photo of package at door
+          </div>
+          <div class="wf-block wf-dark" style="width:100%;height:34px;border-radius:18px;font-size:11px;">COMPLETE DELIVERY</div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-note">ID scan extracts DOB via OCR — driver sees age, never full ID number. Signature pad + delivery photo captured. All stored per order. Manual DOB entry as fallback.</div>
+  </div>
+
+  <div class="arrow">›</div>
+
+  <!-- DRIVER 4: Complete -->
+  <div class="screen-wrap">
+    <div class="screen-title">D4 · Delivery Complete</div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-content">
+        <div class="phone-bar"><div class="t">Delivery Complete</div></div>
+        <div class="phone-body" style="padding:14px 10px;display:flex;flex-direction:column;gap:10px;align-items:center;">
+          <div style="font-size:40px;text-align:center;">✅</div>
+          <div style="font-size:14px;font-weight:700;text-align:center;">Order Delivered!</div>
+          <div style="font-size:10px;color:#888;text-align:center;line-height:1.5;">
+            CR-48301 · James Williams<br>
+            Completed at 2:47pm
+          </div>
+          <!-- Earnings -->
+          <div style="border:1px solid #c8e6c9;border-radius:8px;padding:10px;width:100%;background:#f9fef9;text-align:center;">
+            <div style="font-size:9px;color:#888;margin-bottom:2px;">This delivery</div>
+            <div style="font-size:22px;font-weight:700;color:#1b5e20;">$5.00</div>
+            <div style="font-size:9px;color:#aaa;">base pay · tip added by customer</div>
+          </div>
+          <!-- Metrc confirmation -->
+          <div class="wf-block wf-green" style="width:100%;padding:7px;border-radius:6px;font-size:9px;height:auto;">
+            ✓ Metrc sale reported automatically<br>
+            <span style="font-size:8px;font-weight:400;">Dispensary inventory updated</span>
+          </div>
+          <div style="font-size:9px;color:#888;text-align:center;">Signature, photo &amp; ID check saved to order record</div>
+          <div class="wf-block wf-dark" style="width:100%;height:34px;border-radius:18px;font-size:11px;">BACK TO JOB QUEUE</div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-note">Completion triggers: Metrc sale record, inventory decrement, order status → delivered, customer push notification, earnings logged. All automated — driver just taps one button.</div>
+  </div>
+
+</div>
+
+<hr class="sep">
+
+<!-- ═══════════════════════════════════ GROWER PORTAL -->
+<div class="app-banner">Grower Portal <span>React.js (web) · Licensed cultivators upload and manage farm transparency data</span></div>
+
+<div class="flow-label">Grower Portal — Farm Profile, COA Upload, Pesticide Log, Analytics</div>
+<div class="screens-row" style="flex-direction:column;align-items:flex-start;">
+
+  <!-- GROWER 1: Farm Profile -->
+  <div style="width:100%;">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#333;padding:0 0 8px;">G1 · Farm Profile Setup</div>
+    <div class="browser" style="width:860px;">
+      <div class="browser-bar">
+        <div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+        <div class="url-bar">growers.cannaroute.com/profile</div>
+      </div>
+      <div class="dash-sm">
+        <div class="sidebar-sm">
+          <div class="logo">CannaRoute<span>Grower Portal</span></div>
+          <div class="sn active">🏡 Farm Profile</div>
+          <div class="sn">📄 COA Upload</div>
+          <div class="sn">🧪 Pesticide Log</div>
+          <div class="sn">📦 Products</div>
+          <div class="sn">📈 Analytics</div>
+          <div class="sn" style="margin-top:auto;">⚙️ Settings</div>
+        </div>
+        <div class="dash-body">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <div><div style="font-size:14px;font-weight:700;">Farm Profile</div><div style="font-size:9px;color:#888;">What customers see when they tap your farm name on a product</div></div>
+            <div style="display:flex;gap:6px;">
+              <div class="btn-sm btn-o">Preview Customer View</div>
+              <div class="btn-sm btn-g">Save Changes</div>
+            </div>
+          </div>
+          <!-- Verification status bar -->
+          <div class="card">
+            <div class="card-b" style="display:flex;gap:20px;align-items:center;">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+                <div style="font-size:16px;">✅</div>
+                <div style="font-size:8px;color:#2e7d32;font-weight:700;">License<br>Verified</div>
+              </div>
+              <div style="height:2px;flex:1;background:#c8e6c9;"></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+                <div style="font-size:16px;">✅</div>
+                <div style="font-size:8px;color:#2e7d32;font-weight:700;">COA<br>Uploaded</div>
+              </div>
+              <div style="height:2px;flex:1;background:#c8e6c9;"></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+                <div style="font-size:16px;">⏳</div>
+                <div style="font-size:8px;color:#e65c00;font-weight:700;">Pesticide<br>Log Pending</div>
+              </div>
+              <div style="height:2px;flex:1;background:#eee;"></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+                <div style="font-size:16px;">🔒</div>
+                <div style="font-size:8px;color:#aaa;">Verified<br>Badge</div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;margin-top:10px;">
+            <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+              <div class="card">
+                <div class="card-h"><h3>Basic Info</h3><span class="badge-v badge-v">License Verified ✓</span></div>
+                <div class="card-b" style="display:flex;flex-direction:column;gap:8px;">
+                  <div><div class="label">Farm Name</div><div class="wf-block wf-input" style="height:26px;font-size:9px;padding:0 8px;text-align:left;justify-content:flex-start;">Sunrise Valley Farm</div></div>
+                  <div style="display:flex;gap:8px;">
+                    <div style="flex:1;"><div class="label">State License #</div><div class="wf-block" style="height:26px;font-size:9px;background:#e8f5e9;color:#1b5e20;">MMGR-000234-LIC ✓</div></div>
+                    <div style="flex:1;"><div class="label">License Type</div><div class="wf-block" style="height:26px;font-size:9px;background:#e8f5e9;color:#1b5e20;">Class C Grower ✓</div></div>
+                  </div>
+                  <div style="display:flex;gap:8px;">
+                    <div style="flex:1;"><div class="label">Location</div><div class="wf-block wf-input" style="height:26px;font-size:9px;padding:0 8px;text-align:left;justify-content:flex-start;">Traverse City, MI</div></div>
+                    <div style="flex:1;"><div class="label">Farm Size</div><div class="wf-block wf-input" style="height:26px;font-size:9px;padding:0 8px;text-align:left;justify-content:flex-start;">12,000 sq ft · Indoor</div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-h"><h3>Cultivation Method</h3></div>
+                <div class="card-b" style="display:flex;flex-direction:column;gap:6px;">
+                  <div style="display:flex;gap:6px;">
+                    <div class="wf-block" style="flex:1;height:28px;border:2px solid #2e7d32;background:#f9fef9;color:#1b5e20;font-weight:700;font-size:9px;">● Indoor</div>
+                    <div class="wf-block" style="flex:1;height:28px;font-size:9px;">Outdoor</div>
+                    <div class="wf-block" style="flex:1;height:28px;font-size:9px;">Greenhouse</div>
+                  </div>
+                  <div><div class="label">Pesticide Policy</div>
+                    <div style="display:flex;gap:6px;">
+                      <div class="wf-block" style="flex:1;height:28px;border:2px solid #2e7d32;background:#f9fef9;color:#1b5e20;font-weight:700;font-size:9px;">● Pesticide-Free</div>
+                      <div class="wf-block" style="flex:1;height:28px;font-size:9px;">IPM</div>
+                      <div class="wf-block" style="flex:1;height:28px;font-size:9px;">Conventional</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="flex:0.8;display:flex;flex-direction:column;gap:8px;">
+              <div class="card">
+                <div class="card-h"><h3>Certifications</h3></div>
+                <div class="card-b" style="display:flex;flex-direction:column;gap:6px;">
+                  <div style="border:1px solid #c8e6c9;border-radius:6px;padding:7px;display:flex;align-items:center;gap:8px;background:#f9fef9;">
+                    <span style="font-size:14px;">🌿</span>
+                    <div style="flex:1;font-size:9px;"><strong>Clean Green Certified</strong><br><span style="color:#888;">Auto-verified via directory</span></div>
+                    <span class="badge-v">✓ Active</span>
+                  </div>
+                  <div style="border:1px solid #e0e0e0;border-radius:6px;padding:7px;display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:14px;">☀️</span>
+                    <div style="flex:1;font-size:9px;"><strong>Sun+Earth Certified</strong><br><span style="color:#aaa;">Not certified</span></div>
+                    <span class="btn-sm btn-b" style="font-size:8px;">Apply</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-h"><h3>Farm Photos</h3></div>
+                <div class="card-b">
+                  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;">
+                    <div class="wf-block wf-img" style="height:44px;font-size:8px;">Photo</div>
+                    <div class="wf-block wf-img" style="height:44px;font-size:8px;">Photo</div>
+                    <div class="wf-block" style="height:44px;font-size:9px;border-style:dashed;">+ Add</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:10px;color:#777;margin-top:6px;max-width:860px;line-height:1.5;">
+      License number cross-referenced against Michigan CRA Accela database at signup (automated). Certification badges auto-verified against Clean Green and Sun+Earth public directories. Progress bar shows what's needed to unlock the "Verified" badge. Pesticide policy selection drives the badge shown on all product listings from this farm.
+    </div>
+  </div>
+
+  <!-- GROWER 2: COA Upload -->
+  <div style="width:100%;margin-top:20px;">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#333;padding:0 0 8px;">G2 · COA Upload + Auto-Parse</div>
+    <div class="browser" style="width:860px;">
+      <div class="browser-bar">
+        <div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+        <div class="url-bar">growers.cannaroute.com/coa</div>
+      </div>
+      <div class="dash-sm">
+        <div class="sidebar-sm">
+          <div class="logo">CannaRoute<span>Grower Portal</span></div>
+          <div class="sn">🏡 Farm Profile</div>
+          <div class="sn active">📄 COA Upload</div>
+          <div class="sn">🧪 Pesticide Log</div>
+          <div class="sn">📦 Products</div>
+          <div class="sn">📈 Analytics</div>
+        </div>
+        <div class="dash-body">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <div><div style="font-size:14px;font-weight:700;">Certificate of Analysis (COA)</div><div style="font-size:9px;color:#888;">Upload COA PDFs from your licensed testing lab — we extract and display the data automatically</div></div>
+            <div class="btn-sm btn-g">+ Upload COA</div>
+          </div>
+          <div style="display:flex;gap:12px;">
+            <div style="flex:1;">
+              <!-- Upload zone -->
+              <div class="card">
+                <div class="card-h"><h3>Upload New COA</h3></div>
+                <div class="card-b">
+                  <div class="wf-block wf-input" style="width:100%;height:70px;border-style:dashed;border-width:2px;font-size:10px;border-radius:6px;">
+                    📄 Drag &amp; drop COA PDF here<br>or click to upload
+                  </div>
+                  <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px;">
+                    <div style="border:1.5px solid #2e7d32;border-radius:6px;padding:8px;background:#f9fef9;">
+                      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                        <span>📄</span>
+                        <div style="flex:1;font-size:9px;"><strong>Blue-Dream-Batch-0847.pdf</strong><br><span style="color:#888;">Uploaded 2 min ago · Parsing...</span></div>
+                        <span style="font-size:9px;color:#e65c00;">⏳</span>
+                      </div>
+                      <!-- Parsed data -->
+                      <div style="background:white;border:1px solid #e0e0e0;border-radius:4px;padding:8px;font-size:9px;">
+                        <div style="font-weight:700;color:#2e7d32;margin-bottom:4px;">✓ Auto-Extracted</div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+                          <div>Lab: <strong>SC Labs</strong></div>
+                          <div>License: <strong>STLM-000001 ✓</strong></div>
+                          <div>Test date: <strong>2024-09-14</strong></div>
+                          <div>Batch #: <strong>MV-2024-0847</strong></div>
+                          <div>Total THC: <strong>22.3%</strong></div>
+                          <div>Total CBD: <strong>0.4%</strong></div>
+                        </div>
+                        <div style="margin-top:6px;display:flex;gap:4px;">
+                          <div class="wf-block" style="flex:1;height:20px;font-size:8px;background:#e8f5e9;border-color:#a5d6a7;color:#1b5e20;">✓ Pesticides: PASS</div>
+                          <div class="wf-block" style="flex:1;height:20px;font-size:8px;background:#e8f5e9;border-color:#a5d6a7;color:#1b5e20;">✓ Microbials: PASS</div>
+                          <div class="wf-block" style="flex:1;height:20px;font-size:8px;background:#e8f5e9;border-color:#a5d6a7;color:#1b5e20;">✓ Heavy Metals: PASS</div>
+                        </div>
+                      </div>
+                      <div style="margin-top:6px;display:flex;gap:6px;">
+                        <div class="btn-sm btn-g" style="flex:1;text-align:center;">Confirm &amp; Publish</div>
+                        <div class="btn-sm btn-gr">Edit</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="flex:1;">
+              <div class="card">
+                <div class="card-h"><h3>COA History</h3></div>
+                <table>
+                  <thead><tr><th>Batch #</th><th>Product</th><th>Test Date</th><th>Status</th><th>Expires</th></tr></thead>
+                  <tbody>
+                    <tr>
+                      <td style="font-family:monospace;font-size:8px;">MV-2024-0847</td>
+                      <td>Blue Dream</td>
+                      <td>2024-09-14</td>
+                      <td><span class="chip chip-g" style="font-size:8px;">✓ Active</span></td>
+                      <td>2025-03-14</td>
+                    </tr>
+                    <tr>
+                      <td style="font-family:monospace;font-size:8px;">MV-2024-0791</td>
+                      <td>Blue Dream</td>
+                      <td>2024-06-02</td>
+                      <td><span class="chip" style="font-size:8px;background:#f5f5f5;border-color:#ccc;color:#888;">Archived</span></td>
+                      <td>2024-12-02</td>
+                    </tr>
+                    <tr>
+                      <td style="font-family:monospace;font-size:8px;">EF-2024-1203</td>
+                      <td>Wedding Cake</td>
+                      <td>2024-11-01</td>
+                      <td><span class="chip chip-g" style="font-size:8px;">✓ Active</span></td>
+                      <td>2025-05-01</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:10px;color:#777;margin-top:6px;line-height:1.5;">
+      COA parsing uses OCR + regex to extract structured data from standard lab report formats (SC Labs, ACT Lab, etc.). Lab license number is verified against state-licensed lab list (public record). Grower reviews extracted data before publishing — any mismatch flagged. COAs auto-expire after 6 months; products with expired COAs are auto-hidden from customer menus.
+    </div>
+  </div>
+
+</div>
+
+<hr class="sep">
+
+<!-- ═══════════════════════════════════ ADMIN PANEL -->
+<div class="app-banner">Admin / Compliance Panel <span>React.js (web) · CannaRoute internal team — state config, license verification, platform health</span></div>
+
+<div class="flow-label">Admin Panel — State Compliance Config + License Verification Queue</div>
+<div class="screens-row" style="flex-direction:column;align-items:flex-start;">
+
+  <div style="width:100%;">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#333;padding:0 0 8px;">A1 · State Compliance Configuration</div>
+    <div class="browser" style="width:860px;">
+      <div class="browser-bar">
+        <div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+        <div class="url-bar">admin.cannaroute.com/compliance/states/MI</div>
+      </div>
+      <div class="dash-sm">
+        <div class="sidebar-sm">
+          <div class="logo">Admin Panel</div>
+          <div class="sn">📊 Platform Overview</div>
+          <div class="sn active">🗺️ State Config</div>
+          <div class="sn">🔍 License Verification</div>
+          <div class="sn">🏪 Dispensaries</div>
+          <div class="sn">🌿 Growers</div>
+          <div class="sn">🚗 Drivers</div>
+          <div class="sn">📄 Manifests</div>
+          <div class="sn">🔗 Metrc Logs</div>
+        </div>
+        <div class="dash-body">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div>
+              <div style="font-size:14px;font-weight:700;">Michigan — Compliance Rules</div>
+              <div style="font-size:9px;color:#888;">compliance_rules table · Row ID: MI · Last updated: 2026-01-15</div>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <div class="btn-sm btn-o">View History</div>
+              <div class="btn-sm btn-g">Save Rules</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+              <div class="card">
+                <div class="card-h"><h3>Market Type</h3></div>
+                <div class="card-b" style="display:flex;gap:6px;">
+                  <div class="wf-block" style="flex:1;height:26px;border:2px solid #2e7d32;background:#f9fef9;color:#1b5e20;font-weight:700;font-size:9px;">● Adult-Use</div>
+                  <div class="wf-block" style="flex:1;height:26px;border:2px solid #2e7d32;background:#f9fef9;color:#1b5e20;font-weight:700;font-size:9px;">● Medical</div>
+                  <div class="wf-block" style="flex:1;height:26px;font-size:9px;">Medical Only</div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-h"><h3>Purchase Limits</h3></div>
+                <div class="card-b" style="display:flex;flex-direction:column;gap:6px;font-size:9px;">
+                  <div style="display:flex;gap:8px;align-items:center;"><div style="width:160px;color:#888;">Adult-use per transaction</div><div class="wf-block" style="width:80px;height:24px;">2.5 oz (70.9g)</div></div>
+                  <div style="display:flex;gap:8px;align-items:center;"><div style="width:160px;color:#888;">Medical daily limit</div><div class="wf-block" style="width:80px;height:24px;">2 oz (56.7g)</div></div>
+                  <div style="display:flex;gap:8px;align-items:center;"><div style="width:160px;color:#888;">Medical monthly limit</div><div class="wf-block" style="width:80px;height:24px;">10 oz (283.5g)</div></div>
+                  <div style="display:flex;gap:8px;align-items:center;"><div style="width:160px;color:#888;">Driver carry limit</div><div class="wf-block" style="width:80px;height:24px;">15 oz (425g)</div></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-h"><h3>Delivery Hours</h3></div>
+                <div class="card-b" style="display:flex;gap:8px;font-size:9px;align-items:center;">
+                  <div class="wf-block" style="width:70px;height:24px;">8:00 AM</div>
+                  <span>to</span>
+                  <div class="wf-block" style="width:70px;height:24px;">9:00 PM</div>
+                  <span style="color:#888;">Michigan local time</span>
+                </div>
+              </div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+              <div class="card">
+                <div class="card-h"><h3>Seed-to-Sale Integration</h3></div>
+                <div class="card-b" style="display:flex;flex-direction:column;gap:6px;font-size:9px;">
+                  <div style="display:flex;gap:6px;">
+                    <div class="wf-block" style="flex:1;height:28px;border:2px solid #2e7d32;background:#f9fef9;color:#1b5e20;font-weight:700;font-size:9px;">● Metrc</div>
+                    <div class="wf-block" style="flex:1;height:28px;font-size:9px;">BioTrack</div>
+                    <div class="wf-block" style="flex:1;height:28px;font-size:9px;">LeafData</div>
+                    <div class="wf-block" style="flex:1;height:28px;font-size:9px;">None</div>
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:center;"><div style="width:160px;color:#888;">Metrc API endpoint</div><div class="wf-block wf-input" style="flex:1;height:24px;text-align:left;padding:0 6px;">api.metrc.com/v2/</div></div>
+                  <div style="display:flex;gap:8px;align-items:center;"><div style="width:160px;color:#888;">Sync on sale complete</div><div class="wf-block" style="width:50px;height:24px;background:#e8f5e9;color:#1b5e20;">ON</div></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-h"><h3>Tax Configuration</h3></div>
+                <div class="card-b" style="display:flex;flex-direction:column;gap:6px;font-size:9px;">
+                  <div style="display:flex;gap:8px;align-items:center;"><div style="width:180px;color:#888;">Adult-use excise tax</div><div class="wf-block" style="width:60px;height:24px;">10%</div></div>
+                  <div style="display:flex;gap:8px;align-items:center;"><div style="width:180px;color:#888;">Medical excise tax</div><div class="wf-block" style="width:60px;height:24px;">0%</div></div>
+                  <div style="display:flex;gap:8px;align-items:center;"><div style="width:180px;color:#888;">State sales tax</div><div class="wf-block" style="width:60px;height:24px;">6%</div></div>
+                  <div style="display:flex;gap:8px;align-items:center;"><div style="width:180px;color:#888;">New wholesale tax (Jan 2026)</div><div class="wf-block" style="width:60px;height:24px;background:#fff3cd;color:#e65c00;">24%</div></div>
+                  <div style="font-size:8px;color:#aaa;">Wholesale tax: applied to dispensary cost basis, not retail price. Does not appear on customer receipt.</div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-h"><h3>Compliance Flags</h3></div>
+                <div class="card-b" style="display:flex;flex-direction:column;gap:5px;font-size:9px;">
+                  <div style="display:flex;gap:8px;align-items:center;"><span class="chip chip-g">ON</span><span>Age verification required at delivery (ID scan)</span></div>
+                  <div style="display:flex;gap:8px;align-items:center;"><span class="chip chip-g">ON</span><span>GPS vehicle tracking required for drivers</span></div>
+                  <div style="display:flex;gap:8px;align-items:center;"><span class="chip chip-g">ON</span><span>Delivery manifest required per order</span></div>
+                  <div style="display:flex;gap:8px;align-items:center;"><span class="chip chip-g">ON</span><span>Metrc sale record on delivery complete</span></div>
+                  <div style="display:flex;gap:8px;align-items:center;"><span class="chip chip-g">ON</span><span>Customer signature required at door</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:8px;font-size:9px;color:#888;padding:8px;background:#fff3cd;border-radius:6px;border:1px solid #ffc107;">
+            ⚙️ Adding a new Metrc state: (1) Create new compliance_rules row with state_code + all fields above. (2) Select "Metrc" as seed-to-sale system. (3) Enter Metrc API endpoint for that state. Done — no code changes required for standard Metrc states.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:10px;color:#777;margin-top:6px;line-height:1.5;">
+      This is the compliance engine's admin UI. Every rule maps 1:1 to a field in the compliance_rules database table. Adding a new state = inserting one row + selecting the seed-to-sale adapter. The platform reads these rules at runtime — no deployments needed to configure a new state.
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<div style="background:#1b5e20;color:white;padding:14px 32px;margin-top:30px;font-size:11px;display:flex;justify-content:space-between;">
+  <span>CannaRoute Wireframes — All 5 apps documented: Customer App · Dispensary Dashboard · Driver App · Grower Portal · Admin Panel</span>
+  <span style="opacity:0.7;">Blueprint v0.1 · Next: SQL Schema →</span>
+</div>
+
+</body>
+</html>
