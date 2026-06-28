@@ -1,10 +1,10 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY backend/shared/package*.json ./backend/shared/
-RUN cd backend/shared && npm install --ignore-scripts --network-timeout=600000 --fetch-retries=5 --fetch-retry-mintimeout=20000 --fetch-retry-maxtimeout=120000
+RUN cd backend/shared && npm install --ignore-scripts --no-audit --no-fund --network-timeout=600000 --fetch-retries=5 --fetch-retry-mintimeout=20000 --fetch-retry-maxtimeout=120000
 COPY backend/shared/ ./backend/shared/
 COPY backend/services/inventory/package*.json ./backend/services/inventory/
-RUN cd backend/services/inventory && npm install --ignore-scripts --network-timeout=600000 --fetch-retries=5 --fetch-retry-mintimeout=20000 --fetch-retry-maxtimeout=120000
+RUN cd backend/services/inventory && npm install --ignore-scripts --no-audit --no-fund --network-timeout=600000 --fetch-retries=5 --fetch-retry-mintimeout=20000 --fetch-retry-maxtimeout=120000
 COPY backend/services/inventory/ ./backend/services/inventory/
 RUN cd backend/services/inventory && npm run build
 
