@@ -1,10 +1,10 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY backend/shared/package*.json ./backend/shared/
-RUN cd backend/shared && npm ci --ignore-scripts --network-timeout=300000
+RUN cd backend/shared && npm install --ignore-scripts --network-timeout=600000 --fetch-retries=5 --fetch-retry-mintimeout=20000 --fetch-retry-maxtimeout=120000
 COPY backend/shared/ ./backend/shared/
 COPY backend/services/compliance/package*.json ./backend/services/compliance/
-RUN cd backend/services/compliance && npm ci --ignore-scripts --network-timeout=300000
+RUN cd backend/services/compliance && npm install --ignore-scripts --network-timeout=600000 --fetch-retries=5 --fetch-retry-mintimeout=20000 --fetch-retry-maxtimeout=120000
 COPY backend/services/compliance/ ./backend/services/compliance/
 RUN cd backend/services/compliance && npm run build
 
