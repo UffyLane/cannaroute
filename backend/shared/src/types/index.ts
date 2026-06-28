@@ -167,10 +167,11 @@ export interface ISendNotificationPayload {
 export interface WsOrderConfirmedEvent {
   order_id: string;
   dispensary_id: string;
-  status: OrderStatus;
-  confirmed_at: string;
-  driver_name: string;
-  driver_rating: number;
+  estimated_minutes?: number;
+  status?: OrderStatus;
+  confirmed_at?: string;
+  driver_name?: string;
+  driver_rating?: number;
 }
 
 export interface WsDriverPositionEvent {
@@ -185,18 +186,20 @@ export interface WsDriverPositionEvent {
 export interface WsOrderDeliveredEvent {
   order_id: string;
   dispensary_id: string;
-  status: OrderStatus;
   delivered_at: string;
+  status?: OrderStatus;
 }
 
 export interface WsNewJobEvent {
   order_id: string;
   dispensary_id: string;
-  order_number: string;
-  distance_mi: number;
   item_count: number;
-  weight_g: number;
-  base_pay_cents: number;
-  order_type: OrderType;
-  auto_decline_at: string; // ISO timestamp, 45s from now
+  delivery_address?: string;
+  total_cents?: number;
+  order_number?: string;
+  distance_mi?: number;
+  weight_g?: number;
+  base_pay_cents?: number;
+  order_type?: OrderType;
+  auto_decline_at?: string;
 }
