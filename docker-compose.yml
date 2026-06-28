@@ -1,17 +1,5 @@
-version: '3.9'
-
 # ─── CannaRoute Local Dev Stack ───────────────────────────────────────────────
-# Usage:
-#   cp .env.docker .env.docker.local   # fill in real secrets
-#   docker-compose up --build
-#
-# All 7 microservices + PostgreSQL + Redis boot in dependency order.
-# Hot-reload is NOT wired here (this is for integration testing, not coding).
-# For coding: run individual services with `npm run start:dev` in each directory.
-
 services:
-
-  # ─── Infrastructure ─────────────────────────────────────────────────────────
 
   postgres:
     image: postgres:16-alpine
@@ -45,8 +33,6 @@ services:
       timeout: 3s
       retries: 10
 
-  # ─── Microservices ───────────────────────────────────────────────────────────
-
   auth:
     build:
       context: .
@@ -64,12 +50,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3001/api/v1/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
 
   order:
     build:
@@ -92,12 +72,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3002/api/v1/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
 
   delivery:
     build:
@@ -119,12 +93,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3003/api/v1/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
 
   inventory:
     build:
@@ -141,12 +109,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3004/api/v1/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
 
   compliance:
     build:
@@ -162,12 +124,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3005/api/v1/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
 
   grower:
     build:
@@ -183,12 +139,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3006/api/v1/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
 
   notification:
     build:
@@ -204,14 +154,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3007/api/v1/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
-
-# ─── Volumes ──────────────────────────────────────────────────────────────────
 
 volumes:
   postgres_data:
