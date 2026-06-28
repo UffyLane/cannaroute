@@ -51,7 +51,7 @@ export class NotificationService {
     // Fire and handle result
     try {
       if (payload.channel === 'push' && payload.fcm_token) {
-        await this.sendPush(payload.fcm_token, payload.title, payload.body, payload.data);
+        await this.sendPush(payload.fcm_token, payload.title ?? '', payload.body, payload.data);
       } else if (payload.channel === 'sms' && payload.phone_number) {
         await this.sendSms(payload.phone_number, payload.body);
       }

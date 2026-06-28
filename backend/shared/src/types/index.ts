@@ -158,12 +158,15 @@ export interface ISendNotificationPayload {
   title?: string;
   body: string;
   data?: Record<string, string>;
+  fcm_token?: string;
+  phone_number?: string;
 }
 
 // ─── WebSocket Events ─────────────────────────────────────────────────────────
 
 export interface WsOrderConfirmedEvent {
   order_id: string;
+  dispensary_id: string;
   status: OrderStatus;
   confirmed_at: string;
   driver_name: string;
@@ -181,12 +184,14 @@ export interface WsDriverPositionEvent {
 
 export interface WsOrderDeliveredEvent {
   order_id: string;
+  dispensary_id: string;
   status: OrderStatus;
   delivered_at: string;
 }
 
 export interface WsNewJobEvent {
   order_id: string;
+  dispensary_id: string;
   order_number: string;
   distance_mi: number;
   item_count: number;
