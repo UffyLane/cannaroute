@@ -8,7 +8,8 @@ import { GrowerModule } from './grower/grower.module';
 import { Grower } from './entities/grower.entity';
 import { LabTest } from './entities/lab-test.entity';
 import { PesticideLog } from './entities/pesticide-log.entity';
-import { JwtAuthGuard, RolesGuard } from '@cannaroute/shared';
+import { JwtAuthGuard, RolesGuard, JwtStrategy } from '@cannaroute/shared';
+import { HealthController } from './health.controller';
 
 @Module({
   imports: [
@@ -41,7 +42,9 @@ import { JwtAuthGuard, RolesGuard } from '@cannaroute/shared';
     }),
     GrowerModule,
   ],
+  controllers: [HealthController],
   providers: [
+    JwtStrategy,
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
   ],

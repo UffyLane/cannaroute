@@ -7,7 +7,8 @@ import { PassportModule } from '@nestjs/passport';
 import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/order.entity';
 import { OrderItem } from './orders/order-item.entity';
-import { JwtAuthGuard, RolesGuard } from '@cannaroute/shared';
+import { JwtAuthGuard, RolesGuard, JwtStrategy } from '@cannaroute/shared';
+import { HealthController } from './health.controller';
 
 @Module({
   imports: [
@@ -40,7 +41,9 @@ import { JwtAuthGuard, RolesGuard } from '@cannaroute/shared';
     }),
     OrdersModule,
   ],
+  controllers: [HealthController],
   providers: [
+    JwtStrategy,
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
   ],

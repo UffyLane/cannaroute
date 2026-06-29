@@ -13,69 +13,82 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- Adding a new state = INSERT one row. No code changes.
 -- ============================================================
 
+-- Column names match the TypeORM ComplianceRules entity exactly.
+-- With synchronize:true in development, TypeORM compares this table against the entity
+-- and does nothing if they already match. If they differ, TypeORM adds missing columns.
+-- Keeping them in sync here means fresh installs work out of the box.
+
 CREATE TABLE compliance_rules (
-  state_code                   CHAR(2)         PRIMARY KEY,  -- 'MI', 'CO', 'CA', etc.
-  state_name                   VARCHAR(64)     NOT NULL,
+  state_code                        CHAR(2)        PRIMARY KEY,  -- 'MI', 'CO', 'CA'
+  state_name                        VARCHAR(64)    NOT NULL,
 
   -- Market type
-  adult_use_enabled            BOOLEAN         NOT NULL DEFAULT FALSE,
-  medical_enabled              BOOLEAN         NOT NULL DEFAULT FALSE,
+  is_active                         BOOLEAN        NOT NULL DEFAULT TRUE,
+  adult_use_allowed                 BOOLEAN        NOT NULL DEFAULT FALSE,
+  medical_allowed                   BOOLEAN        NOT NULL DEFAULT FALSE,
+  delivery_allowed                  BOOLEAN        NOT NULL DEFAULT FALSE,
 
-  -- Purchase limits (stored in grams)
-  adult_use_per_transaction_g  NUMERIC(8,2)    NOT NULL DEFAULT 70.87,  -- 2.5 oz
-  medical_daily_limit_g        NUMERIC(8,2)    NOT NULL DEFAULT 56.70,  -- 2 oz
-  medical_monthly_limit_g      NUMERIC(8,2)    NOT NULL DEFAULT 283.50, -- 10 oz
-  driver_carry_limit_g         NUMERIC(8,2)    NOT NULL DEFAULT 425.24, -- 15 oz
+  -- Per-transaction purchase limits (grams)
+  adult_use_flower_limit_grams      NUMERIC(8,3),  -- MI adult-use: 70.87g (2.5oz)
+  medical_flower_limit_grams        NUMERIC(8,3),  -- MI medical: 70.87g
+  adult_use_concentrate_limit_grams NUMERIC(8,3),  -- MI: 15g
+  medical_concentrate_limit_grams   NUMERIC(8,3),  -- MI: 15g
 
-  -- Delivery hours (local time, stored as TIME)
-  delivery_start_time          TIME            NOT NULL DEFAULT '08:00:00',
-  delivery_end_time            TIME            NOT NULL DEFAULT '21:00:00',
+  -- Edible limits (mg THC per transaction)
+  adult_use_edible_thc_limit_mg     INTEGER,       -- MI: 100mg
+  medical_edible_thc_limit_mg       INTEGER,       -- MI: 200mg
 
-  -- Seed-to-sale system
-  -- Options: 'metrc', 'biotrack', 'leafdata', 'none'
-  seed_to_sale_system          VARCHAR(16)     NOT NULL DEFAULT 'metrc',
-  s2s_api_endpoint             VARCHAR(255),   -- e.g. 'https://api.metrc.com/v2/'
-  s2s_sync_on_delivery         BOOLEAN         NOT NULL DEFAULT TRUE,
+  -- Delivery hours (24h format, e.g. '09:00', '21:00')
+  delivery_hours_start              VARCHAR(5),
+  delivery_hours_end                VARCHAR(5),
 
-  -- Tax rates (stored as decimal, e.g. 0.10 = 10%)
-  adult_use_excise_tax_rate    NUMERIC(5,4)    NOT NULL DEFAULT 0.1000,
-  medical_excise_tax_rate      NUMERIC(5,4)    NOT NULL DEFAULT 0.0000,
-  state_sales_tax_rate         NUMERIC(5,4)    NOT NULL DEFAULT 0.0600,
+  -- Delivery requirements
+  delivery_requires_age_verification BOOLEAN       NOT NULL DEFAULT TRUE,
+  delivery_requires_signature        BOOLEAN       NOT NULL DEFAULT TRUE,
 
-  -- Compliance flags
-  id_verification_required     BOOLEAN         NOT NULL DEFAULT TRUE,
-  gps_tracking_required        BOOLEAN         NOT NULL DEFAULT TRUE,
-  delivery_manifest_required   BOOLEAN         NOT NULL DEFAULT TRUE,
-  customer_signature_required  BOOLEAN         NOT NULL DEFAULT TRUE,
-  proof_of_delivery_photo_req  BOOLEAN         NOT NULL DEFAULT TRUE,
+  -- Tax rates (decimal: 0.10 = 10%)
+  excise_tax_rate                   NUMERIC(5,4)   NOT NULL DEFAULT 0,
+  sales_tax_rate                    NUMERIC(5,4)   NOT NULL DEFAULT 0,
 
-  -- License verification API
-  license_api_url              VARCHAR(255),   -- e.g. MI CRA Accela endpoint
-  license_api_key_env_var      VARCHAR(128),   -- name of env var holding the key
+  -- Seed-to-sale system: 'metrc' | 'biotrack' | 'leaf' | null
+  seed_to_sale_system               VARCHAR(16),
 
-  -- Metadata
-  active                       BOOLEAN         NOT NULL DEFAULT TRUE,
-  created_at                   TIMESTAMPTZ     NOT NULL DEFAULT NOW(),
-  updated_at                   TIMESTAMPTZ     NOT NULL DEFAULT NOW()
+  -- License verification API (state licensing authority)
+  license_api_url                   VARCHAR(255),
+
+  -- COA requirements
+  coa_validity_days                 INTEGER        NOT NULL DEFAULT 365,
+  require_pesticide_testing         BOOLEAN        NOT NULL DEFAULT FALSE,
+
+  updated_at                        TIMESTAMPTZ    NOT NULL DEFAULT NOW()
 );
 
 -- Seed: Michigan
+-- Adult-use + medical market. Delivery permitted 9am–9pm local time.
+-- Per-transaction limits: 2.5oz flower, 15g concentrate, 100mg THC edibles.
+-- Taxes: 10% excise + 6% state sales = 16% effective rate.
 INSERT INTO compliance_rules (
   state_code, state_name,
-  adult_use_enabled, medical_enabled,
-  adult_use_per_transaction_g, medical_daily_limit_g, medical_monthly_limit_g, driver_carry_limit_g,
-  delivery_start_time, delivery_end_time,
-  seed_to_sale_system, s2s_api_endpoint, s2s_sync_on_delivery,
-  adult_use_excise_tax_rate, medical_excise_tax_rate, state_sales_tax_rate,
-  license_api_url, license_api_key_env_var
+  is_active, adult_use_allowed, medical_allowed, delivery_allowed,
+  adult_use_flower_limit_grams, medical_flower_limit_grams,
+  adult_use_concentrate_limit_grams, medical_concentrate_limit_grams,
+  adult_use_edible_thc_limit_mg, medical_edible_thc_limit_mg,
+  delivery_hours_start, delivery_hours_end,
+  delivery_requires_age_verification, delivery_requires_signature,
+  excise_tax_rate, sales_tax_rate,
+  seed_to_sale_system, license_api_url,
+  coa_validity_days, require_pesticide_testing
 ) VALUES (
   'MI', 'Michigan',
+  TRUE, TRUE, TRUE, TRUE,
+  70.87, 70.87,
+  15.0, 15.0,
+  100, 200,
+  '09:00', '21:00',
   TRUE, TRUE,
-  70.87, 56.70, 283.50, 425.24,
-  '08:00:00', '21:00:00',
-  'metrc', 'https://api.metrc.com/v2/', TRUE,
-  0.1000, 0.0000, 0.0600,
-  'https://aca.cannaroute.io/mi/cra/', 'MI_CRA_API_KEY'
+  0.1000, 0.0600,
+  'metrc', 'https://aca.cannaroute.io/mi/cra/',
+  365, TRUE
 );
 
 
@@ -716,20 +729,31 @@ CREATE INDEX idx_notifications_status ON notifications(status);
 -- Used by compliance service to enforce purchase limits
 -- ============================================================
 
+-- Column names match the TypeORM PurchaseLimit entity.
+-- Tracks cumulative purchases per customer per day per state.
+-- Compliance service queries this on every order to enforce daily limits.
+
 CREATE TABLE purchase_limits (
   id                UUID            PRIMARY KEY DEFAULT gen_random_uuid(),
   customer_id       UUID            NOT NULL REFERENCES users(id),
-  state_code        CHAR(2)         NOT NULL REFERENCES compliance_rules(state_code),
   order_id          UUID            NOT NULL REFERENCES orders(id),
+  state_code        CHAR(2)         NOT NULL REFERENCES compliance_rules(state_code),
 
-  -- What was purchased
-  cannabis_weight_g NUMERIC(8,3)   NOT NULL,
+  -- Date of purchase (YYYY-MM-DD) — compliance window is per calendar day
   purchase_date     DATE            NOT NULL DEFAULT CURRENT_DATE,
+
+  -- Quantities by category (drives separate limit checks per category)
+  flower_grams      NUMERIC(8,3)    NOT NULL DEFAULT 0,
+  concentrate_grams NUMERIC(8,3)    NOT NULL DEFAULT 0,
+  edible_thc_mg     INTEGER         NOT NULL DEFAULT 0,
+
+  -- Which tier this purchase counts against
+  is_medical        BOOLEAN         NOT NULL DEFAULT FALSE,
 
   created_at        TIMESTAMPTZ     NOT NULL DEFAULT NOW()
 );
 
--- For fast purchase limit lookups (compliance service uses this constantly)
+-- For fast purchase limit lookups (compliance service uses this on every order)
 CREATE INDEX idx_purchase_limits_customer_state_date
   ON purchase_limits(customer_id, state_code, purchase_date);
 
