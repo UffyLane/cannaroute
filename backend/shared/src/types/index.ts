@@ -176,11 +176,13 @@ export interface WsOrderConfirmedEvent {
 
 export interface WsDriverPositionEvent {
   order_id: string;
-  driver_id: string;
   lat: number;
   lng: number;
-  eta_minutes: number;
-  heading_deg: number;
+  driver_id?: string;
+  eta_minutes?: number;
+  heading_deg?: number;
+  timestamp?: string;
+  accuracy_meters?: number;
 }
 
 export interface WsOrderDeliveredEvent {

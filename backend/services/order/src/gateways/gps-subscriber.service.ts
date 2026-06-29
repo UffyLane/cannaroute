@@ -49,11 +49,11 @@ export class GpsSubscriberService implements OnModuleInit, OnModuleDestroy {
       lazyConnect: true,
     });
 
-    this.subscriber.on('error', (err) => {
+    this.subscriber.on('error', (err: Error) => {
       this.logger.error('GPS subscriber Redis error', err);
     });
 
-    this.subscriber.subscribe('gps_updates', (err, count) => {
+    this.subscriber.subscribe('gps_updates', (err: Error | null, count: number) => {
       if (err) {
         this.logger.error('Failed to subscribe to gps_updates channel', err);
         return;
@@ -61,7 +61,7 @@ export class GpsSubscriberService implements OnModuleInit, OnModuleDestroy {
       this.logger.log(`Subscribed to ${count} Redis channel(s) — listening for GPS updates`);
     });
 
-    this.subscriber.on('message', (channel, message) => {
+    this.subscriber.on('message', (channel: string, message: string) => {
       if (channel !== 'gps_updates') return;
 
       try {
