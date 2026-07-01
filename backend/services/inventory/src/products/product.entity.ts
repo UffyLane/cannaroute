@@ -34,7 +34,7 @@ export class Product {
   @Column()
   name: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   description: string | null;
 
   @Column()
@@ -69,7 +69,7 @@ export class Product {
   stock_quantity: number;
 
   // Metrc package/batch tag — required for seed-to-sale tracking
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   metrc_package_tag: string | null;
 
   @Column({
@@ -80,7 +80,7 @@ export class Product {
   status: string;
 
   // Product image stored in S3
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   image_s3_key: string | null;
 
   @Column({ type: 'jsonb', nullable: true })

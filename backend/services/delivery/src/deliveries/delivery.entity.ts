@@ -60,20 +60,20 @@ export class Delivery {
 
   // ─── Proof of delivery ────────────────────────────────────────────────────
   // S3 keys — never store the signed URL here (those are generated on-demand)
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   signature_s3_key: string | null; // s3://cannaroute-deliveries/{order_id}/signature.png
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   proof_photo_s3_key: string | null; // s3://cannaroute-deliveries/{order_id}/proof.jpg
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   notes: string | null;
 
   // ─── Google Maps route data ────────────────────────────────────────────────
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   maps_route_id: string | null; // Google Maps route token for navigation
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   maps_polyline: string | null; // encoded polyline for customer map display
 
   // ─── Timestamps ───────────────────────────────────────────────────────────

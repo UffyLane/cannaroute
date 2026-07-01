@@ -63,7 +63,7 @@ export class Order {
   @Column()
   delivery_address_line1: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   delivery_address_line2: string | null;
 
   @Column()
@@ -90,10 +90,10 @@ export class Order {
   @Column({ type: 'jsonb', nullable: true })
   compliance_check_notes: Record<string, unknown> | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   metrc_transfer_id: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   cancelled_reason: string | null;
 
   @OneToMany(() => OrderItem, (item) => item.order, { cascade: true, eager: false })

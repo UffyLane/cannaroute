@@ -21,7 +21,7 @@ export class OrderItem {
   @Column('uuid')
   product_id: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   batch_id: string | null;
 
   @Column()

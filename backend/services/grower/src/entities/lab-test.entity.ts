@@ -36,7 +36,7 @@ export class LabTest {
   @Column()
   lab_name: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   lab_license_number: string | null;
 
   // S3 key for the original PDF
@@ -57,19 +57,19 @@ export class LabTest {
   cbda_percentage: number | null;
 
   // ─── Safety panels ────────────────────────────────────────────────────────
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   pesticide_panel: string | null; // 'pass' | 'fail' | 'not_tested'
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   heavy_metals_panel: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   microbials_panel: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   mycotoxins_panel: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   residual_solvents_panel: string | null;
 
   @Column({ default: false })

@@ -33,7 +33,7 @@ export class Notification {
   @Column({ default: 'pending' })
   status: string; // pending | sent | failed
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   error_message: string | null;
 
   @Column({ type: 'timestamptz', nullable: true })

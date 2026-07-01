@@ -37,30 +37,30 @@ export class PesticideLog {
   no_pesticides_used: boolean;
 
   // ─── Pesticide application path ───────────────────────────────────────────
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   pesticide_name: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   active_ingredient: string | null;
 
   // EPA registration number — format: XXXXX-XXXXX
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   epa_reg_number: string | null;
 
   // EPA verification result
   @Column({ default: false })
   epa_verified: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   epa_verified_name: string | null; // Product name from EPA database
 
   @Column({ nullable: true, type: 'timestamptz' })
   epa_verified_at: Date | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   application_method: string | null; // spray, drench, foliar, etc.
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   application_rate: string | null; // "2 oz per gallon"
 
   @Column({ type: 'date', nullable: true })
@@ -69,7 +69,7 @@ export class PesticideLog {
   @Column({ type: 'date', nullable: true })
   pre_harvest_interval_days: string | null; // PHI from label
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   notes: string | null;
 
   @CreateDateColumn({ type: 'timestamptz' })

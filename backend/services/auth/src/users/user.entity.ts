@@ -18,11 +18,11 @@ export class User {
   @Column({ length: 255 })
   email: string;
 
-  @Column({ length: 20, nullable: true })
+  @Column({ type: 'varchar', length: 20, nullable: true })
   phone: string | null;
 
   // Nullable — set null for SSO-only accounts
-  @Column({ length: 255, nullable: true, select: false })
+  @Column({ type: 'varchar', length: 255, nullable: true, select: false })
   password_hash: string | null;
 
   @Column({ type: 'varchar', length: 32 })
@@ -50,10 +50,10 @@ export class User {
   @Column({ default: false })
   is_medical: boolean;
 
-  @Column({ length: 128, nullable: true })
+  @Column({ type: 'varchar', length: 128, nullable: true })
   medical_card_number: string | null;
 
-  @Column({ length: 2, nullable: true })
+  @Column({ type: 'varchar', length: 2, nullable: true })
   medical_card_state: string | null;
 
   @Column({ type: 'date', nullable: true })
@@ -65,7 +65,7 @@ export class User {
   // ─── Jurisdiction ─────────────────────────────────────────────────────────
 
   @Index()
-  @Column({ length: 2, nullable: true })
+  @Column({ type: 'varchar', length: 2, nullable: true })
   state_code: string | null;
 
   // ─── Auth ─────────────────────────────────────────────────────────────────
@@ -76,7 +76,7 @@ export class User {
   @Column({ type: 'timestamptz', nullable: true })
   last_login_at: Date | null;
 
-  @Column({ length: 255, nullable: true, select: false })
+  @Column({ type: 'varchar', length: 255, nullable: true, select: false })
   password_reset_token: string | null;
 
   @Column({ type: 'timestamptz', nullable: true, select: false })

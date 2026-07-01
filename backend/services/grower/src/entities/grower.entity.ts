@@ -31,7 +31,7 @@ export class Grower {
   @Column()
   farm_name: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   farm_description: string | null;
 
   @Column()
@@ -48,23 +48,23 @@ export class Grower {
   verification_status: string;
 
   // ─── Location ─────────────────────────────────────────────────────────────
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   city: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   county: string | null;
 
   // ─── Certifications (auto-verified from public directories) ───────────────
   @Column({ default: false })
   clean_green_certified: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   clean_green_cert_number: string | null;
 
   @Column({ default: false })
   sun_earth_certified: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   sun_earth_cert_number: string | null;
 
   @Column({ default: false })
@@ -84,10 +84,10 @@ export class Grower {
   greenhouse_grown: boolean;
 
   // ─── Media ────────────────────────────────────────────────────────────────
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   farm_photo_s3_key: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   logo_s3_key: string | null;
 
   // ─── License verification ─────────────────────────────────────────────────

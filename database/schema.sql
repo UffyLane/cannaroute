@@ -19,7 +19,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- Keeping them in sync here means fresh installs work out of the box.
 
 CREATE TABLE compliance_rules (
-  state_code                        CHAR(2)        PRIMARY KEY,  -- 'MI', 'CO', 'CA'
+  state_code                        VARCHAR(2)        PRIMARY KEY,  -- 'MI', 'CO', 'CA'
   state_name                        VARCHAR(64)    NOT NULL,
 
   -- Market type
@@ -115,12 +115,12 @@ CREATE TABLE users (
   -- Medical patient (customers only)
   is_medical        BOOLEAN         NOT NULL DEFAULT FALSE,
   medical_card_number VARCHAR(128),
-  medical_card_state  CHAR(2),
+  medical_card_state  VARCHAR(2),
   medical_card_expiry DATE,
   medical_verified  BOOLEAN         NOT NULL DEFAULT FALSE,
 
   -- State / jurisdiction
-  state_code        CHAR(2)         REFERENCES compliance_rules(state_code),
+  state_code        VARCHAR(2)         REFERENCES compliance_rules(state_code),
 
   -- Auth
   mfa_enabled       BOOLEAN         NOT NULL DEFAULT FALSE,
@@ -147,7 +147,7 @@ CREATE TABLE dispensaries (
   id                UUID            PRIMARY KEY DEFAULT gen_random_uuid(),
   name              VARCHAR(255)    NOT NULL,
   slug              VARCHAR(128)    NOT NULL UNIQUE, -- for URL paths
-  state_code        CHAR(2)         NOT NULL REFERENCES compliance_rules(state_code),
+  state_code        VARCHAR(2)         NOT NULL REFERENCES compliance_rules(state_code),
 
   -- License
   license_number    VARCHAR(128)    NOT NULL,
@@ -216,7 +216,7 @@ CREATE TABLE growers (
   id                UUID            PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id           UUID            NOT NULL REFERENCES users(id) UNIQUE,
   farm_name         VARCHAR(255)    NOT NULL,
-  state_code        CHAR(2)         NOT NULL REFERENCES compliance_rules(state_code),
+  state_code        VARCHAR(2)         NOT NULL REFERENCES compliance_rules(state_code),
 
   -- License
   license_number    VARCHAR(128)    NOT NULL,
@@ -226,7 +226,7 @@ CREATE TABLE growers (
 
   -- Location
   address_city      VARCHAR(128),
-  address_state     CHAR(2),
+  address_state     VARCHAR(2),
   lat               NUMERIC(10,7),
   lng               NUMERIC(10,7),
 
@@ -440,7 +440,7 @@ CREATE TABLE drivers (
 
   -- Identity
   license_number    VARCHAR(128)    NOT NULL, -- driver's license
-  license_state     CHAR(2)         NOT NULL,
+  license_state     VARCHAR(2)         NOT NULL,
   license_expiry    DATE            NOT NULL,
   dob               DATE            NOT NULL,
   age_at_hire       INTEGER,        -- must be 21+
@@ -457,7 +457,7 @@ CREATE TABLE drivers (
   vehicle_model     VARCHAR(64),
   vehicle_year      INTEGER,
   vehicle_plate     VARCHAR(32),
-  vehicle_state     CHAR(2),
+  vehicle_state     VARCHAR(2),
   vehicle_insurance_verified BOOLEAN NOT NULL DEFAULT FALSE,
   vehicle_registration_verified BOOLEAN NOT NULL DEFAULT FALSE,
 
@@ -501,7 +501,7 @@ CREATE TABLE orders (
   customer_id       UUID            NOT NULL REFERENCES users(id),
   dispensary_id     UUID            NOT NULL REFERENCES dispensaries(id),
   driver_id         UUID            REFERENCES drivers(id),
-  state_code        CHAR(2)         NOT NULL REFERENCES compliance_rules(state_code),
+  state_code        VARCHAR(2)         NOT NULL REFERENCES compliance_rules(state_code),
 
   -- Order type: 'adult_use' | 'medical'
   order_type        VARCHAR(16)     NOT NULL,
@@ -737,7 +737,7 @@ CREATE TABLE purchase_limits (
   id                UUID            PRIMARY KEY DEFAULT gen_random_uuid(),
   customer_id       UUID            NOT NULL REFERENCES users(id),
   order_id          UUID            NOT NULL REFERENCES orders(id),
-  state_code        CHAR(2)         NOT NULL REFERENCES compliance_rules(state_code),
+  state_code        VARCHAR(2)         NOT NULL REFERENCES compliance_rules(state_code),
 
   -- Date of purchase (YYYY-MM-DD) — compliance window is per calendar day
   purchase_date     DATE            NOT NULL DEFAULT CURRENT_DATE,
@@ -759,76 +759,14 @@ CREATE INDEX idx_purchase_limits_customer_state_date
 
 
 -- ============================================================
--- VIEWS: Useful precomputed queries
+-- VIEWS
+-- Views are intentionally omitted here. They are managed
+-- separately after TypeORM synchronizes the schema, because
+-- synchronize:true needs to freely add/drop entity columns
+-- and views that reference those columns would block drops.
+-- Recreate views manually or via a post-migration script once
+-- the schema is stable.
 -- ============================================================
-
--- Active products with grower + latest COA info
-CREATE VIEW vw_products_with_grower AS
-SELECT
-  p.id,
-  p.dispensary_id,
-  p.name,
-  p.category,
-  p.strain_type,
-  p.strain_name,
-  p.thc_pct,
-  p.cbd_pct,
-  p.weight_grams,
-  p.price_cents,
-  p.stock_count,
-  p.status,
-  p.is_on_menu,
-  g.id AS grower_id,
-  g.farm_name,
-  g.grow_type,
-  g.pesticide_policy,
-  g.clean_green_certified,
-  g.sun_earth_certified,
-  g.verification_status AS grower_verification_status,
-  lt.id AS lab_test_id,
-  lt.batch_number,
-  lt.test_date,
-  lt.expiry_date,
-  lt.overall_pass AS coa_pass,
-  lt.coa_pdf_url,
-  CASE WHEN lt.expiry_date < CURRENT_DATE THEN TRUE ELSE FALSE END AS coa_expired
-FROM products p
-LEFT JOIN growers g ON p.grower_id = g.id
-LEFT JOIN lab_tests lt ON lt.product_id = p.id
-  AND lt.expiry_date = (
-    SELECT MAX(expiry_date) FROM lab_tests
-    WHERE product_id = p.id
-  )
-WHERE p.deleted_at IS NULL;
-
-
--- Active orders with driver GPS position
-CREATE VIEW vw_active_orders AS
-SELECT
-  o.id,
-  o.order_number,
-  o.dispensary_id,
-  o.customer_id,
-  o.driver_id,
-  o.status,
-  o.total_cents,
-  o.placed_at,
-  o.confirmed_at,
-  o.picked_up_at,
-  o.delivery_address,
-  o.delivery_lat,
-  o.delivery_lng,
-  d.last_lat AS driver_lat,
-  d.last_lng AS driver_lng,
-  d.last_gps_update,
-  u.first_name || ' ' || u.last_name AS driver_name,
-  drv.rating AS driver_rating,
-  drv.total_deliveries AS driver_total_deliveries
-FROM orders o
-LEFT JOIN drivers drv ON o.driver_id = drv.id
-LEFT JOIN users u ON drv.user_id = u.id
-LEFT JOIN drivers d ON o.driver_id = d.id
-WHERE o.status NOT IN ('delivered', 'cancelled');
 
 
 -- ============================================================

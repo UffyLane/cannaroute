@@ -53,10 +53,10 @@ export class ComplianceRules {
   medical_edible_thc_limit_mg: number | null;
 
   // ─── Delivery rules ───────────────────────────────────────────────────────
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   delivery_hours_start: string | null; // "09:00" — 24h format
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   delivery_hours_end: string | null;   // "21:00"
 
   @Column({ default: false })
@@ -74,10 +74,10 @@ export class ComplianceRules {
   sales_tax_rate: number;  // 0.06 = 6%
 
   // ─── Seed-to-sale system ─────────────────────────────────────────────────
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   seed_to_sale_system: string | null; // 'metrc' | 'biotrack' | 'leaf'
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   license_api_url: string | null; // State licensing authority API
 
   // ─── COA requirements ─────────────────────────────────────────────────────
