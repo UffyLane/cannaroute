@@ -64,27 +64,27 @@ export default function PesticideLogsPage() {
           {!noPesticides && (
             <>
               <div>
-                <label className="form-label">Pesticide Name *</label>
-                <input className="form-input" value={form.pesticideName} onChange={(e) => setForm({ ...form, pesticideName: e.target.value })} required />
+                <label htmlFor="pesticideName" className="form-label">Pesticide Name *</label>
+                <input id="pesticideName" className="form-input" value={form.pesticideName} onChange={(e) => setForm({ ...form, pesticideName: e.target.value })} required />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="form-label">EPA Reg # (e.g. 12345-67890)</label>
-                  <input className="form-input" placeholder="XXXXX-XXXXX" value={form.epaRegNumber} onChange={(e) => setForm({ ...form, epaRegNumber: e.target.value })} />
+                  <label htmlFor="epaRegNumber" className="form-label">EPA Reg # (e.g. 12345-67890)</label>
+                  <input id="epaRegNumber" className="form-input" placeholder="XXXXX-XXXXX" value={form.epaRegNumber} onChange={(e) => setForm({ ...form, epaRegNumber: e.target.value })} />
                 </div>
                 <div>
-                  <label className="form-label">Date Applied</label>
-                  <input type="date" className="form-input" value={form.appliedDate} onChange={(e) => setForm({ ...form, appliedDate: e.target.value })} />
+                  <label htmlFor="appliedDate" className="form-label">Date Applied</label>
+                  <input id="appliedDate" type="date" className="form-input" value={form.appliedDate} onChange={(e) => setForm({ ...form, appliedDate: e.target.value })} />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="form-label">Application Rate</label>
-                  <input type="number" className="form-input" value={form.applicationRate} onChange={(e) => setForm({ ...form, applicationRate: e.target.value })} />
+                  <label htmlFor="applicationRate" className="form-label">Application Rate</label>
+                  <input id="applicationRate" type="number" className="form-input" value={form.applicationRate} onChange={(e) => setForm({ ...form, applicationRate: e.target.value })} />
                 </div>
                 <div>
-                  <label className="form-label">Unit</label>
-                  <select className="form-input" value={form.applicationRateUnit} onChange={(e) => setForm({ ...form, applicationRateUnit: e.target.value })}>
+                  <label htmlFor="applicationRateUnit" className="form-label">Unit</label>
+                  <select id="applicationRateUnit" className="form-input" value={form.applicationRateUnit} onChange={(e) => setForm({ ...form, applicationRateUnit: e.target.value })}>
                     <option>oz/acre</option><option>fl oz/gal</option><option>g/L</option><option>lb/acre</option>
                   </select>
                 </div>

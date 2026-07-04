@@ -33,12 +33,12 @@ export default function GrowerLoginPage() {
           <h2 className="text-xl font-semibold text-neutral-900 mb-6">Sign In</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="form-label">Email</label>
-              <input type="email" required className="form-input" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="grower@farm.com" />
+              <label htmlFor="email" className="form-label">Email</label>
+              <input id="email" type="email" required className="form-input" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="grower@farm.com" />
             </div>
             <div>
-              <label className="form-label">Password</label>
-              <input type="password" required className="form-input" value={password} onChange={(e) => setPassword(e.target.value)} />
+              <label htmlFor="password" className="form-label">Password</label>
+              <input id="password" type="password" required className="form-input" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
             <button type="submit" disabled={loading} className="w-full bg-brand-900 text-white font-semibold py-3 rounded-xl hover:bg-brand-800 disabled:opacity-50 transition-colors mt-2">
               {loading ? 'Signing in…' : 'Sign In'}
