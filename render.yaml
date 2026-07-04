@@ -20,14 +20,14 @@ databases:
   - name: cannaroute-db
     databaseName: cannaroute_dev
     user: cannaroute
-    plan: starter
+    plan: free
 
 services:
 
   # ─── Redis ─────────────────────────────────────────────────────────────────
   - type: redis
     name: cannaroute-redis
-    plan: starter
+    plan: free
     maxmemoryPolicy: allkeys-lru
     ipAllowList: []
 
