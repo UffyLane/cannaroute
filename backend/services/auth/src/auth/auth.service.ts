@@ -94,7 +94,7 @@ export class AuthService {
     let payload: JwtPayload;
     try {
       payload = this.jwtService.verify<JwtPayload>(refreshToken, {
-        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+        secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
       });
     } catch {
       throw new UnauthorizedException('Invalid or expired refresh token');
@@ -231,7 +231,7 @@ export class AuthService {
       state_code: user.state_code,
     };
     return this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_SECRET'),
+      secret: this.configService.getOrThrow<string>('JWT_SECRET'),
       expiresIn: ACCESS_TOKEN_EXPIRY,
     });
   }
@@ -244,7 +244,7 @@ export class AuthService {
       state_code: user.state_code,
     };
     return this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
       expiresIn: REFRESH_TOKEN_EXPIRY,
     });
   }
