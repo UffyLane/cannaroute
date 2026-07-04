@@ -24,7 +24,7 @@ import { HealthController } from './health.controller';
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME', 'cannaroute_dev'),
         entities: [Delivery],
-        synchronize: config.get<string>('NODE_ENV') === 'development',
+        synchronize: config.get<string>('NODE_ENV') === 'development' || config.get<string>('DB_SYNC') === 'true',
         ssl: config.get<string>('NODE_ENV') === 'production'
           ? { rejectUnauthorized: false }
           : false,

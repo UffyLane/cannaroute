@@ -1,0 +1,452 @@
+# ─── CannaRoute — Render Blueprint ────────────────────────────────────────────
+# Deploys the full CannaRoute stack:
+#   • 1 Postgres database  (shared by all 7 services)
+#   • 1 Redis instance     (GPS pub/sub + caching)
+#   • 7 NestJS web services
+#
+# One-time setup after first deploy:
+#   1. Set all env vars marked sync:false in the Render dashboard
+#   2. Seed Michigan compliance data:
+#        psql $DATABASE_URL < database/seed.sql
+#   3. Once schema is stable, set DB_SYNC=false on all services
+#        to prevent accidental schema changes in production.
+#
+# Estimated cost: ~$60-70/month on Render Pro
+#   Postgres Starter: ~$7/mo  |  Redis Starter: ~$7/mo
+#   7 × Web Starter:  ~$7/mo each → $49/mo
+# ──────────────────────────────────────────────────────────────────────────────
+
+databases:
+  - name: cannaroute-db
+    databaseName: cannaroute_dev
+    user: cannaroute
+    plan: starter           # 1 GB storage, up to 97 connections
+
+services:
+
+  # ─── Redis ─────────────────────────────────────────────────────────────────
+  - type: redis
+    name: cannaroute-redis
+    plan: starter
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []         # private — only reachable from Render services
+
+  # ─── Auth Service ──────────────────────────────────────────────────────────
+  - type: web
+    name: cannaroute-auth
+    env: docker
+    dockerfilePath: ./backend/services/auth/Dockerfile
+    dockerContext: .
+    plan: starter
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+    buildFilter:
+      paths:
+        - backend/shared/**
+        - backend/services/auth/**
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_SYNC
+        value: "true"       # set to "false" after first successful deploy
+      - key: DB_HOST
+        fromDatabase:
+          name: cannaroute-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: cannaroute-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: cannaroute-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: cannaroute-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: cannaroute-db
+          property: database
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: cannaroute-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: cannaroute-redis
+          property: port
+      - key: REDIS_PASSWORD
+        fromService:
+          type: redis
+          name: cannaroute-redis
+          property: password
+      - key: JWT_SECRET
+        sync: false         # REQUIRED — set a 64+ char random string in dashboard
+      - key: JWT_REFRESH_SECRET
+        sync: false         # REQUIRED — different from JWT_SECRET
+      - key: CORS_ORIGINS
+        sync: false         # comma-separated, e.g. https://app.cannaroute.com
+
+  # ─── Order Service ──────────────────────────────────────────────────────────
+  - type: web
+    name: cannaroute-order
+    env: docker
+    dockerfilePath: ./backend/services/order/Dockerfile
+    dockerContext: .
+    plan: starter
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+    buildFilter:
+      paths:
+        - backend/shared/**
+        - backend/services/order/**
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_SYNC
+        value: "true"
+      - key: DB_HOST
+        fromDatabase:
+          name: cannaroute-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: cannaroute-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: cannaroute-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: cannaroute-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: cannaroute-db
+          property: database
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: cannaroute-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: cannaroute-redis
+          property: port
+      - key: REDIS_PASSWORD
+        fromService:
+          type: redis
+          name: cannaroute-redis
+          property: password
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: INVENTORY_SERVICE_URL
+        fromService:
+          type: web
+          name: cannaroute-inventory
+          property: url
+      - key: COMPLIANCE_SERVICE_URL
+        fromService:
+          type: web
+          name: cannaroute-compliance
+          property: url
+      - key: NOTIFICATION_SERVICE_URL
+        fromService:
+          type: web
+          name: cannaroute-notification
+          property: url
+      - key: DELIVERY_SERVICE_URL
+        fromService:
+          type: web
+          name: cannaroute-delivery
+          property: url
+
+  # ─── Delivery Service ───────────────────────────────────────────────────────
+  - type: web
+    name: cannaroute-delivery
+    env: docker
+    dockerfilePath: ./backend/services/delivery/Dockerfile
+    dockerContext: .
+    plan: starter
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+    buildFilter:
+      paths:
+        - backend/shared/**
+        - backend/services/delivery/**
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_SYNC
+        value: "true"
+      - key: DB_HOST
+        fromDatabase:
+          name: cannaroute-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: cannaroute-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: cannaroute-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: cannaroute-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: cannaroute-db
+          property: database
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: cannaroute-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: cannaroute-redis
+          property: port
+      - key: REDIS_PASSWORD
+        fromService:
+          type: redis
+          name: cannaroute-redis
+          property: password
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: ORDER_SERVICE_URL
+        fromService:
+          type: web
+          name: cannaroute-order
+          property: url
+      - key: COMPLIANCE_SERVICE_URL
+        fromService:
+          type: web
+          name: cannaroute-compliance
+          property: url
+      - key: NOTIFICATION_SERVICE_URL
+        fromService:
+          type: web
+          name: cannaroute-notification
+          property: url
+      - key: AWS_REGION
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: S3_BUCKET_NAME
+        sync: false
+
+  # ─── Inventory Service ──────────────────────────────────────────────────────
+  - type: web
+    name: cannaroute-inventory
+    env: docker
+    dockerfilePath: ./backend/services/inventory/Dockerfile
+    dockerContext: .
+    plan: starter
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+    buildFilter:
+      paths:
+        - backend/shared/**
+        - backend/services/inventory/**
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_SYNC
+        value: "true"
+      - key: DB_HOST
+        fromDatabase:
+          name: cannaroute-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: cannaroute-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: cannaroute-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: cannaroute-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: cannaroute-db
+          property: database
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: NOTIFICATION_SERVICE_URL
+        fromService:
+          type: web
+          name: cannaroute-notification
+          property: url
+      - key: AWS_REGION
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: S3_BUCKET_NAME
+        sync: false
+
+  # ─── Compliance Service ─────────────────────────────────────────────────────
+  - type: web
+    name: cannaroute-compliance
+    env: docker
+    dockerfilePath: ./backend/services/compliance/Dockerfile
+    dockerContext: .
+    plan: starter
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+    buildFilter:
+      paths:
+        - backend/shared/**
+        - backend/services/compliance/**
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_SYNC
+        value: "true"
+      - key: DB_HOST
+        fromDatabase:
+          name: cannaroute-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: cannaroute-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: cannaroute-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: cannaroute-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: cannaroute-db
+          property: database
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+
+  # ─── Grower Service ─────────────────────────────────────────────────────────
+  - type: web
+    name: cannaroute-grower
+    env: docker
+    dockerfilePath: ./backend/services/grower/Dockerfile
+    dockerContext: .
+    plan: starter
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+    buildFilter:
+      paths:
+        - backend/shared/**
+        - backend/services/grower/**
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_SYNC
+        value: "true"
+      - key: DB_HOST
+        fromDatabase:
+          name: cannaroute-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: cannaroute-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: cannaroute-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: cannaroute-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: cannaroute-db
+          property: database
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: AWS_REGION
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: S3_BUCKET_NAME
+        sync: false
+
+  # ─── Notification Service ───────────────────────────────────────────────────
+  - type: web
+    name: cannaroute-notification
+    env: docker
+    dockerfilePath: ./backend/services/notification/Dockerfile
+    dockerContext: .
+    plan: starter
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+    buildFilter:
+      paths:
+        - backend/shared/**
+        - backend/services/notification/**
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_SYNC
+        value: "true"
+      - key: DB_HOST
+        fromDatabase:
+          name: cannaroute-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: cannaroute-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: cannaroute-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: cannaroute-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: cannaroute-db
+          property: database
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: FIREBASE_SERVICE_ACCOUNT_JSON
+        sync: false
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_PHONE_NUMBER
+        sync: false
