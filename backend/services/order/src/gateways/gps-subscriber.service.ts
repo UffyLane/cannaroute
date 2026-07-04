@@ -45,7 +45,6 @@ export class GpsSubscriberService implements OnModuleInit, OnModuleDestroy {
     this.subscriber = new Redis({
       host: this.config.get<string>('REDIS_HOST', 'localhost'),
       port: this.config.get<number>('REDIS_PORT', 6379),
-      password: this.config.get<string>('REDIS_PASSWORD'),
       lazyConnect: true,
     });
 
@@ -53,7 +52,7 @@ export class GpsSubscriberService implements OnModuleInit, OnModuleDestroy {
       this.logger.error('GPS subscriber Redis error', err);
     });
 
-    this.subscriber.subscribe('gps_updates', (err: Error | null, count: number) => {
+    this.subscriber.subscribe('gps_updates', (err: Error | null | undefined, count: number) => {
       if (err) {
         this.logger.error('Failed to subscribe to gps_updates channel', err);
         return;
