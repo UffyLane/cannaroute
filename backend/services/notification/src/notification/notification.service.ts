@@ -2,7 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
-import * as admin from 'firebase-admin';
+import { App, initializeApp, cert } from 'firebase-admin/app';
+import { getMessaging } from 'firebase-admin/messaging';
 import { Twilio } from 'twilio';
 import { Notification } from './notification.entity';
 import { NotificationType, NotificationChannel, ISendNotificationPayload } from '@cannaroute/shared';
@@ -21,7 +22,7 @@ import { NotificationType, NotificationChannel, ISendNotificationPayload } from 
 @Injectable()
 export class NotificationService {
   private readonly logger = new Logger(NotificationService.name);
-  private firebaseApp: admin.app.App | null = null;
+  private firebaseApp: App | null = null;
   private twilioClient: Twilio | null = null;
 
   constructor(
@@ -101,7 +102,7 @@ export class NotificationService {
       return;
     }
 
-    await admin.messaging(this.firebaseApp).send({
+    await getMessaging(this.firebaseApp).send({
       token,
       notification: { title, body },
       data: data ?? {},
@@ -135,8 +136,8 @@ export class NotificationService {
     }
     try {
       const serviceAccount = JSON.parse(serviceAccountJson);
-      this.firebaseApp = admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
+      this.firebaseApp = initializeApp({
+        credential: cert(serviceAccount),
       });
       this.logger.log('Firebase Admin initialized');
     } catch (err) {
