@@ -12,6 +12,8 @@
     "rootDir": "./src",
     "skipLibCheck": true,
     "strictNullChecks": true,
+    "strict": true,
+    "strictPropertyInitialization": false,
     "noImplicitAny": true,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": true,
