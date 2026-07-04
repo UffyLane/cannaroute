@@ -20,7 +20,7 @@ databases:
   - name: cannaroute-db
     databaseName: cannaroute_dev
     user: cannaroute
-    plan: starter           # 1 GB storage, up to 97 connections
+    plan: starter
 
 services:
 
@@ -29,7 +29,7 @@ services:
     name: cannaroute-redis
     plan: starter
     maxmemoryPolicy: allkeys-lru
-    ipAllowList: []         # private — only reachable from Render services
+    ipAllowList: []
 
   # ─── Auth Service ──────────────────────────────────────────────────────────
   - type: web
@@ -48,7 +48,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: DB_SYNC
-        value: "true"       # set to "false" after first successful deploy
+        value: "true"
       - key: DB_HOST
         fromDatabase:
           name: cannaroute-db
@@ -79,17 +79,12 @@ services:
           type: redis
           name: cannaroute-redis
           property: port
-      - key: REDIS_PASSWORD
-        fromService:
-          type: redis
-          name: cannaroute-redis
-          property: password
       - key: JWT_SECRET
-        sync: false         # REQUIRED — set a 64+ char random string in dashboard
+        sync: false
       - key: JWT_REFRESH_SECRET
-        sync: false         # REQUIRED — different from JWT_SECRET
+        sync: false
       - key: CORS_ORIGINS
-        sync: false         # comma-separated, e.g. https://app.cannaroute.com
+        sync: false
 
   # ─── Order Service ──────────────────────────────────────────────────────────
   - type: web
@@ -139,35 +134,18 @@ services:
           type: redis
           name: cannaroute-redis
           property: port
-      - key: REDIS_PASSWORD
-        fromService:
-          type: redis
-          name: cannaroute-redis
-          property: password
       - key: JWT_SECRET
         sync: false
       - key: CORS_ORIGINS
         sync: false
       - key: INVENTORY_SERVICE_URL
-        fromService:
-          type: web
-          name: cannaroute-inventory
-          property: url
+        value: "http://cannaroute-inventory:10000"
       - key: COMPLIANCE_SERVICE_URL
-        fromService:
-          type: web
-          name: cannaroute-compliance
-          property: url
+        value: "http://cannaroute-compliance:10000"
       - key: NOTIFICATION_SERVICE_URL
-        fromService:
-          type: web
-          name: cannaroute-notification
-          property: url
+        value: "http://cannaroute-notification:10000"
       - key: DELIVERY_SERVICE_URL
-        fromService:
-          type: web
-          name: cannaroute-delivery
-          property: url
+        value: "http://cannaroute-delivery:10000"
 
   # ─── Delivery Service ───────────────────────────────────────────────────────
   - type: web
@@ -217,30 +195,16 @@ services:
           type: redis
           name: cannaroute-redis
           property: port
-      - key: REDIS_PASSWORD
-        fromService:
-          type: redis
-          name: cannaroute-redis
-          property: password
       - key: JWT_SECRET
         sync: false
       - key: CORS_ORIGINS
         sync: false
       - key: ORDER_SERVICE_URL
-        fromService:
-          type: web
-          name: cannaroute-order
-          property: url
+        value: "http://cannaroute-order:10000"
       - key: COMPLIANCE_SERVICE_URL
-        fromService:
-          type: web
-          name: cannaroute-compliance
-          property: url
+        value: "http://cannaroute-compliance:10000"
       - key: NOTIFICATION_SERVICE_URL
-        fromService:
-          type: web
-          name: cannaroute-notification
-          property: url
+        value: "http://cannaroute-notification:10000"
       - key: AWS_REGION
         sync: false
       - key: AWS_ACCESS_KEY_ID
@@ -293,10 +257,7 @@ services:
       - key: CORS_ORIGINS
         sync: false
       - key: NOTIFICATION_SERVICE_URL
-        fromService:
-          type: web
-          name: cannaroute-notification
-          property: url
+        value: "http://cannaroute-notification:10000"
       - key: AWS_REGION
         sync: false
       - key: AWS_ACCESS_KEY_ID
