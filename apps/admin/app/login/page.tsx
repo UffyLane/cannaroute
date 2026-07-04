@@ -34,15 +34,15 @@ export default function AdminLoginPage() {
           <h2 className="text-xl font-semibold text-neutral-900 mb-6">Administrator Sign In</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1.5">Email</label>
-              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+              <label htmlFor="email" className="block text-sm font-medium text-neutral-700 mb-1.5">Email</label>
+              <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@cannaroute.com"
                 className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1.5">Password</label>
-              <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
+              <label htmlFor="password" className="block text-sm font-medium text-neutral-700 mb-1.5">Password</label>
+              <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
                 className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
               />
             </div>
