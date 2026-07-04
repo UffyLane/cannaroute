@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "CannaRoute",
+    "slug": "cannaroute-customer",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0f4c35"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.cannaroute.customer",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Used to scan your ID for age verification.",
+        "NSPhotoLibraryUsageDescription": "Used to upload your medical card.",
+        "NSLocationWhenInUseUsageDescription": "Used to find dispensaries near you and track your delivery."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0f4c35"
+      },
+      "package": "com.cannaroute.customer",
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-camera",
+      "expo-image-picker",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow CannaRoute to use your location."
+        }
+      ]
+    ],
+    "scheme": "cannaroute",
+    "extra": {
+      "eas": {
+        "projectId": "YOUR_EAS_PROJECT_ID"
+      }
+    }
+  }
+}

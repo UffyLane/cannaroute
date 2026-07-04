@@ -1,0 +1,47 @@
+{
+  "expo": {
+    "name": "CannaRoute Driver",
+    "slug": "cannaroute-driver",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#175137"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.cannaroute.driver",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Used to capture proof-of-delivery photos.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Used to broadcast your location to customers during active deliveries.",
+        "NSLocationWhenInUseUsageDescription": "Used for navigation and delivery tracking."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#175137"
+      },
+      "package": "com.cannaroute.driver",
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-camera",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow CannaRoute Driver to use your location for delivery tracking."
+        }
+      ]
+    ],
+    "scheme": "cannaroute-driver"
+  }
+}
