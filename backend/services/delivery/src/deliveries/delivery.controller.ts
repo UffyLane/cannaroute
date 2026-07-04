@@ -9,6 +9,7 @@ import {
   HttpStatus,
   UseInterceptors,
   UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DeliveryService } from './delivery.service';
@@ -144,7 +145,7 @@ export class DeliveryController {
       limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
       fileFilter: (_req, file, cb) => {
         if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.mimetype)) {
-          cb(new Error('Only JPEG and PNG images are allowed'), false);
+          cb(new BadRequestException('Only JPEG and PNG images are allowed'), false);
         } else {
           cb(null, true);
         }
@@ -155,7 +156,7 @@ export class DeliveryController {
     @Param('id', ParseUUIDPipe) id: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    if (!file) throw new Error('Photo file is required');
+    if (!file) throw new BadRequestException('Photo file is required');
     return this.deliveryService.capturePhoto(id, {
       buffer: file.buffer,
       mimetype: file.mimetype,

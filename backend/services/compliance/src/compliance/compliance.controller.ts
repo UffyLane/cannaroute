@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { ComplianceService } from './compliance.service';
 import { ComplianceRules } from '../entities/compliance-rules.entity';
+import { CheckOrderDto } from './dto/check-order.dto';
 import { CurrentUser, Roles, RequestUser } from '@cannaroute/shared';
 
 @Controller('compliance')
@@ -24,16 +25,8 @@ export class ComplianceController {
    */
   @Post('check-order')
   @HttpCode(HttpStatus.OK)
-  checkOrder(
-    @Body() body: {
-      customer_id: string;
-      state_code: string;
-      items: any[];
-      dispensary_id: string;
-      is_medical?: boolean;
-    },
-  ) {
-    return this.complianceService.checkOrder(body);
+  checkOrder(@Body() dto: CheckOrderDto) {
+    return this.complianceService.checkOrder(dto);
   }
 
   /**

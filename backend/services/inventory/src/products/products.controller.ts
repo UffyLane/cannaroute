@@ -10,6 +10,7 @@ import {
   ParseUUIDPipe,
   HttpCode,
   HttpStatus,
+  BadRequestException,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -32,7 +33,7 @@ export class ProductsController {
     @Query('category') category?: string,
   ) {
     if (!dispensaryId) {
-      return { error: 'dispensary_id query param is required' };
+      throw new BadRequestException('dispensary_id query param is required');
     }
     return this.productsService.getMenu(dispensaryId, category);
   }
@@ -45,8 +46,10 @@ export class ProductsController {
   @Roles('dispensary_admin', 'platform_admin')
   @Get('products')
   findAll(@CurrentUser() user: RequestUser, @Query('dispensary_id') dispensaryId: string) {
-    const id = dispensaryId ?? '';
-    return this.productsService.findByDispensary(id);
+    if (!dispensaryId) {
+      throw new BadRequestException('dispensary_id query param is required');
+    }
+    return this.productsService.findByDispensary(dispensaryId);
   }
 
   /**

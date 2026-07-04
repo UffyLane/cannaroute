@@ -18,10 +18,7 @@ import {
 } from '@cannaroute/shared';
 
 @WebSocketGateway({
-  cors: {
-    origin: process.env.CORS_ORIGINS?.split(',') ?? ['http://localhost:3000', 'http://localhost:19006'],
-    credentials: true,
-  },
+  // CORS is configured via SocketIoAdapter in main.ts — do not read process.env here.
   namespace: '/orders',
 })
 export class OrdersGateway

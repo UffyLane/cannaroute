@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
+import { SocketIoAdapter } from './socket-io.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,9 +17,12 @@ async function bootstrap() {
     }),
   );
 
-  const allowedOrigins = process.env.CORS_ORIGINS
-    ? process.env.CORS_ORIGINS.split(',')
-    : ['http://localhost:3000', 'http://localhost:19006'];
+  const config = app.get(ConfigService);
+
+  const allowedOrigins = config
+    .get<string>('CORS_ORIGINS', 'http://localhost:3000,http://localhost:19006')
+    .split(',')
+    .map((o) => o.trim());
 
   app.enableCors({
     origin: allowedOrigins,
@@ -26,7 +31,10 @@ async function bootstrap() {
     credentials: true,
   });
 
-  const port = process.env.PORT ?? 3002;
+  // Wire Socket.IO CORS through ConfigService (not process.env)
+  app.useWebSocketAdapter(new SocketIoAdapter(app, config));
+
+  const port = config.get<number>('PORT', 3002);
   await app.listen(port);
 
   console.log(`[order-service] Running on port ${port}`);

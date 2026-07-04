@@ -10,10 +10,15 @@ import {
   HttpStatus,
   UseInterceptors,
   UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { GrowerService } from './grower.service';
 import { CurrentUser, Roles, RequestUser } from '@cannaroute/shared';
+import { CreateGrowerDto } from './dto/create-grower.dto';
+import { UpdateGrowerDto } from './dto/update-grower.dto';
+import { ConfirmCoaDto } from './dto/confirm-coa.dto';
+import { AddPesticideLogDto } from './dto/add-pesticide-log.dto';
 
 @Controller('grower')
 export class GrowerController {
@@ -26,8 +31,19 @@ export class GrowerController {
   @Roles('grower', 'platform_admin')
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@CurrentUser() user: RequestUser, @Body() dto: any) {
+  create(@CurrentUser() user: RequestUser, @Body() dto: CreateGrowerDto) {
     return this.growerService.create(user.id, dto);
+  }
+
+  /**
+   * GET /grower/me
+   * Grower views their own full profile.
+   * Note: must be declared before :id to avoid "me" being parsed as a UUID.
+   */
+  @Roles('grower')
+  @Get('me')
+  getMe(@CurrentUser() user: RequestUser) {
+    return this.growerService.findByUserId(user.id);
   }
 
   /**
@@ -38,19 +54,8 @@ export class GrowerController {
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     const grower = await this.growerService.findById(id);
-    // Strip internal fields for public response
     const { user_id, ...publicProfile } = grower;
     return publicProfile;
-  }
-
-  /**
-   * GET /grower/me
-   * Grower views their own full profile.
-   */
-  @Roles('grower')
-  @Get('me')
-  getMe(@CurrentUser() user: RequestUser) {
-    return this.growerService.findByUserId(user.id);
   }
 
   /**
@@ -59,7 +64,7 @@ export class GrowerController {
    */
   @Roles('grower', 'platform_admin')
   @Put(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: any) {
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateGrowerDto) {
     return this.growerService.update(id, dto);
   }
 
@@ -76,7 +81,7 @@ export class GrowerController {
       limits: { fileSize: 20 * 1024 * 1024 }, // 20MB max
       fileFilter: (_req, file, cb) => {
         if (file.mimetype !== 'application/pdf') {
-          cb(new Error('COA must be a PDF file'), false);
+          cb(new BadRequestException('COA must be a PDF file'), false);
         } else {
           cb(null, true);
         }
@@ -88,8 +93,9 @@ export class GrowerController {
     @Body('product_id') productId: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    if (!file) throw new Error('COA PDF is required');
-    if (!productId) throw new Error('product_id is required');
+    if (!file) throw new BadRequestException('COA PDF is required');
+    if (!productId) throw new BadRequestException('product_id is required');
+
     return this.growerService.uploadCoa(id, productId, {
       buffer: file.buffer,
       mimetype: file.mimetype,
@@ -117,9 +123,9 @@ export class GrowerController {
   @HttpCode(HttpStatus.OK)
   confirmCoa(
     @Param('coaId', ParseUUIDPipe) coaId: string,
-    @Body() confirmedData: any,
+    @Body() dto: ConfirmCoaDto,
   ) {
-    return this.growerService.confirmCoa(coaId, confirmedData);
+    return this.growerService.confirmCoa(coaId, dto);
   }
 
   /**
@@ -132,7 +138,7 @@ export class GrowerController {
   @HttpCode(HttpStatus.CREATED)
   addPesticideLog(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: any,
+    @Body() dto: AddPesticideLogDto,
   ) {
     return this.growerService.addPesticideLog(id, dto);
   }
