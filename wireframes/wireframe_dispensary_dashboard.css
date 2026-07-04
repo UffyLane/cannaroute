@@ -91,3 +91,75 @@ hr.flow-break { border: none; border-top: 2px dashed #ccc; margin: 16px 32px; }
 .tag-green { background: #e8f5e9; color: #2e7d32; }
 .tag-blue  { background: #e3f2fd; color: #0d47a1; }
 .tag-amber { background: #fff3cd; color: #e65c00; }
+
+
+/* ─── Utility classes (auto-generated from inline styles) ─────────────────────── */
+.u-080467ff { height:20%; }
+.u-08288bb3 { display:flex;gap:8px;margin-bottom:12px;align-items:center; }
+.u-090c37ca { opacity:0.7; }
+.u-0c954b61 { background:#1b5e20;color:white;padding:14px 32px;margin-top:20px;font-size:11px;display:flex;justify-content:space-between; }
+.u-0e91f8a3 { width:100px;height:28px;font-size:10px;background:#fff;border-color:#ccc; }
+.u-0f1d4d26 { font-size:11px;color:#888; }
+.u-11285792 { display:flex;justify-content:space-between;font-weight:700;color:#1b5e20; }
+.u-13d172e7 { height:100%;background:#1b5e20; }
+.u-1952d609 { display:flex;gap:8px; }
+.u-1add6b02 { height:55%; }
+.u-1cfe6dcb { display:flex;gap:6px; }
+.u-1f1cf937 { height:70%; }
+.u-217f25e7 { font-size:10px;color:#888;margin-top:8px; }
+.u-2624ae26 { height:45%; }
+.u-294a2647 { padding:10px 14px;display:flex;flex-direction:column;gap:6px; }
+.u-2a80a4a2 { font-size:10px;color:#2e7d32;font-weight:700; }
+.u-325f9235 { color:#e65c00; }
+.u-332cb094 { font-size:9px;color:#888; }
+.u-490ea08a { display:flex;gap:6px;align-items:center; }
+.u-49389107 { width:70%;background:#4caf50; }
+.u-49f06467 { font-size:10px; }
+.u-4d724b64 { width:180px;height:28px;font-size:10px;background:#fff;border-color:#ccc; }
+.u-4e5dc2dd { border:1px solid #e0e0e0;border-radius:6px;padding:8px; }
+.u-5000f501 { width:18%;background:#ff9800; }
+.u-5108ac2b { display:flex;gap:12px; }
+.u-579b56f0 { font-size:10px;color:#888; }
+.u-57a82090 { font-size:10px;color:#888;margin-top:6px; }
+.u-5a6a70ac { width:0%;background:#f44336; }
+.u-5bf3866e { text-align:center;padding:8px;border-radius:6px; }
+.u-5e451403 { border:2px solid #2e7d32;border-radius:6px;padding:8px;background:#f9fef9; }
+.u-6015bee6 { width:28px;height:28px;border-radius:50%;font-size:8px;flex-shrink:0; }
+.u-625bbee3 { font-size:9px;color:#c62828; }
+.u-63e98485 { display:flex;gap:8px;align-items:center; }
+.u-651ef6b7 { font-size:10px;color:#2e7d32; }
+.u-68d93279 { display:flex;justify-content:space-between; }
+.u-749cff35 { color:#888; }
+.u-7a164197 { flex:1;font-size:10px; }
+.u-7ac8d5eb { color:#aaa;font-size:10px; }
+.u-7d829cc1 { display:flex;justify-content:space-between;font-weight:700;border-top:1px solid #eee;padding-top:6px; }
+.u-856e3827 { color:#888;font-size:9px; }
+.u-95e18125 { display:flex;justify-content:space-between;margin-top:4px;color:#2e7d32; }
+.u-99027e98 { padding:10px 14px;font-size:10px;display:flex;flex-direction:column;gap:5px; }
+.u-a20a409c { padding:10px 14px;display:flex;flex-direction:column;gap:6px;font-size:10px; }
+.u-a7c40266 { height:80%; }
+.u-acdc133e { flex:1.4; }
+.u-b475036b { margin-left:4px; }
+.u-b4cf0ff3 { width:28px;height:28px;border-radius:4px;flex-shrink:0;font-size:7px; }
+.u-b62bfe59 { flex:0.8;display:flex;flex-direction:column;gap:12px; }
+.u-bc737815 { display:flex;align-items:center;gap:6px; }
+.u-bd5119bd { margin-top:6px;padding:6px 10px;background:#e8f5e9;border-radius:6px;color:#1b5e20;font-weight:700; }
+.u-bf45b088 { padding:10px 14px;font-size:10px;display:flex;flex-direction:column;gap:4px; }
+.u-c3401bd1 { height:35%; }
+.u-c3c8884a { color:#2e7d32;font-weight:700; }
+.u-c742a7c4 { padding:10px 14px; }
+.u-c7efc145 { background:#ffebee;color:#c62828; }
+.u-cc568fe7 { font-weight:700; }
+.u-d049a5c3 { height:90%; }
+.u-d42351de { font-size:9px;color:#aaa;margin-top:4px; }
+.u-d5e8c5f3 { flex:1; }
+.u-d652d4fc { color:#aaa; }
+.u-d676b3ca { width:26px;height:26px;border-radius:50%;flex-shrink:0;font-size:8px; }
+.u-d859753d { display:flex;gap:14px; }
+.u-dd730114 { display:flex;justify-content:space-between;font-size:9px;color:#aaa;margin-top:4px; }
+.u-e82a5206 { width:120px;height:28px;font-size:10px;background:#fff;border-color:#ccc; }
+.u-ed13acd8 { font-size:12px;vertical-align:middle; }
+.u-ee5cda8f { font-size:8px; }
+.u-f6e80eb6 { flex:1;margin-bottom:0; }
+.u-fdfe6fb1 { font-family:monospace;font-size:9px; }
+.u-ff6eee77 { margin-top:6px; }
