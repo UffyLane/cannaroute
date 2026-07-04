@@ -52,13 +52,14 @@ export class GpsSubscriberService implements OnModuleInit, OnModuleDestroy {
       this.logger.error('GPS subscriber Redis error', err);
     });
 
-    this.subscriber.subscribe('gps_updates', (err: Error | null | undefined, count: number) => {
-      if (err) {
+    this.subscriber
+      .subscribe('gps_updates')
+      .then((count) => {
+        this.logger.log(`Subscribed to ${count} Redis channel(s) — listening for GPS updates`);
+      })
+      .catch((err: Error) => {
         this.logger.error('Failed to subscribe to gps_updates channel', err);
-        return;
-      }
-      this.logger.log(`Subscribed to ${count} Redis channel(s) — listening for GPS updates`);
-    });
+      });
 
     this.subscriber.on('message', (channel: string, message: string) => {
       if (channel !== 'gps_updates') return;
