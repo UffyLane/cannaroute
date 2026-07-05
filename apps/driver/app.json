@@ -29,7 +29,11 @@
       "permissions": [
         "CAMERA",
         "ACCESS_FINE_LOCATION",
-        "ACCESS_BACKGROUND_LOCATION"
+        "ACCESS_BACKGROUND_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
       ]
     },
     "plugins": [
@@ -42,6 +46,15 @@
         }
       ]
     ],
-    "scheme": "cannaroute-driver"
+    "scheme": "cannaroute-driver",
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "da1271b2-c8d9-4c71-b587-681197618fa0"
+      }
+    },
+    "owner": "uffylane"
   }
 }

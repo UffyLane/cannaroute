@@ -11,7 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#0f4c35"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.cannaroute.customer",
@@ -28,10 +30,11 @@
       },
       "package": "com.cannaroute.customer",
       "permissions": [
-        "CAMERA",
-        "READ_EXTERNAL_STORAGE",
-        "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION"
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "plugins": [
@@ -47,9 +50,13 @@
     ],
     "scheme": "cannaroute",
     "extra": {
+      "router": {
+        "origin": false
+      },
       "eas": {
-        "projectId": "YOUR_EAS_PROJECT_ID"
+        "projectId": "a351bd58-e36d-42c8-8a9f-a4993e452664"
       }
-    }
+    },
+    "owner": "uffylane"
   }
 }
