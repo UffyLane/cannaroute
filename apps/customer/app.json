@@ -20,7 +20,8 @@
       "infoPlist": {
         "NSCameraUsageDescription": "Used to scan your ID for age verification.",
         "NSPhotoLibraryUsageDescription": "Used to upload your medical card.",
-        "NSLocationWhenInUseUsageDescription": "Used to find dispensaries near you and track your delivery."
+        "NSLocationWhenInUseUsageDescription": "Used to find dispensaries near you and track your delivery.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {

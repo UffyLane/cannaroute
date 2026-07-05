@@ -17,7 +17,8 @@
       "infoPlist": {
         "NSCameraUsageDescription": "Used to capture proof-of-delivery photos.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Used to broadcast your location to customers during active deliveries.",
-        "NSLocationWhenInUseUsageDescription": "Used for navigation and delivery tracking."
+        "NSLocationWhenInUseUsageDescription": "Used for navigation and delivery tracking.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
