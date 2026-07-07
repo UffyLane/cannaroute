@@ -7,7 +7,7 @@
       "developmentClient": true,
       "distribution": "internal",
       "android": {
-        "image": "ubuntu-22.04-jdk-17-ndk-r25b"
+        "image": "ubuntu-22.04-jdk-17-ndk-r26b-like"
       },
       "env": {
         "EXPO_PUBLIC_AUTH_SERVICE_URL": "https://cannaroute-auth.onrender.com",
@@ -19,7 +19,7 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk",
-        "image": "ubuntu-22.04-jdk-17-ndk-r25b"
+        "image": "ubuntu-22.04-jdk-17-ndk-r26b-like"
       },
       "env": {
         "EXPO_PUBLIC_AUTH_SERVICE_URL": "https://cannaroute-auth.onrender.com",
@@ -29,7 +29,7 @@
     },
     "production": {
       "android": {
-        "image": "ubuntu-22.04-jdk-17-ndk-r25b"
+        "image": "ubuntu-22.04-jdk-17-ndk-r26b-like"
       },
       "env": {
         "EXPO_PUBLIC_AUTH_SERVICE_URL": "https://cannaroute-auth.onrender.com",
