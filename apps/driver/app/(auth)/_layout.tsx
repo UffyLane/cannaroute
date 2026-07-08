@@ -9,12 +9,16 @@ export default function AuthLayout() {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator size="large" color="#0f4c35" />
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#060f08' }}>
+        <ActivityIndicator size="large" color="#f59e0b" />
       </View>
     );
   }
   if (isAuthenticated) return <Redirect href="/(tabs)" />;
 
-  return <Stack screenOptions={{ headerShown: false }}><Stack.Screen name="login" /></Stack>;
+  return (
+    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#060f08' } }}>
+      <Stack.Screen name="login" />
+    </Stack>
+  );
 }

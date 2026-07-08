@@ -1,10 +1,22 @@
 import React from 'react';
 import { Tabs, Redirect } from 'expo-router';
-import { Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/store/auth.store';
 
-function TabIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
-  return <Text style={{ fontSize: focused ? 24 : 21, opacity: focused ? 1 : 0.5 }}>{emoji}</Text>;
+const TAB_BG = '#080f0a';
+const GOLD   = '#f59e0b';
+const MUTED  = 'rgba(255,255,255,0.38)';
+
+type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
+
+function TabIcon({ focused, name }: { focused: boolean; name: IoniconName }) {
+  return (
+    <Ionicons
+      name={focused ? name : (`${name}-outline` as IoniconName)}
+      size={23}
+      color={focused ? GOLD : MUTED}
+    />
+  );
 }
 
 export default function DriverTabsLayout() {
@@ -17,23 +29,39 @@ export default function DriverTabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#0f4c35',
-        tabBarInactiveTintColor: '#a3a3a3',
-        tabBarStyle: { borderTopWidth: 1, borderTopColor: '#e5e5e5', height: 72, paddingTop: 4 },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '500', marginBottom: 8 },
+        tabBarStyle: {
+          backgroundColor: TAB_BG,
+          borderTopColor: 'rgba(255,255,255,0.08)',
+          borderTopWidth: 1,
+          height: 72,
+          paddingTop: 6,
+          paddingBottom: 10,
+        },
+        tabBarActiveTintColor: GOLD,
+        tabBarInactiveTintColor: MUTED,
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '600', marginTop: 2 },
       }}
     >
       <Tabs.Screen
         name="index"
-        options={{ title: 'Queue', tabBarIcon: ({ focused }) => <TabIcon emoji="📋" focused={focused} /> }}
+        options={{
+          title: 'Queue',
+          tabBarIcon: ({ focused }) => <TabIcon focused={focused} name="list" />,
+        }}
       />
       <Tabs.Screen
         name="history"
-        options={{ title: 'History', tabBarIcon: ({ focused }) => <TabIcon emoji="📦" focused={focused} /> }}
+        options={{
+          title: 'History',
+          tabBarIcon: ({ focused }) => <TabIcon focused={focused} name="time" />,
+        }}
       />
       <Tabs.Screen
         name="account"
-        options={{ title: 'Account', tabBarIcon: ({ focused }) => <TabIcon emoji="👤" focused={focused} /> }}
+        options={{
+          title: 'Account',
+          tabBarIcon: ({ focused }) => <TabIcon focused={focused} name="person" />,
+        }}
       />
     </Tabs>
   );

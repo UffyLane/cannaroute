@@ -24,7 +24,15 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" />
             <Stack.Screen
               name="delivery/[id]"
-              options={{ headerShown: true, title: 'Active Delivery', headerBackTitle: 'Queue' }}
+              options={{
+                headerShown: true,
+                title: 'Active Delivery',
+                headerBackTitle: 'Queue',
+                headerStyle: { backgroundColor: '#080f0a' },
+                headerTintColor: '#ffffff',
+                headerTitleStyle: { color: '#ffffff', fontWeight: '700' },
+                headerShadowVisible: false,
+              }}
             />
           </Stack>
           <Toast />
