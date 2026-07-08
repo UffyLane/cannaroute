@@ -1,8 +1,14 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Dispensary } from '@/types';
 import { Badge } from '@/components/ui/Badge';
-import { Card } from '@/components/ui/Card';
+
+const SURFACE = 'rgba(255,255,255,0.05)';
+const BORDER  = 'rgba(255,255,255,0.10)';
+const GOLD    = '#f59e0b';
+const WHITE   = '#ffffff';
+const MUTED   = 'rgba(255,255,255,0.50)';
+const MUTED2  = 'rgba(255,255,255,0.32)';
 
 interface DispensaryCardProps {
   dispensary: Dispensary;
@@ -11,76 +17,100 @@ interface DispensaryCardProps {
 
 export function DispensaryCard({ dispensary, onPress }: DispensaryCardProps) {
   return (
-    <TouchableOpacity activeOpacity={0.85} onPress={onPress} className="mb-3">
-      <Card padded={false} elevated>
-        {/* Cover image */}
-        <View className="h-36 bg-brand-100 rounded-t-2xl overflow-hidden">
-          {dispensary.logoUrl ? (
-            <Image
-              source={{ uri: dispensary.logoUrl }}
-              className="w-full h-full"
-              resizeMode="cover"
-            />
-          ) : (
-            <View className="flex-1 items-center justify-center">
-              <Text className="text-4xl">🌿</Text>
-            </View>
-          )}
-          {/* Open / Closed chip */}
-          <View className="absolute top-3 right-3">
-            <Badge
-              label={dispensary.isOpen ? 'Open' : 'Closed'}
-              variant={dispensary.isOpen ? 'success' : 'error'}
-            />
+    <TouchableOpacity activeOpacity={0.85} onPress={onPress} style={styles.card}>
+      {/* Cover image */}
+      <View style={styles.cover}>
+        {dispensary.logoUrl ? (
+          <Image
+            source={{ uri: dispensary.logoUrl }}
+            style={{ width: '100%', height: '100%' }}
+            resizeMode="cover"
+          />
+        ) : (
+          <View style={styles.coverPlaceholder}>
+            <Text style={styles.coverIcon}>🌿</Text>
           </View>
+        )}
+        <View style={styles.badgeWrap}>
+          <Badge
+            label={dispensary.isOpen ? 'Open' : 'Closed'}
+            variant={dispensary.isOpen ? 'success' : 'error'}
+          />
         </View>
+      </View>
 
-        {/* Content */}
-        <View className="p-4">
-          <Text className="text-base font-semibold text-neutral-900">{dispensary.name}</Text>
-          <Text className="text-sm text-neutral-500 mt-0.5">
-            {dispensary.city}, {dispensary.state}
-          </Text>
+      {/* Content */}
+      <View style={styles.content}>
+        <Text style={styles.name}>{dispensary.name}</Text>
+        <Text style={styles.location}>{dispensary.city}, {dispensary.state}</Text>
 
-          <View className="flex-row items-center mt-3 gap-x-4">
-            {/* Rating */}
-            <View className="flex-row items-center">
-              <Text className="text-amber-500 text-sm">★</Text>
-              <Text className="text-sm font-medium text-neutral-700 ml-1">
-                {dispensary.rating.toFixed(1)}
-              </Text>
-              <Text className="text-xs text-neutral-400 ml-1">({dispensary.reviewCount})</Text>
-            </View>
-
-            {/* Distance */}
-            {dispensary.distanceMiles !== undefined && (
-              <Text className="text-sm text-neutral-500">
-                {dispensary.distanceMiles.toFixed(1)} mi
-              </Text>
-            )}
-
-            {/* Delivery time */}
-            {dispensary.deliveryAvailable && (
-              <Text className="text-sm text-neutral-500">
-                ~{dispensary.estimatedDeliveryMinutes} min
-              </Text>
-            )}
+        <View style={styles.metaRow}>
+          {/* Rating */}
+          <View style={styles.ratingWrap}>
+            <Text style={styles.star}>★</Text>
+            <Text style={styles.rating}>{dispensary.rating.toFixed(1)}</Text>
+            <Text style={styles.reviews}>({dispensary.reviewCount})</Text>
           </View>
 
-          {/* Delivery fee / min order */}
+          {dispensary.distanceMiles !== undefined && (
+            <>
+              <Text style={styles.sep}>·</Text>
+              <Text style={styles.meta}>{dispensary.distanceMiles.toFixed(1)} mi</Text>
+            </>
+          )}
+
           {dispensary.deliveryAvailable && (
-            <View className="flex-row items-center mt-2 gap-x-3">
-              <Text className="text-xs text-neutral-400">
-                ${dispensary.deliveryFee.toFixed(2)} delivery
-              </Text>
-              <Text className="text-xs text-neutral-400">•</Text>
-              <Text className="text-xs text-neutral-400">
-                ${dispensary.minOrderAmount} min
-              </Text>
-            </View>
+            <>
+              <Text style={styles.sep}>·</Text>
+              <Text style={styles.meta}>~{dispensary.estimatedDeliveryMinutes} min</Text>
+            </>
           )}
         </View>
-      </Card>
+
+        {dispensary.deliveryAvailable && (
+          <View style={styles.feeRow}>
+            <Text style={styles.fee}>${dispensary.deliveryFee.toFixed(2)} delivery</Text>
+            <Text style={styles.feeSep}>•</Text>
+            <Text style={styles.fee}>${dispensary.minOrderAmount} min order</Text>
+          </View>
+        )}
+      </View>
     </TouchableOpacity>
   );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: SURFACE,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: BORDER,
+    marginBottom: 12,
+    overflow: 'hidden',
+  },
+  cover: {
+    height: 148,
+    backgroundColor: 'rgba(15,76,53,0.28)',
+  },
+  coverPlaceholder: {
+    flex: 1, alignItems: 'center', justifyContent: 'center',
+  },
+  coverIcon: { fontSize: 40 },
+  badgeWrap: { position: 'absolute', top: 12, right: 12 },
+
+  content: { padding: 14 },
+  name:     { fontSize: 16, fontWeight: '700', color: WHITE },
+  location: { fontSize: 13, color: MUTED, marginTop: 3 },
+
+  metaRow:    { flexDirection: 'row', alignItems: 'center', marginTop: 10, gap: 6, flexWrap: 'wrap' },
+  ratingWrap: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+  star:    { color: GOLD, fontSize: 14 },
+  rating:  { fontSize: 13, fontWeight: '600', color: WHITE },
+  reviews: { fontSize: 12, color: MUTED },
+  sep:     { color: MUTED, fontSize: 12 },
+  meta:    { fontSize: 13, color: MUTED },
+
+  feeRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8, gap: 6 },
+  fee:    { fontSize: 12, color: MUTED2 },
+  feeSep: { color: MUTED2, fontSize: 11 },
+});

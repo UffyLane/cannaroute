@@ -1,14 +1,24 @@
 import React from 'react';
 import { Tabs, Redirect } from 'expo-router';
-import { Text, View } from 'react-native';
+import { View, Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/store/auth.store';
 import { useCartStore } from '@/store/cart.store';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { Colors } from '@/constants/colors';
 
-function TabIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
+const TAB_BG = '#080f0a';
+const GOLD   = '#f59e0b';
+const MUTED  = 'rgba(255,255,255,0.38)';
+
+type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
+
+function TabIcon({ focused, name }: { focused: boolean; name: IoniconName }) {
   return (
-    <Text style={{ fontSize: focused ? 24 : 22, opacity: focused ? 1 : 0.55 }}>{emoji}</Text>
+    <Ionicons
+      name={focused ? name : (`${name}-outline` as IoniconName)}
+      size={23}
+      color={focused ? GOLD : MUTED}
+    />
   );
 }
 
@@ -16,23 +26,23 @@ function CartTabIcon({ focused }: { focused: boolean }) {
   const itemCount = useCartStore((s) => s.itemCount);
   return (
     <View>
-      <TabIcon emoji="🛒" focused={focused} />
+      <TabIcon focused={focused} name="bag" />
       {itemCount > 0 && (
         <View
           style={{
             position: 'absolute',
             top: -4,
             right: -8,
-            backgroundColor: Colors.accent[500],
-            borderRadius: 8,
-            minWidth: 16,
-            height: 16,
+            backgroundColor: GOLD,
+            borderRadius: 9,
+            minWidth: 17,
+            height: 17,
             alignItems: 'center',
             justifyContent: 'center',
-            paddingHorizontal: 2,
+            paddingHorizontal: 3,
           }}
         >
-          <Text style={{ color: '#fff', fontSize: 10, fontWeight: 'bold' }}>{itemCount}</Text>
+          <Text style={{ color: '#0a1a0f', fontSize: 10, fontWeight: '700' }}>{itemCount}</Text>
         </View>
       )}
     </View>
@@ -50,29 +60,31 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: Colors.brand[900],
-        tabBarInactiveTintColor: Colors.neutral[400],
         tabBarStyle: {
+          backgroundColor: TAB_BG,
+          borderTopColor: 'rgba(255,255,255,0.08)',
           borderTopWidth: 1,
-          borderTopColor: Colors.neutral[200],
-          paddingTop: 4,
           height: 72,
+          paddingTop: 6,
+          paddingBottom: 10,
         },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '500', marginBottom: 8 },
+        tabBarActiveTintColor: GOLD,
+        tabBarInactiveTintColor: MUTED,
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '600', marginTop: 2 },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: 'Discover',
-          tabBarIcon: ({ focused }) => <TabIcon emoji="🗺️" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon focused={focused} name="compass" />,
         }}
       />
       <Tabs.Screen
         name="orders"
         options={{
           title: 'Orders',
-          tabBarIcon: ({ focused }) => <TabIcon emoji="📋" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon focused={focused} name="receipt" />,
         }}
       />
       <Tabs.Screen
@@ -86,7 +98,7 @@ export default function TabsLayout() {
         name="account"
         options={{
           title: 'Account',
-          tabBarIcon: ({ focused }) => <TabIcon emoji="👤" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon focused={focused} name="person" />,
         }}
       />
     </Tabs>

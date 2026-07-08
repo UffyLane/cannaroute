@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
 type BadgeVariant = 'success' | 'warning' | 'error' | 'info' | 'neutral' | 'brand';
 
@@ -9,36 +9,32 @@ interface BadgeProps {
   size?: 'sm' | 'md';
 }
 
-const containerStyles: Record<BadgeVariant, string> = {
-  success: 'bg-green-100',
-  warning: 'bg-amber-100',
-  error: 'bg-red-100',
-  info: 'bg-blue-100',
-  neutral: 'bg-neutral-100',
-  brand: 'bg-brand-100',
-};
-
-const textStyles: Record<BadgeVariant, string> = {
-  success: 'text-green-700',
-  warning: 'text-amber-700',
-  error: 'text-red-700',
-  info: 'text-blue-700',
-  neutral: 'text-neutral-700',
-  brand: 'text-brand-800',
+const variantColors: Record<BadgeVariant, { bg: string; text: string }> = {
+  success: { bg: 'rgba(34,197,94,0.15)',   text: '#4ade80' },
+  warning: { bg: 'rgba(245,158,11,0.15)',  text: '#fbbf24' },
+  error:   { bg: 'rgba(239,68,68,0.15)',   text: '#f87171' },
+  info:    { bg: 'rgba(59,130,246,0.15)',  text: '#93c5fd' },
+  neutral: { bg: 'rgba(255,255,255,0.10)', text: 'rgba(255,255,255,0.65)' },
+  brand:   { bg: 'rgba(15,76,53,0.45)',    text: '#6ee7b7' },
 };
 
 export function Badge({ label, variant = 'neutral', size = 'sm' }: BadgeProps) {
+  const { bg, text } = variantColors[variant];
   return (
-    <View className={['rounded-full px-2.5 py-0.5 self-start', containerStyles[variant]].join(' ')}>
-      <Text
-        className={[
-          'font-medium',
-          size === 'sm' ? 'text-xs' : 'text-sm',
-          textStyles[variant],
-        ].join(' ')}
-      >
+    <View style={[styles.wrap, { backgroundColor: bg }]}>
+      <Text style={[styles.label, { color: text, fontSize: size === 'sm' ? 11 : 13 }]}>
         {label}
       </Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  wrap: {
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    alignSelf: 'flex-start',
+  },
+  label: { fontWeight: '600' },
+});

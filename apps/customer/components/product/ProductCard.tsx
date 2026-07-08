@@ -1,8 +1,26 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Product } from '@/types';
 import { Badge } from '@/components/ui/Badge';
 import { useCartStore } from '@/store/cart.store';
+
+const SURFACE = 'rgba(255,255,255,0.05)';
+const BORDER  = 'rgba(255,255,255,0.10)';
+const GREEN   = '#0f4c35';
+const GOLD    = '#f59e0b';
+const WHITE   = '#ffffff';
+const MUTED   = 'rgba(255,255,255,0.45)';
+
+const categoryLabel: Record<string, string> = {
+  flower:      'Flower',
+  concentrate: 'Concentrate',
+  edible:      'Edible',
+  tincture:    'Tincture',
+  topical:     'Topical',
+  vape:        'Vape',
+  pre_roll:    'Pre-Roll',
+  accessory:   'Accessory',
+};
 
 interface ProductCardProps {
   product: Product;
@@ -10,20 +28,9 @@ interface ProductCardProps {
   onPress: () => void;
 }
 
-const categoryLabel: Record<string, string> = {
-  flower: 'Flower',
-  concentrate: 'Concentrate',
-  edible: 'Edible',
-  tincture: 'Tincture',
-  topical: 'Topical',
-  vape: 'Vape',
-  pre_roll: 'Pre-Roll',
-  accessory: 'Accessory',
-};
-
 export function ProductCard({ product, dispensaryId, onPress }: ProductCardProps) {
-  const addItem = useCartStore((s) => s.addItem);
-  const items = useCartStore((s) => s.items);
+  const addItem      = useCartStore((s) => s.addItem);
+  const items        = useCartStore((s) => s.items);
   const cartQuantity = items.find((i) => i.product.id === product.id)?.quantity ?? 0;
 
   const handleAddToCart = (e: { stopPropagation: () => void }) => {
@@ -31,80 +38,67 @@ export function ProductCard({ product, dispensaryId, onPress }: ProductCardProps
     addItem(product, dispensaryId);
   };
 
+  const inCart = cartQuantity > 0;
+
   return (
-    <TouchableOpacity
-      activeOpacity={0.85}
-      onPress={onPress}
-      className="bg-white rounded-2xl overflow-hidden mb-3 border border-neutral-100"
-      style={{ shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, shadowOffset: { width: 0, height: 1 } }}
-    >
-      {/* Product image */}
-      <View className="h-28 bg-neutral-100 items-center justify-center">
+    <TouchableOpacity activeOpacity={0.85} onPress={onPress} style={styles.card}>
+      {/* Image */}
+      <View style={styles.imageWrap}>
         {product.imageUrl ? (
-          <Image source={{ uri: product.imageUrl }} className="w-full h-full" resizeMode="cover" />
+          <Image source={{ uri: product.imageUrl }} style={styles.image} resizeMode="cover" />
         ) : (
-          <Text className="text-3xl">🌱</Text>
+          <Text style={styles.imagePlaceholder}>🌱</Text>
         )}
       </View>
 
-      <View className="p-3">
-        <View className="flex-row items-start justify-between">
-          <View className="flex-1 mr-2">
-            <Text className="text-sm font-semibold text-neutral-900" numberOfLines={1}>
-              {product.name}
-            </Text>
-            {product.strain && (
-              <Text className="text-xs text-neutral-500 mt-0.5">{product.strain}</Text>
-            )}
+      <View style={styles.content}>
+        <View style={styles.topRow}>
+          <View style={styles.nameWrap}>
+            <Text style={styles.name} numberOfLines={1}>{product.name}</Text>
+            {product.strain && <Text style={styles.strain}>{product.strain}</Text>}
           </View>
           <Badge label={categoryLabel[product.category] ?? product.category} variant="brand" />
         </View>
 
-        {/* THC / CBD */}
+        {/* Cannabinoids */}
         {(product.thcPercentage !== undefined || product.cbdPercentage !== undefined) && (
-          <View className="flex-row gap-x-3 mt-2">
+          <View style={styles.cbdRow}>
             {product.thcPercentage !== undefined && (
-              <Text className="text-xs text-neutral-600">
-                THC {product.thcPercentage.toFixed(1)}%
-              </Text>
+              <Text style={styles.cbd}>THC {product.thcPercentage.toFixed(1)}%</Text>
             )}
             {product.cbdPercentage !== undefined && (
-              <Text className="text-xs text-neutral-600">
-                CBD {product.cbdPercentage.toFixed(1)}%
-              </Text>
+              <Text style={styles.cbd}>CBD {product.cbdPercentage.toFixed(1)}%</Text>
             )}
           </View>
         )}
 
-        {/* Price + add to cart */}
-        <View className="flex-row items-center justify-between mt-3">
+        {/* Price + Add */}
+        <View style={styles.priceRow}>
           <View>
-            <Text className="text-base font-bold text-neutral-900">
-              ${product.pricePerUnit.toFixed(2)}
-            </Text>
-            <Text className="text-xs text-neutral-400">{product.weightGrams}g</Text>
+            <Text style={styles.price}>${product.pricePerUnit.toFixed(2)}</Text>
+            <Text style={styles.weight}>{product.weightGrams}g</Text>
           </View>
 
           <TouchableOpacity
             onPress={handleAddToCart}
-            className="bg-brand-900 rounded-xl px-3 py-2 flex-row items-center"
+            style={[styles.addBtn, inCart && styles.addBtnActive]}
             activeOpacity={0.8}
           >
-            {cartQuantity > 0 && (
-              <Text className="text-white text-sm font-bold mr-1">{cartQuantity}</Text>
+            {inCart && (
+              <Text style={[styles.addLabel, inCart && { color: '#0a1a0f' }]}>{cartQuantity}</Text>
             )}
-            <Text className="text-white text-sm font-semibold">
-              {cartQuantity > 0 ? '+ Add' : 'Add'}
+            <Text style={[styles.addLabel, inCart && { color: '#0a1a0f' }]}>
+              {inCart ? '+ Add' : 'Add'}
             </Text>
           </TouchableOpacity>
         </View>
 
-        {/* Grower badge */}
+        {/* Grower */}
         {product.grower && (
-          <View className="mt-2 flex-row items-center">
-            <Text className="text-xs text-brand-700">🌿 {product.grower.farmName}</Text>
+          <View style={styles.growerRow}>
+            <Text style={styles.growerName}>🌿 {product.grower.farmName}</Text>
             {product.grower.noPesticidesUsed && (
-              <Text className="text-xs text-green-600 ml-2">• No Pesticides</Text>
+              <Text style={styles.noPesticide}>• No Pesticides</Text>
             )}
           </View>
         )}
@@ -112,3 +106,54 @@ export function ProductCard({ product, dispensaryId, onPress }: ProductCardProps
     </TouchableOpacity>
   );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: SURFACE,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: BORDER,
+    marginBottom: 12,
+    overflow: 'hidden',
+  },
+  imageWrap: {
+    height: 120,
+    backgroundColor: 'rgba(15,76,53,0.22)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  image:            { width: '100%', height: '100%' },
+  imagePlaceholder: { fontSize: 36 },
+
+  content: { padding: 12 },
+  topRow:  { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
+  nameWrap: { flex: 1, marginRight: 8 },
+  name:   { fontSize: 14, fontWeight: '600', color: WHITE },
+  strain: { fontSize: 12, color: MUTED, marginTop: 2 },
+
+  cbdRow: { flexDirection: 'row', gap: 10, marginTop: 8 },
+  cbd:    { fontSize: 11, color: 'rgba(255,255,255,0.48)' },
+
+  priceRow: {
+    flexDirection: 'row', alignItems: 'center',
+    justifyContent: 'space-between', marginTop: 10,
+  },
+  price:  { fontSize: 16, fontWeight: '700', color: WHITE },
+  weight: { fontSize: 11, color: MUTED },
+
+  addBtn: {
+    backgroundColor: GREEN,
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  addBtnActive: { backgroundColor: GOLD },
+  addLabel: { color: WHITE, fontSize: 13, fontWeight: '600' },
+
+  growerRow:    { flexDirection: 'row', alignItems: 'center', marginTop: 8, gap: 6 },
+  growerName:   { fontSize: 11, color: 'rgba(110,231,183,0.75)' },
+  noPesticide:  { fontSize: 11, color: 'rgba(34,197,94,0.75)' },
+});

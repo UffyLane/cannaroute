@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ViewProps } from 'react-native';
+import { View, ViewProps, StyleSheet } from 'react-native';
 
 interface CardProps extends ViewProps {
   children: React.ReactNode;
@@ -9,16 +9,19 @@ interface CardProps extends ViewProps {
 
 export function Card({ children, padded = true, elevated = true, style, ...rest }: CardProps) {
   return (
-    <View
-      className={[
-        'bg-white rounded-2xl overflow-hidden',
-        padded ? 'p-4' : '',
-        elevated ? 'shadow-sm' : '',
-      ].join(' ')}
-      style={[{ shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 8, shadowOffset: { width: 0, height: 2 } }, style as object]}
-      {...rest}
-    >
+    <View style={[styles.card, padded && styles.padded, style]} {...rest}>
       {children}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.10)',
+    overflow: 'hidden',
+  },
+  padded: { padding: 16 },
+});

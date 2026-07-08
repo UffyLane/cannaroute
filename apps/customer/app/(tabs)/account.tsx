@@ -1,31 +1,38 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '@/hooks/useAuth';
 import { Badge } from '@/components/ui/Badge';
-import { Card } from '@/components/ui/Card';
+
+const BG      = '#060f08';
+const SURFACE = 'rgba(255,255,255,0.05)';
+const BORDER  = 'rgba(255,255,255,0.10)';
+const GREEN   = '#0f4c35';
+const GOLD    = '#f59e0b';
+const WHITE   = '#ffffff';
+const MUTED   = 'rgba(255,255,255,0.45)';
 
 interface MenuRowProps {
   icon: string;
   label: string;
   onPress: () => void;
   destructive?: boolean;
+  last?: boolean;
 }
 
-function MenuRow({ icon, label, onPress, destructive = false }: MenuRowProps) {
+function MenuRow({ icon, label, onPress, destructive = false, last = false }: MenuRowProps) {
   return (
     <TouchableOpacity
-      className="flex-row items-center py-4 border-b border-neutral-100"
+      style={[styles.menuRow, !last && styles.menuRowBorder]}
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <Text className="text-xl mr-3">{icon}</Text>
-      <Text
-        className={['flex-1 text-sm font-medium', destructive ? 'text-red-500' : 'text-neutral-800'].join(' ')}
-      >
-        {label}
-      </Text>
-      <Text className="text-neutral-300 text-base">›</Text>
+      <View style={styles.menuIconWrap}>
+        <Text style={styles.menuIcon}>{icon}</Text>
+      </View>
+      <Text style={[styles.menuLabel, destructive && styles.menuLabelDestructive]}>{label}</Text>
+      <Text style={styles.menuChevron}>›</Text>
     </TouchableOpacity>
   );
 }
@@ -41,58 +48,118 @@ export default function AccountScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-neutral-50">
-      <View className="px-5 pt-4 pb-3 bg-white border-b border-neutral-100">
-        <Text className="text-2xl font-bold text-neutral-900">Account</Text>
-      </View>
+    <View style={styles.root}>
+      <StatusBar style="light" />
+      <SafeAreaView style={styles.safe} edges={['top']}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Account</Text>
+        </View>
 
-      <ScrollView className="flex-1 px-5 pt-4">
-        {/* Profile card */}
-        <Card>
-          <View className="flex-row items-center">
-            <View className="w-14 h-14 rounded-full bg-brand-900 items-center justify-center mr-4">
-              <Text className="text-white text-xl font-bold">
-                {user?.firstName?.[0]?.toUpperCase() ?? '?'}
-              </Text>
-            </View>
-            <View className="flex-1">
-              <Text className="text-base font-semibold text-neutral-900">
-                {user?.firstName} {user?.lastName}
-              </Text>
-              <Text className="text-sm text-neutral-500 mt-0.5">{user?.email}</Text>
-              {user?.isMedical && (
-                <View className="mt-1.5">
-                  <Badge label="Medical Patient" variant="success" />
-                </View>
-              )}
+        <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+          {/* Profile card */}
+          <View style={[styles.card, { marginTop: 20 }]}>
+            <View style={styles.profileRow}>
+              <View style={styles.avatar}>
+                <Text style={styles.avatarLetter}>
+                  {user?.firstName?.[0]?.toUpperCase() ?? '?'}
+                </Text>
+              </View>
+              <View style={styles.profileInfo}>
+                <Text style={styles.profileName}>
+                  {user?.firstName} {user?.lastName}
+                </Text>
+                <Text style={styles.profileEmail}>{user?.email}</Text>
+                {user?.isMedical && (
+                  <View style={{ marginTop: 8 }}>
+                    <Badge label="Medical Patient" variant="success" />
+                  </View>
+                )}
+              </View>
             </View>
           </View>
-        </Card>
 
-        {/* Menu sections */}
-        <Card style={{ marginTop: 12 }}>
-          <Text className="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-1">
-            Account
-          </Text>
-          <MenuRow icon="📋" label="Order History" onPress={() => {}} />
-          <MenuRow icon="📍" label="Saved Addresses" onPress={() => {}} />
-          <MenuRow icon="💳" label="Payment Methods" onPress={() => {}} />
-          <MenuRow icon="🏥" label="Medical Card" onPress={() => {}} />
-        </Card>
+          {/* Account section */}
+          <View style={[styles.card, { marginTop: 12 }]}>
+            <Text style={styles.sectionLabel}>Account</Text>
+            <MenuRow icon="📋" label="Order History"    onPress={() => {}} />
+            <MenuRow icon="📍" label="Saved Addresses"  onPress={() => {}} />
+            <MenuRow icon="💳" label="Payment Methods"  onPress={() => {}} />
+            <MenuRow icon="🏥" label="Medical Card"     onPress={() => {}} last />
+          </View>
 
-        <Card style={{ marginTop: 12 }}>
-          <Text className="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-1">
-            Support
-          </Text>
-          <MenuRow icon="❓" label="Help Center" onPress={() => {}} />
-          <MenuRow icon="📄" label="Terms of Service" onPress={() => {}} />
-          <MenuRow icon="🔒" label="Privacy Policy" onPress={() => {}} />
-        </Card>
+          {/* Support section */}
+          <View style={[styles.card, { marginTop: 12 }]}>
+            <Text style={styles.sectionLabel}>Support</Text>
+            <MenuRow icon="❓" label="Help Center"       onPress={() => {}} />
+            <MenuRow icon="📄" label="Terms of Service" onPress={() => {}} />
+            <MenuRow icon="🔒" label="Privacy Policy"   onPress={() => {}} last />
+          </View>
 
-        <Card style={{ marginTop: 12, marginBottom: 32 }}>
-          <MenuRow icon="🚪" label="Sign Out" onPress={handleLogout} destructive />
-        </Card>
-      </ScrollView>
-    </SafeAreaView>
+          {/* Sign out */}
+          <View style={[styles.card, { marginTop: 12, marginBottom: 36 }]}>
+            <MenuRow icon="🚪" label="Sign Out" onPress={handleLogout} destructive last />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  root: { flex: 1, backgroundColor: BG },
+  safe: { flex: 1 },
+
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: BORDER,
+    backgroundColor: '#080f0a',
+  },
+  headerTitle: { fontSize: 24, fontWeight: '700', color: WHITE },
+
+  scroll: { flex: 1, paddingHorizontal: 16 },
+
+  card: {
+    backgroundColor: SURFACE,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: BORDER,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+  },
+
+  profileRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10 },
+  avatar: {
+    width: 58, height: 58, borderRadius: 29,
+    backgroundColor: GREEN,
+    alignItems: 'center', justifyContent: 'center', marginRight: 14,
+  },
+  avatarLetter: { color: WHITE, fontSize: 22, fontWeight: '700' },
+  profileInfo:  { flex: 1 },
+  profileName:  { fontSize: 16, fontWeight: '600', color: WHITE },
+  profileEmail: { fontSize: 13, color: MUTED, marginTop: 3 },
+
+  sectionLabel: {
+    fontSize: 11, fontWeight: '700', color: MUTED,
+    textTransform: 'uppercase', letterSpacing: 1.2,
+    paddingTop: 12, paddingBottom: 4,
+  },
+
+  menuRow: {
+    flexDirection: 'row', alignItems: 'center',
+    paddingVertical: 14,
+  },
+  menuRowBorder: { borderBottomWidth: 1, borderBottomColor: BORDER },
+  menuIconWrap: {
+    width: 34, height: 34, borderRadius: 10,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    alignItems: 'center', justifyContent: 'center',
+    marginRight: 12,
+  },
+  menuIcon:              { fontSize: 16 },
+  menuLabel:             { flex: 1, fontSize: 14, fontWeight: '500', color: WHITE },
+  menuLabelDestructive:  { color: '#f87171' },
+  menuChevron:           { fontSize: 18, color: 'rgba(255,255,255,0.25)', fontWeight: '300' },
+});

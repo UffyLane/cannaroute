@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, ScrollView, Alert } from 'react-native';
+import { View, Text, ScrollView, Alert, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 import { router } from 'expo-router';
 import { useMutation } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
@@ -11,13 +12,20 @@ import { Button } from '@/components/ui/Button';
 import { OrderService } from '@/services/order.service';
 
 const DELIVERY_FEE = 5.99;
-const TAX_RATE = 0.1;
+const TAX_RATE     = 0.1;
+
+const BG      = '#060f08';
+const SURFACE = 'rgba(255,255,255,0.05)';
+const BORDER  = 'rgba(255,255,255,0.10)';
+const GOLD    = '#f59e0b';
+const WHITE   = '#ffffff';
+const MUTED   = 'rgba(255,255,255,0.45)';
 
 export default function CartScreen() {
   const { items, dispensaryId, subtotal, clearCart } = useCart();
   const { user } = useAuth();
 
-  const tax = subtotal * TAX_RATE;
+  const tax   = subtotal * TAX_RATE;
   const total = subtotal + DELIVERY_FEE + tax;
 
   const { mutate: placeOrder, isPending } = useMutation({
@@ -51,71 +59,143 @@ export default function CartScreen() {
 
   if (items.length === 0) {
     return (
-      <SafeAreaView className="flex-1 bg-neutral-50 items-center justify-center px-8">
-        <Text className="text-5xl mb-4">🛒</Text>
-        <Text className="text-xl font-bold text-neutral-900">Your cart is empty</Text>
-        <Text className="text-sm text-neutral-500 mt-2 text-center">
-          Browse dispensaries and add products to get started
-        </Text>
-        <Button
-          label="Discover Dispensaries"
-          onPress={() => router.push('/(tabs)')}
-          style={{ marginTop: 24 }}
-        />
-      </SafeAreaView>
+      <View style={styles.root}>
+        <StatusBar style="light" />
+        <SafeAreaView style={[styles.safe, styles.emptyScreen]}>
+          <Text style={styles.emptyCartIcon}>🛒</Text>
+          <Text style={styles.emptyTitle}>Your cart is empty</Text>
+          <Text style={styles.emptyBody}>
+            Browse dispensaries and add products to get started
+          </Text>
+          <Button
+            label="Discover Dispensaries"
+            onPress={() => router.push('/(tabs)')}
+            variant="gold"
+            style={{ marginTop: 28 }}
+          />
+        </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-neutral-50">
-      <View className="px-5 pt-4 pb-3 bg-white border-b border-neutral-100">
-        <Text className="text-2xl font-bold text-neutral-900">Your Cart</Text>
-      </View>
-
-      <ScrollView className="flex-1 px-5">
-        {/* Items */}
-        <View className="bg-white rounded-2xl mt-4 px-4">
-          {items.map((item) => (
-            <CartItem key={item.product.id} item={item} />
-          ))}
+    <View style={styles.root}>
+      <StatusBar style="light" />
+      <SafeAreaView style={styles.safe} edges={['top']}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Your Cart</Text>
         </View>
 
-        {/* Order summary */}
-        <View className="bg-white rounded-2xl mt-3 p-4 mb-6">
-          <Text className="text-base font-semibold text-neutral-900 mb-3">Order Summary</Text>
-
-          <View className="flex-row justify-between mb-2">
-            <Text className="text-sm text-neutral-600">Subtotal</Text>
-            <Text className="text-sm text-neutral-900">${subtotal.toFixed(2)}</Text>
+        <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+          {/* Items */}
+          <View style={styles.itemsCard}>
+            {items.map((item) => (
+              <CartItem key={item.product.id} item={item} />
+            ))}
           </View>
 
-          <View className="flex-row justify-between mb-2">
-            <Text className="text-sm text-neutral-600">Delivery fee</Text>
-            <Text className="text-sm text-neutral-900">${DELIVERY_FEE.toFixed(2)}</Text>
-          </View>
+          {/* Order summary */}
+          <View style={styles.summaryCard}>
+            <Text style={styles.summaryTitle}>Order Summary</Text>
 
-          <View className="flex-row justify-between mb-3">
-            <Text className="text-sm text-neutral-600">Tax (10%)</Text>
-            <Text className="text-sm text-neutral-900">${tax.toFixed(2)}</Text>
-          </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Subtotal</Text>
+              <Text style={styles.summaryValue}>${subtotal.toFixed(2)}</Text>
+            </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Delivery fee</Text>
+              <Text style={styles.summaryValue}>${DELIVERY_FEE.toFixed(2)}</Text>
+            </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Tax (10%)</Text>
+              <Text style={styles.summaryValue}>${tax.toFixed(2)}</Text>
+            </View>
 
-          <View className="border-t border-neutral-100 pt-3 flex-row justify-between">
-            <Text className="text-base font-bold text-neutral-900">Total</Text>
-            <Text className="text-base font-bold text-neutral-900">${total.toFixed(2)}</Text>
+            <View style={styles.totalRow}>
+              <Text style={styles.totalLabel}>Total</Text>
+              <Text style={styles.totalAmount}>${total.toFixed(2)}</Text>
+            </View>
           </View>
+        </ScrollView>
+
+        {/* Checkout CTA */}
+        <View style={styles.footer}>
+          <Button
+            label={isPending ? 'Placing Order…' : `Place Order · $${total.toFixed(2)}`}
+            onPress={handleCheckout}
+            isLoading={isPending}
+            variant="gold"
+            fullWidth
+            size="lg"
+          />
         </View>
-      </ScrollView>
-
-      {/* Checkout CTA */}
-      <View className="px-5 py-4 bg-white border-t border-neutral-100">
-        <Button
-          label={isPending ? 'Placing Order…' : `Place Order · $${total.toFixed(2)}`}
-          onPress={handleCheckout}
-          isLoading={isPending}
-          fullWidth
-          size="lg"
-        />
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  root: { flex: 1, backgroundColor: BG },
+  safe: { flex: 1 },
+
+  emptyScreen: { alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 },
+  emptyCartIcon: { fontSize: 52, marginBottom: 16 },
+  emptyTitle: { fontSize: 22, fontWeight: '700', color: WHITE, textAlign: 'center' },
+  emptyBody: {
+    fontSize: 14, color: MUTED, marginTop: 10,
+    textAlign: 'center', lineHeight: 20,
+  },
+
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: BORDER,
+    backgroundColor: '#080f0a',
+  },
+  headerTitle: { fontSize: 24, fontWeight: '700', color: WHITE },
+
+  scroll: { flex: 1, paddingHorizontal: 16 },
+
+  itemsCard: {
+    backgroundColor: SURFACE,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: BORDER,
+    marginTop: 16,
+    overflow: 'hidden',
+  },
+
+  summaryCard: {
+    backgroundColor: SURFACE,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: BORDER,
+    marginTop: 12,
+    marginBottom: 28,
+    padding: 16,
+  },
+  summaryTitle: { fontSize: 15, fontWeight: '600', color: WHITE, marginBottom: 14 },
+  summaryRow:   { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
+  summaryLabel: { fontSize: 13, color: MUTED },
+  summaryValue: { fontSize: 13, color: WHITE },
+  totalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderTopWidth: 1,
+    borderTopColor: BORDER,
+    paddingTop: 14,
+    marginTop: 4,
+  },
+  totalLabel:  { fontSize: 16, fontWeight: '700', color: WHITE },
+  totalAmount: { fontSize: 16, fontWeight: '700', color: GOLD },
+
+  footer: {
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderTopWidth: 1,
+    borderTopColor: BORDER,
+    backgroundColor: '#080f0a',
+  },
+});
