@@ -11,10 +11,8 @@ export default function AuthLayout() {
   if (isAuthenticated) return <Redirect href="/(tabs)" />;
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#060f08' } }}>
       <Stack.Screen name="welcome" />
-      <Stack.Screen name="age-verify" />
-      <Stack.Screen name="medical" />
       <Stack.Screen name="login" />
       <Stack.Screen name="register" />
     </Stack>
