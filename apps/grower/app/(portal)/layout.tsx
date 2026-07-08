@@ -1,7 +1,9 @@
 'use client';
+
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/layout/Sidebar';
+import { Header } from '@/components/layout/Header';
 import { useAuthStore } from '@/store/auth.store';
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
@@ -12,17 +14,26 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
     if (!isLoading && !isAuthenticated) router.replace('/login');
   }, [isAuthenticated, isLoading, router]);
 
-  if (isLoading) return (
-    <div className="flex h-screen items-center justify-center">
-      <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand-900 border-t-transparent" />
-    </div>
-  );
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center" style={{ backgroundColor: '#060f08' }}>
+        <div
+          className="h-8 w-8 animate-spin rounded-full border-2"
+          style={{ borderColor: 'rgba(245,158,11,0.25)', borderTopColor: '#f59e0b' }}
+        />
+      </div>
+    );
+  }
+
   if (!isAuthenticated) return null;
 
   return (
-    <div className="flex h-screen bg-neutral-50 overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-neutral-50">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto p-6">{children}</main>
+      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+        <Header />
+        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+      </div>
     </div>
   );
 }
