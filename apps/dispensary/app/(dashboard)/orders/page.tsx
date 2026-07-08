@@ -10,18 +10,18 @@ import { formatCurrency, timeAgo } from '@/lib/utils';
 import { Order, OrderStatus } from '@/types';
 
 const STATUS_FILTERS: { key: OrderStatus | 'all'; label: string }[] = [
-  { key: 'all', label: 'All' },
-  { key: 'pending', label: 'Pending' },
-  { key: 'confirmed', label: 'Confirmed' },
-  { key: 'preparing', label: 'Preparing' },
-  { key: 'in_transit', label: 'In Transit' },
-  { key: 'delivered', label: 'Delivered' },
+  { key: 'all',            label: 'All' },
+  { key: 'pending',        label: 'Pending' },
+  { key: 'confirmed',      label: 'Confirmed' },
+  { key: 'preparing',      label: 'Preparing' },
+  { key: 'in_transit',     label: 'In Transit' },
+  { key: 'delivered',      label: 'Delivered' },
 ];
 
 const NEXT_STATUS: Partial<Record<OrderStatus, OrderStatus>> = {
-  pending: 'confirmed',
-  confirmed: 'preparing',
-  preparing: 'ready_for_pickup',
+  pending:          'confirmed',
+  confirmed:        'preparing',
+  preparing:        'ready_for_pickup',
   ready_for_pickup: 'in_transit',
 };
 
@@ -51,33 +51,40 @@ export default function OrdersPage() {
 
   return (
     <div className="space-y-4">
-      {/* Filter tabs */}
-      <div className="flex gap-2 flex-wrap">
+      {/* ── Filter tabs ── */}
+      <div className="flex gap-2 flex-wrap items-center">
         {STATUS_FILTERS.map((f) => (
           <button
             key={f.key}
             onClick={() => setFilter(f.key)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors border ${
+            className="px-4 py-2 rounded-xl text-sm font-semibold transition-all border"
+            style={
               filter === f.key
-                ? 'bg-brand-900 text-white border-brand-900'
-                : 'bg-white text-neutral-600 border-neutral-200 hover:border-brand-300'
-            }`}
+                ? { backgroundColor: '#0f4c35', color: '#ffffff', borderColor: '#0f4c35' }
+                : { backgroundColor: '#ffffff', color: '#737373', borderColor: '#e5e5e5' }
+            }
           >
             {f.label}
           </button>
         ))}
+        <span className="ml-auto text-sm text-neutral-400">
+          {orders.length} order{orders.length !== 1 ? 's' : ''}
+        </span>
       </div>
 
-      {/* Table */}
+      {/* ── Table card ── */}
       <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-hidden">
         {isLoading ? (
           <div className="flex items-center justify-center h-48">
-            <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand-900 border-t-transparent" />
+            <div
+              className="h-6 w-6 animate-spin rounded-full border-2"
+              style={{ borderColor: 'rgba(15,76,53,0.20)', borderTopColor: '#0f4c35' }}
+            />
           </div>
         ) : orders.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-48 text-neutral-400">
-            <span className="text-4xl mb-2">📭</span>
-            <p className="text-sm">No orders found</p>
+          <div className="flex flex-col items-center justify-center h-48 gap-2">
+            <span className="text-3xl">📭</span>
+            <p className="text-sm text-neutral-400">No orders found</p>
           </div>
         ) : (
           <table className="data-table w-full">
@@ -97,16 +104,20 @@ export default function OrdersPage() {
                 const nextStatus = NEXT_STATUS[order.status];
                 return (
                   <tr key={order.id}>
-                    <td className="font-mono text-xs text-neutral-500">
+                    <td className="font-mono text-xs text-neutral-400">
                       #{order.id.slice(0, 8).toUpperCase()}
                     </td>
                     <td>
-                      <p className="font-medium">{order.customerName}</p>
-                      <p className="text-xs text-neutral-400">{order.customerEmail}</p>
+                      <p className="font-semibold text-neutral-900">{order.customerName}</p>
+                      <p className="text-xs text-neutral-400 mt-0.5">{order.customerEmail}</p>
                     </td>
-                    <td>{order.items.length} item{order.items.length !== 1 ? 's' : ''}</td>
-                    <td className="font-semibold">{formatCurrency(order.total)}</td>
-                    <td><OrderStatusBadge status={order.status} /></td>
+                    <td className="text-neutral-600">
+                      {order.items.length} item{order.items.length !== 1 ? 's' : ''}
+                    </td>
+                    <td className="font-bold text-neutral-900">{formatCurrency(order.total)}</td>
+                    <td>
+                      <OrderStatusBadge status={order.status} />
+                    </td>
                     <td className="text-neutral-400 text-xs">{timeAgo(order.createdAt)}</td>
                     <td>
                       {nextStatus ? (
@@ -116,9 +127,9 @@ export default function OrdersPage() {
                           isLoading={isPending}
                           onClick={() => updateStatus({ orderId: order.id, status: nextStatus })}
                         >
-                          Mark {nextStatus.replace(/_/g, ' ')}
+                          → {nextStatus.replace(/_/g, ' ')}
                         </Button>
-                      ) : order.status === 'pending' ? null : (
+                      ) : (
                         <span className="text-xs text-neutral-300">—</span>
                       )}
                     </td>
