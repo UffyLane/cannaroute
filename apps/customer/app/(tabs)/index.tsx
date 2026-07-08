@@ -76,7 +76,7 @@ export default function HomeScreen() {
                 {search ? 'No dispensaries found' : 'No dispensaries available'}
               </Text>
               <Text className="text-sm text-neutral-400 mt-1 text-center px-8">
-                {search ? 'Try a different search term' : 'Check back soon — we're growing.'}
+                {search ? 'Try a different search term' : "Check back soon — we're growing."}
               </Text>
             </View>
           }
