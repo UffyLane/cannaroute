@@ -8,12 +8,13 @@ import {
   ParseUUIDPipe,
   HttpCode,
   HttpStatus,
+  Headers,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { CancelOrderDto } from './dto/cancel-order.dto';
 import { AssignDriverDto } from './dto/assign-driver.dto';
-import { CurrentUser, Roles, RequestUser } from '@cannaroute/shared';
+import { CurrentUser, Roles, Public, RequestUser } from '@cannaroute/shared';
 
 @Controller('orders')
 export class OrdersController {
@@ -67,5 +68,23 @@ export class OrdersController {
   @Get(':id/manifest')
   getManifest(@Param('id', ParseUUIDPipe) id: string) {
     return this.ordersService.getManifest(id);
+  }
+
+  /**
+   * PATCH /api/v1/orders/:id/payment-status
+   * Called by the payment service (service-to-service) to update payment status.
+   * Validated via X-Internal-Service header — not a JWT-protected route.
+   */
+  @Public()
+  @Patch(':id/payment-status')
+  updatePaymentStatus(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: { payment_status: string },
+    @Headers('x-internal-service') internalService: string,
+  ) {
+    if (internalService !== 'payment-service') {
+      return { error: 'Forbidden' };
+    }
+    return this.ordersService.updatePaymentStatus(id, body.payment_status);
   }
 }

@@ -1,15 +1,12 @@
 import React from 'react';
-import { View, Text, ScrollView, Alert, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { router } from 'expo-router';
-import { useMutation } from '@tanstack/react-query';
-import Toast from 'react-native-toast-message';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { CartItem } from '@/components/order/CartItem';
 import { Button } from '@/components/ui/Button';
-import { OrderService } from '@/services/order.service';
 
 const DELIVERY_FEE = 5.99;
 const TAX_RATE     = 0.1;
@@ -22,39 +19,14 @@ const WHITE   = '#ffffff';
 const MUTED   = 'rgba(255,255,255,0.45)';
 
 export default function CartScreen() {
-  const { items, dispensaryId, subtotal, clearCart } = useCart();
+  const { items, dispensaryId, subtotal } = useCart();
   const { user } = useAuth();
 
   const tax   = subtotal * TAX_RATE;
   const total = subtotal + DELIVERY_FEE + tax;
 
-  const { mutate: placeOrder, isPending } = useMutation({
-    mutationFn: () =>
-      OrderService.placeOrder({
-        dispensaryId: dispensaryId!,
-        items: OrderService.cartItemsToPayload(items),
-        deliveryAddress: user?.email ?? '',
-        isMedical: user?.isMedical,
-      }),
-    onSuccess: (order) => {
-      clearCart();
-      Toast.show({ type: 'success', text1: 'Order placed!', text2: 'Your order is being prepared.' });
-      router.push(`/track/${order.id}`);
-    },
-    onError: () => {
-      Toast.show({ type: 'error', text1: 'Order failed', text2: 'Please try again.' });
-    },
-  });
-
   const handleCheckout = () => {
-    Alert.alert(
-      'Confirm Order',
-      `Total: $${total.toFixed(2)}\n\nBy placing this order you confirm all items are for personal adult-use only.`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Place Order', onPress: () => placeOrder() },
-      ],
-    );
+    router.push('/checkout');
   };
 
   if (items.length === 0) {
@@ -121,9 +93,8 @@ export default function CartScreen() {
         {/* Checkout CTA */}
         <View style={styles.footer}>
           <Button
-            label={isPending ? 'Placing Order…' : `Place Order · $${total.toFixed(2)}`}
+            label={`Checkout · $${total.toFixed(2)}`}
             onPress={handleCheckout}
-            isLoading={isPending}
             variant="gold"
             fullWidth
             size="lg"

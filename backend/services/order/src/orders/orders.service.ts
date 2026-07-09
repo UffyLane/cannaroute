@@ -217,6 +217,18 @@ export class OrdersService {
     return saved;
   }
 
+  // ─── Payment Status Update ────────────────────────────────────────────────
+
+  async updatePaymentStatus(orderId: string, paymentStatus: string): Promise<Order> {
+    const order = await this.findById(orderId);
+    const validStatuses = ['pending', 'authorized', 'captured', 'failed', 'refunded', 'partially_refunded'];
+    if (!validStatuses.includes(paymentStatus)) {
+      throw new BadRequestException(`Invalid payment status: ${paymentStatus}`);
+    }
+    order.payment_status = paymentStatus;
+    return this.ordersRepo.save(order);
+  }
+
   // ─── Delivery Manifest ────────────────────────────────────────────────────
 
   async getManifest(orderId: string) {

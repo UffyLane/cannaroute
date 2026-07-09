@@ -146,6 +146,8 @@ services:
         value: "http://cannaroute-notification:10000"
       - key: DELIVERY_SERVICE_URL
         value: "http://cannaroute-delivery:10000"
+      - key: PAYMENT_SERVICE_URL
+        value: "http://cannaroute-payment:10000"
 
   # ─── Delivery Service ───────────────────────────────────────────────────────
   - type: web
@@ -411,3 +413,57 @@ services:
         sync: false
       - key: TWILIO_PHONE_NUMBER
         sync: false
+
+  # ─── Payment Service ────────────────────────────────────────────────────────
+  - type: web
+    name: cannaroute-payment
+    env: docker
+    dockerfilePath: ./backend/services/payment/Dockerfile
+    dockerContext: .
+    plan: starter
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+    buildFilter:
+      paths:
+        - backend/shared/**
+        - backend/services/payment/**
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_SYNC
+        value: "true"
+      - key: DB_HOST
+        fromDatabase:
+          name: cannaroute-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: cannaroute-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: cannaroute-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: cannaroute-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: cannaroute-db
+          property: database
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: ORDER_SERVICE_URL
+        value: "http://cannaroute-order:10000"
+      # ── CanPay credentials (set in Render dashboard after signing up) ────────
+      - key: CANPAY_API_KEY
+        sync: false
+      - key: CANPAY_MERCHANT_ID
+        sync: false
+      - key: CANPAY_WEBHOOK_SECRET
+        sync: false
+      - key: CANPAY_BASE_URL
+        value: "https://api.canpay.com/api/v1"

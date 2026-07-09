@@ -1,0 +1,38 @@
+{
+  "name": "@cannaroute/payment-service",
+  "version": "0.1.0",
+  "description": "CannaRoute Payment Service — cannabis-compliant payment processing via CanPay / AeroPay",
+  "main": "src/main.ts",
+  "scripts": {
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "build": "nest build",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.1.27",
+    "@nestjs/config": "^4.0.4",
+    "@nestjs/core": "^11.1.27",
+    "@nestjs/jwt": "^11.0.0",
+    "@nestjs/passport": "^11.0.0",
+    "@nestjs/platform-express": "^11.1.27",
+    "@nestjs/typeorm": "^11.0.3",
+    "class-transformer": "^0.5.0",
+    "class-validator": "^0.14.0",
+    "passport": "^0.6.0",
+    "passport-jwt": "^4.0.0",
+    "pg": "^8.11.0",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.8.0",
+    "typeorm": "^0.3.17",
+    "@cannaroute/shared": "*"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^10.3.2",
+    "@nestjs/schematics": "^10.1.1",
+    "@nestjs/testing": "^11.1.27",
+    "@types/node": "^20.11.5",
+    "@types/passport-jwt": "^4.0.1",
+    "typescript": "^5.3.3"
+  }
+}
