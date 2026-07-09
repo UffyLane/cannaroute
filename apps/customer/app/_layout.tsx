@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { useAuthStore } from '@/store/auth.store';
+import { useNotifications } from '@/hooks/useNotifications';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,6 +23,9 @@ export default function RootLayout() {
   useEffect(() => {
     bootstrap();
   }, [bootstrap]);
+
+  // Register Expo push token + set up notification tap handler
+  useNotifications();
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

@@ -42,6 +42,32 @@ export class OrdersService {
     private readonly configService: ConfigService,
   ) {}
 
+  // ─── Notification helper ──────────────────────────────────────────────────
+
+  private async notify(params: {
+    event: string;
+    user_id: string;
+    order_id: string;
+    dispensary_name?: string;
+    estimated_minutes?: number;
+    total_formatted?: string;
+  }): Promise<void> {
+    const notifUrl = this.configService.get<string>('NOTIFICATION_SERVICE_URL', 'http://localhost:3007');
+    try {
+      await fetch(`${notifUrl}/api/v1/notifications/order-update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Internal-Service': 'order-service',
+        },
+        body: JSON.stringify(params),
+      });
+    } catch (err) {
+      this.logger.warn(`Notification service unreachable for event ${params.event}`, err);
+      // Non-fatal — order state change still succeeds
+    }
+  }
+
   // ─── Create Order ─────────────────────────────────────────────────────────
 
   async create(customerId: string, dto: CreateOrderDto): Promise<Order> {
@@ -107,6 +133,9 @@ export class OrdersService {
     // 5. Notify dispensary dashboard via WebSocket
     this.ordersGateway.emitOrderStatusChange(order.id, order.dispensary_id, 'placed');
 
+    // 6. Push notification to dispensary staff
+    this.notify({ event: 'order_placed', user_id: dto.dispensary_id, order_id: order.id });
+
     this.logger.log(`Order ${order.id} created by customer ${customerId}`);
 
     return this.findById(order.id);
@@ -170,15 +199,25 @@ export class OrdersService {
       total_cents: saved.total_cents,
     });
 
+    // Notify customer — order confirmed
+    this.notify({ event: 'order_confirmed', user_id: saved.customer_id, order_id: saved.id, estimated_minutes: 30 });
+    // Notify driver — new job assigned
+    this.notify({ event: 'job_assigned', user_id: dto.driver_id, order_id: saved.id,
+      total_formatted: `$${(saved.total_cents / 100).toFixed(2)}` });
+
     return saved;
   }
 
   async markPickedUp(orderId: string): Promise<Order> {
-    return this.transition(orderId, 'picked_up');
+    const order = await this.transition(orderId, 'picked_up');
+    this.notify({ event: 'order_picked_up', user_id: order.customer_id, order_id: order.id });
+    return order;
   }
 
   async markInTransit(orderId: string): Promise<Order> {
-    return this.transition(orderId, 'in_transit');
+    const order = await this.transition(orderId, 'in_transit');
+    this.notify({ event: 'order_in_transit', user_id: order.customer_id, order_id: order.id });
+    return order;
   }
 
   async markDelivered(orderId: string): Promise<Order> {
@@ -189,6 +228,8 @@ export class OrdersService {
       dispensary_id: order.dispensary_id,
       delivered_at: new Date().toISOString(),
     });
+
+    this.notify({ event: 'order_delivered', user_id: order.customer_id, order_id: order.id });
 
     // TODO: trigger compliance service to report sale to Metrc
     // this.complianceClient.reportSale(order.id);
@@ -213,6 +254,7 @@ export class OrdersService {
     const saved = await this.ordersRepo.save(order);
 
     this.ordersGateway.emitOrderStatusChange(order.id, order.dispensary_id, 'cancelled');
+    this.notify({ event: 'order_cancelled', user_id: saved.customer_id, order_id: saved.id });
 
     return saved;
   }

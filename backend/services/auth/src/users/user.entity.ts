@@ -82,6 +82,16 @@ export class User {
   @Column({ type: 'timestamptz', nullable: true, select: false })
   password_reset_expires: Date | null;
 
+  // ─── Push notifications ───────────────────────────────────────────────────
+
+  /**
+   * Expo Push Token — set when the mobile app calls POST /users/me/push-token.
+   * Format: ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
+   * Used to send push notifications via Expo's Push API.
+   */
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  expo_push_token: string | null;
+
   // ─── Timestamps ───────────────────────────────────────────────────────────
 
   @CreateDateColumn({ type: 'timestamptz' })

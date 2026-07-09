@@ -3,11 +3,15 @@ import {
   Post,
   Get,
   Put,
+  Patch,
+  Param,
   Body,
   HttpCode,
   HttpStatus,
+  Headers,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
@@ -16,10 +20,19 @@ import { MedicalCardDto } from './dto/medical-card.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Public, CurrentUser, Roles } from '@cannaroute/shared';
 import { RequestUser } from '@cannaroute/shared';
+import { IsString } from 'class-validator';
+
+class RegisterPushTokenDto {
+  @IsString()
+  token: string;
+}
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
 
   // ─── Public routes ────────────────────────────────────────────────────────
 
@@ -112,5 +125,35 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   submitMedicalCard(@CurrentUser() user: RequestUser, @Body() dto: MedicalCardDto) {
     return this.authService.submitMedicalCard(user.id, dto);
+  }
+
+  /**
+   * POST /auth/push-token
+   * Register or update Expo push token for the current user.
+   * Called on every app launch after permissions are granted.
+   */
+  @Post('push-token')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async registerPushToken(
+    @CurrentUser() user: RequestUser,
+    @Body() dto: RegisterPushTokenDto,
+  ) {
+    await this.usersService.registerPushToken(user.id, dto.token);
+  }
+
+  /**
+   * GET /auth/users/:id/push-token
+   * Internal service-to-service — notification service resolves push token.
+   * Secured by X-Internal-Service header (not JWT).
+   */
+  @Public()
+  @Get('users/:id/push-token')
+  async getPushToken(
+    @Param('id') id: string,
+    @Headers('x-internal-service') internalService: string,
+  ) {
+    if (!internalService) return { token: null };
+    const token = await this.usersService.getPushToken(id);
+    return { token };
   }
 }

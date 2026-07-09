@@ -112,4 +112,18 @@ export class UsersService {
     const password_hash = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
     await this.userRepo.update(id, { password_hash });
   }
+
+  // ─── Push token ───────────────────────────────────────────────────────────
+
+  async registerPushToken(id: string, token: string): Promise<void> {
+    await this.userRepo.update(id, { expo_push_token: token });
+  }
+
+  async getPushToken(id: string): Promise<string | null> {
+    const user = await this.userRepo.findOne({
+      where: { id },
+      select: ['id', 'expo_push_token'],
+    });
+    return user?.expo_push_token ?? null;
+  }
 }
