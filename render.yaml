@@ -6,9 +6,12 @@
 #
 # One-time setup after first deploy:
 #   1. Set all env vars marked sync:false in the Render dashboard
-#   2. Seed Michigan compliance data:
+#   2. Set CORS_ORIGINS on every service to your production domains, e.g.:
+#        https://app.cannaroute.com,https://grow.cannaroute.com,https://admin.cannaroute.com
+#      (see docs/domain-setup.md for full instructions)
+#   3. Seed Michigan compliance data:
 #        psql $DATABASE_URL < database/seed.sql
-#   3. Once schema is stable, set DB_SYNC=false on all services
+#   4. Once schema is stable, set DB_SYNC=false on all services
 #        to prevent accidental schema changes in production.
 #
 # Estimated cost: ~$60-70/month on Render Pro
