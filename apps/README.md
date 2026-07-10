@@ -6,13 +6,15 @@ Five client applications covering every role in the platform.
 
 ## Apps Overview
 
-| App | Framework | Target | Status |
+| App | Framework | URL / Distribution | Demo Login |
 |---|---|---|---|
-| `customer/` | React Native + Expo | iOS + Android | ✅ Built — EAS build in progress |
-| `driver/` | React Native + Expo | iOS + Android | ✅ Built — EAS build in progress |
-| `dispensary/` | Next.js 14 + Tailwind | Web (Vercel) | ✅ Deployed |
-| `grower/` | Next.js 14 + Tailwind | Web (Vercel) | ✅ Deployed |
-| `admin/` | Next.js 14 + Tailwind | Web (Vercel) | ✅ Deployed |
+| `customer/` | React Native + Expo | Android APK (EAS) | `customer@demo.canna-route.com` |
+| `driver/` | React Native + Expo | Android APK (EAS) | `driver@demo.canna-route.com` |
+| `dispensary/` | Next.js 14 + Tailwind | [app.canna-route.com](https://app.canna-route.com) | `dispensary@demo.canna-route.com` |
+| `grower/` | Next.js 14 + Tailwind | [grow.canna-route.com](https://grow.canna-route.com) | `grower@demo.canna-route.com` |
+| `admin/` | Next.js 14 + Tailwind | [admin.canna-route.com](https://admin.canna-route.com) | `admin@demo.canna-route.com` |
+
+All demo accounts use password `Demo1234!`
 
 ---
 
@@ -28,16 +30,13 @@ All five apps share a consistent premium dark design language.
 | Sidebar border | `rgba(255,255,255,0.07)` |
 | Active nav item | `rgba(245,158,11,0.12)` bg / `#f59e0b` text |
 | Sidebar width | `228px` |
-| Logo mark gradient | `linear-gradient(135deg, #0f4c35, #0c3324)` |
-| Loading background | `#060f08` |
-| Spinner | `borderTopColor: #f59e0b` |
+| Green accent | `#0f4c35` |
+| Gold accent | `#f59e0b` |
+| Body background | `#060f08` |
+| Card background | `rgba(255,255,255,0.03)` |
+| Card border | `rgba(255,255,255,0.07)` |
 
-Portal-specific accents:
-- **Dispensary** — Leaf+pin logo mark, emerald "Live" header badge, green avatar
-- **Grower** — Sprout logo mark, emerald "Farm Portal" header badge, green avatar
-- **Admin** — Lock logo mark, red "Admin" header badge, purple avatar (`#7e22ce`)
-
-No icon library is used — all icons are inline Feather-style SVG strokes.
+Icons: inline Feather-style SVGs only — no icon library dependency (avoids bundle bloat and Tailwind purging issues).
 
 ### Mobile apps (customer, driver)
 
@@ -45,90 +44,88 @@ No icon library is used — all icons are inline Feather-style SVG strokes.
 |---|---|
 | Background | `#060f08` |
 | Surface | `rgba(255,255,255,0.05)` |
-| Border | `rgba(255,255,255,0.10)` |
-| Brand green | `#0f4c35` |
-| Gold accent | `#f59e0b` |
-| White | `#ffffff` |
-| Muted text | `rgba(255,255,255,0.45)` |
-| Tab bar bg | `#080f0a` |
+| Gold | `#f59e0b` |
+| Green | `#0f4c35` |
+| Text primary | `#ffffff` |
+| Text secondary | `rgba(255,255,255,0.6)` |
+| Border | `rgba(255,255,255,0.08)` |
 
-All styles use `StyleSheet.create()` — no NativeWind or className on mobile. Ionicons used in tab bars only.
+Styling: `StyleSheet.create()` only — no styled-components or NativeWind.
 
 ---
 
 ## Customer App (`apps/customer/`)
 
-**React Native + Expo SDK 51**
+React Native + Expo — cannabis ordering for end customers.
 
 ### Screens
+
 | Screen | Path | Description |
 |---|---|---|
-| Sign In | `app/(auth)/login.tsx` | Email/password, dark theme |
-| Register | `app/(auth)/register.tsx` | New account creation |
-| Discover | `app/(tabs)/index.tsx` | Dispensary browsing, search |
-| Cart | `app/(tabs)/cart.tsx` | Cart review → routes to checkout |
-| Checkout | `app/checkout.tsx` | Payment method selection + order placement |
-| Orders | `app/(tabs)/orders.tsx` | Order history with status badges |
+| Welcome | `app/index.tsx` | Splash + auth entry |
+| Login | `app/login.tsx` | Email/password login |
+| Register | `app/register.tsx` | New account + age verification |
+| Home | `app/(tabs)/index.tsx` | Product discovery, featured dispensaries |
+| Cart | `app/(tabs)/cart.tsx` | Cart review, proceed to checkout |
+| Checkout | `app/checkout.tsx` | Payment method selection (CanPay / POB / Cash) |
+| Orders | `app/(tabs)/orders.tsx` | Order history + status |
+| Track | `app/track/[orderId].tsx` | Live GPS order tracking |
 | Account | `app/(tabs)/account.tsx` | Profile, medical card, preferences |
-| Dispensary | `app/dispensary/[id].tsx` | Dispensary menu + product listing |
-| Product | `app/product/[id].tsx` | Product detail, COA info |
-| Track | `app/track/[id].tsx` | Live order tracking map |
+| Product Detail | `app/product/[id].tsx` | COAs, grower info, lab results |
 
-### Payment Flow
-1. Customer adds items → Cart screen
-2. Cart → `checkout.tsx` with payment method picker
-3. Payment methods: **CanPay** (ACH debit, recommended), **Point of Banking**, **Cash on Delivery**
-4. For CanPay: order placed → payment service initiates → `processor_redirect_url` opens CanPay app via `Linking.openURL()`
-5. CanPay posts webhook → payment service → order service updates `payment_status`
-
-### Key services
-- `services/api.ts` — Axios instance with JWT interceptor
-- `services/auth.service.ts` — Login, register, token refresh
-- `services/order.service.ts` — Place order, order history
-- `services/payment.service.ts` — Initiate payment, check status
-- `services/inventory.service.ts` — Dispensary products
+### Key Features
+- CanPay ACH checkout — places order then deep-links to CanPay app
+- Live GPS tracking via WebSocket connection to order service
+- Expo Push notifications for all order lifecycle events
+- Deep-link tap handling → navigates to correct screen per notification
+- Age verification gate on registration
 
 ### Setup
+
 ```bash
 cd apps/customer
 cp .env.example .env
-# Set EXPO_PUBLIC_API_BASE_URL, EXPO_PUBLIC_PAYMENT_SERVICE_URL, EXPO_PUBLIC_GOOGLE_MAPS_KEY
 npm install
 npx expo start
 ```
 
-### Build (EAS)
-```bash
-# Preview APK (Android)
-eas build --platform android --profile preview --non-interactive
+### Env vars
 
-# Production (requires Apple Developer + Google Play accounts)
-eas build --platform all --profile production
+```
+EXPO_PUBLIC_API_BASE_URL=http://localhost:3001
+EXPO_PUBLIC_ORDER_SERVICE_URL=http://localhost:3002
+EXPO_PUBLIC_INVENTORY_SERVICE_URL=http://localhost:3003
+EXPO_PUBLIC_DELIVERY_SERVICE_URL=http://localhost:3004
+EXPO_PUBLIC_PAYMENT_SERVICE_URL=http://localhost:3008
+EXPO_PUBLIC_SOCKET_URL=http://localhost:3002
+EXPO_PUBLIC_GOOGLE_MAPS_API_KEY=your_key
 ```
 
 ---
 
 ## Driver App (`apps/driver/`)
 
-**React Native + Expo SDK 51**
+React Native + Expo — delivery management for drivers.
 
 ### Screens
+
 | Screen | Path | Description |
 |---|---|---|
-| Sign In | `app/(auth)/login.tsx` | Driver login |
-| Job Queue | `app/(tabs)/index.tsx` | Available deliveries with accept/decline |
-| Active Delivery | `app/(tabs)/active.tsx` | Current job map + status controls |
+| Login | `app/login.tsx` | Driver login |
+| Job Queue | `app/(tabs)/index.tsx` | Available delivery jobs |
+| Active Delivery | `app/delivery/[orderId].tsx` | Current job — map, status controls |
 | Earnings | `app/(tabs)/earnings.tsx` | Daily/weekly earnings breakdown |
-| History | `app/(tabs)/history.tsx` | Completed delivery log |
-| Profile | `app/(tabs)/profile.tsx` | Driver info, vehicle, documents |
+| History | `app/(tabs)/history.tsx` | Completed deliveries |
+| Profile | `app/(tabs)/profile.tsx` | License, vehicle, documents |
 
-### Driver flow
-1. Driver logs in → sees open jobs dispatched by dispensary
-2. Accepts job → navigates to dispensary for pickup
-3. Marks picked up → in transit → delivered
-4. Real-time GPS position published to Redis → order tracking updates for customer
+### Key Features
+- Real-time job offers via WebSocket
+- GPS location broadcast to Redis (customer tracking)
+- Push notifications: new job offers, assignment confirmations
+- Deep-link tap: job offer → `/delivery/[orderId]`
 
 ### Setup
+
 ```bash
 cd apps/driver
 cp .env.example .env
@@ -140,29 +137,25 @@ npx expo start
 
 ## Dispensary Dashboard (`apps/dispensary/`)
 
-**Next.js 14 + Tailwind CSS — deployed to Vercel**
+Next.js 14 — order management, inventory, driver coordination.
 
 ### Pages
+
 | Page | Route | Description |
 |---|---|---|
-| Login | `/login` | Split-panel: brand left, form right |
-| Dashboard | `/dashboard` | Stats, revenue chart, recent orders |
-| Orders | `/orders` | Order management, status transitions |
-| Inventory | `/inventory` | Product catalog, stock alerts |
-| Drivers | `/drivers` | Driver roster, availability, dispatch |
-| Compliance | `/compliance` | Metrc sync status, compliance flags |
-| Settings | `/settings` | Store profile, hours, payment config |
-
-### Layout
-- Dark sidebar (`#0a1a0f`, 228px) + light main content area
-- `Sidebar.tsx` — logo mark, nav items with inline SVG icons, gold active state, user footer
-- `Header.tsx` — page title, notification bell, emerald "Live" pulse badge
+| Login | `/login` | Dispensary staff login |
+| Dashboard | `/dashboard` | Live order feed, stats |
+| Orders | `/orders` | Order queue, status management |
+| Inventory | `/inventory` | Product catalog, stock levels |
+| Drivers | `/drivers` | Driver roster, availability |
+| Compliance | `/compliance` | State rules, daily limits |
+| Settings | `/settings` | Dispensary profile, API keys |
 
 ### Setup
+
 ```bash
 cd apps/dispensary
 cp .env.example .env.local
-# Set NEXT_PUBLIC_API_BASE_URL
 npm install
 npm run dev   # http://localhost:3000
 ```
@@ -171,24 +164,21 @@ npm run dev   # http://localhost:3000
 
 ## Grower Portal (`apps/grower/`)
 
-**Next.js 14 + Tailwind CSS — deployed to Vercel**
+Next.js 14 — farm profile, COA management, pesticide logs.
 
 ### Pages
+
 | Page | Route | Description |
 |---|---|---|
-| Login | `/login` | Split-panel with green checkmarks |
-| Overview | `/dashboard` | Compliance banner, cert chips, lab test summary |
-| Farm Profile | `/farm-profile` | USDA cert, growing methods, location |
-| Lab Tests & COAs | `/lab-tests` | Upload COAs, Pass/Fail table, PDF links |
-| Pesticide Logs | `/pesticide-logs` | Log entries, pesticide-free toggle |
-| Compliance | `/compliance` | State compliance status |
-
-### Layout
-- Same dark sidebar pattern as dispensary
-- Sprout logo mark, "Farm Portal" emerald header badge
-- `ComplianceBanner` — per-status config (Compliant/Warning/NonCompliant) with SVG icons
+| Login | `/login` | Grower login |
+| Dashboard | `/dashboard` | Overview, recent activity |
+| Lab Tests | `/lab-tests` | COA uploads, batch tracking |
+| Pesticide Logs | `/pesticide-logs` | Spray records, compliance |
+| Profile | `/profile` | Farm info, certifications |
+| Products | `/products` | Products linked to this farm |
 
 ### Setup
+
 ```bash
 cd apps/grower
 cp .env.example .env.local
@@ -200,23 +190,20 @@ npm run dev   # http://localhost:3001
 
 ## Admin Panel (`apps/admin/`)
 
-**Next.js 14 + Tailwind CSS — deployed to Vercel**
+Next.js 14 — platform-wide oversight for CannaRoute staff only.
 
 ### Pages
+
 | Page | Route | Description |
 |---|---|---|
-| Login | `/login` | Minimal dark centered — "Admin Access Only" red badge |
-| Dashboard | `/dashboard` | 6 platform stats (users, orders, revenue, dispensaries, drivers, growers) + order volume bar chart |
-| Users | `/users` | Search, role filters, verify/revoke actions, inline-style role badges |
-| Dispensaries | `/dispensaries` | Active dispensary management |
-| Compliance | `/compliance` | State-grouped compliance rules table |
-| Health | `/health` | Service health cards with latency + auto-refresh |
-
-### Layout
-- Lock icon logo mark, red "Admin" header badge, purple admin avatar (`#7e22ce`)
-- Same dark sidebar — distinguished by color palette, not structure
+| Login | `/login` | Admin-only login (red "Admin Access Only" badge) |
+| Dashboard | `/dashboard` | Platform stats, order volume chart |
+| Users | `/users` | All users, role badges, verify/revoke |
+| Compliance | `/compliance` | State rules table, edit limits |
+| Health | `/health` | All 8 service statuses, latency |
 
 ### Setup
+
 ```bash
 cd apps/admin
 cp .env.example .env.local
@@ -226,20 +213,61 @@ npm run dev   # http://localhost:3002
 
 ---
 
-## Environment Variables
+## Payment Flow
 
-### All web portals share this pattern:
-```env
-NEXT_PUBLIC_API_BASE_URL=https://cannaroute-auth.onrender.com
-NEXT_PUBLIC_ORDER_SERVICE_URL=https://cannaroute-order.onrender.com
+```
+Customer selects CanPay at checkout
+        ↓
+POST /payments/initiate  →  Payment Service
+        ↓
+CanPay API returns processor_redirect_url
+        ↓
+Linking.openURL(redirect_url)  →  Customer's CanPay app
+        ↓
+Customer authorizes payment in CanPay app
+        ↓
+CanPay POSTs HMAC-signed webhook  →  POST /payments/webhook/canpay
+        ↓
+Payment Service verifies signature, updates payment status
+        ↓
+PATCH /orders/:id/payment-status  →  Order Service
+        ↓
+Order Service emits push notification to customer
 ```
 
-### Mobile apps:
-```env
-EXPO_PUBLIC_API_BASE_URL=https://cannaroute-auth.onrender.com
-EXPO_PUBLIC_ORDER_SERVICE_URL=https://cannaroute-order.onrender.com
-EXPO_PUBLIC_PAYMENT_SERVICE_URL=https://cannaroute-payment.onrender.com
-EXPO_PUBLIC_GOOGLE_MAPS_KEY=your_key_here
+---
+
+## Push Notification Flow
+
+```
+Order state changes in Order Service
+        ↓
+notify() helper  →  POST /notifications/order-update  →  Notification Service
+        ↓
+Notification Service resolves push token from Auth Service
+        ↓
+Sends Expo Push API request
+        ↓
+Notification delivered to customer/driver device
+        ↓
+User taps notification  →  deep-link navigates to correct screen
 ```
 
-See each app's `.env.example` for the full variable list.
+---
+
+## Building APKs
+
+```bash
+# Install EAS CLI
+npm install -g eas-cli
+
+# Customer APK (production)
+cd apps/customer
+eas build --platform android --profile production
+
+# Driver APK (production)
+cd apps/driver
+eas build --platform android --profile production
+```
+
+Both apps are configured in `eas.json`. Builds run in the cloud — no Android SDK required locally.

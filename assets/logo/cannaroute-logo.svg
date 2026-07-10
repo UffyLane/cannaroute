@@ -1,0 +1,38 @@
+<svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dark background version -->
+  <rect width="600" height="200" fill="#0a1a0f"/>
+
+  <!-- Icon -->
+  <g transform="translate(105, 100)">
+
+    <!-- Filled heart -->
+    <path d="M0,42 C-2,38 -50,10 -50,-18 C-50,-42 -28,-54 0,-36 C28,-54 50,-42 50,-18 C50,10 2,38 0,42 Z"
+          fill="#1e3a28"/>
+
+    <!-- Center stem -->
+    <line x1="0" y1="-34" x2="0" y2="40" stroke="#4a7c5a" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Left upper arm -->
+    <path d="M0,-16 C-10,-24 -26,-26 -36,-18" fill="none" stroke="#4a7c5a" stroke-width="2.2" stroke-linecap="round"/>
+    <!-- Left lower arm -->
+    <path d="M0,6 C-10,0 -24,-2 -30,6" fill="none" stroke="#4a7c5a" stroke-width="2.2" stroke-linecap="round"/>
+
+    <!-- Right upper arm -->
+    <path d="M0,-16 C10,-24 26,-26 36,-18" fill="none" stroke="#4a7c5a" stroke-width="2.2" stroke-linecap="round"/>
+    <!-- Right lower arm -->
+    <path d="M0,6 C10,0 24,-2 30,6" fill="none" stroke="#4a7c5a" stroke-width="2.2" stroke-linecap="round"/>
+
+    <!-- Gold dot at top -->
+    <circle cx="0" cy="-34" r="7" fill="#f59e0b"/>
+
+    <!-- Gold pin at bottom -->
+    <circle cx="0" cy="44" r="4" fill="#f59e0b"/>
+    <line x1="0" y1="48" x2="0" y2="56" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="0" cy="59" r="2.5" fill="#f59e0b"/>
+
+  </g>
+
+  <!-- Wordmark -->
+  <text x="170" y="90" fill="white" font-size="34" font-weight="800" font-family="Arial, system-ui, sans-serif">Canna<tspan fill="#f59e0b">Route</tspan></text>
+  <text x="172" y="116" fill="#6b9e7a" font-size="11" font-family="system-ui, sans-serif" letter-spacing="4.5">CANNABIS DELIVERY</text>
+</svg>

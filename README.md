@@ -2,6 +2,8 @@
 
 > Cannabis delivery, dispensary management, and grower transparency — one universal platform for every legal state.
 
+**Live at [canna-route.com](https://canna-route.com)**
+
 ---
 
 ## What This Is
@@ -13,8 +15,22 @@ CannaRoute is a full-stack cannabis delivery platform combining:
 - **Grower transparency** — pesticide logs, COAs, certifications surfaced to the customer at point of sale
 - **Multi-state compliance engine** — state-adaptive purchase limits, license validation, seed-to-sale integration
 - **Cannabis-compliant payments** — CanPay ACH debit, Point of Banking, and cash on delivery
+- **Push notifications** — real-time order lifecycle alerts via Expo Push, with deep-link tap handling
 
 No existing platform does all four. That's the gap.
+
+---
+
+## Live Platform
+
+| Portal | URL | Credentials |
+|---|---|---|
+| Dispensary Dashboard | [app.canna-route.com](https://app.canna-route.com) | `dispensary@demo.canna-route.com` / `Demo1234!` |
+| Grower Portal | [grow.canna-route.com](https://grow.canna-route.com) | `grower@demo.canna-route.com` / `Demo1234!` |
+| Admin Panel | [admin.canna-route.com](https://admin.canna-route.com) | `admin@demo.canna-route.com` / `Demo1234!` |
+| API Gateway | [api.canna-route.com](https://api.canna-route.com) | — |
+| Customer App | Android APK (EAS build) | `customer@demo.canna-route.com` / `Demo1234!` |
+| Driver App | Android APK (EAS build) | `driver@demo.canna-route.com` / `Demo1234!` |
 
 ---
 
@@ -25,27 +41,31 @@ cannaroute/
 ├── apps/
 │   ├── customer/        # React Native (Expo) — iOS + Android customer app
 │   ├── driver/          # React Native (Expo) — driver delivery app
-│   ├── dispensary/      # Next.js + Tailwind — dispensary web dashboard
-│   ├── grower/          # Next.js + Tailwind — grower transparency portal
-│   └── admin/           # Next.js + Tailwind — platform admin panel
+│   ├── dispensary/      # Next.js 14 + Tailwind — dispensary web dashboard
+│   ├── grower/          # Next.js 14 + Tailwind — grower transparency portal
+│   └── admin/           # Next.js 14 + Tailwind — platform admin panel
 ├── backend/
 │   ├── services/
-│   │   ├── auth/        # JWT auth, user management, role-based access
-│   │   ├── order/       # Order lifecycle state machine, payment status relay
+│   │   ├── auth/        # JWT auth, user management, push token storage
+│   │   ├── order/       # Order lifecycle state machine, notification triggers
 │   │   ├── delivery/    # Driver assignment, GPS tracking, routing
 │   │   ├── inventory/   # Menu management, stock levels, Metrc sync
 │   │   ├── compliance/  # State rules engine, purchase limits, license checks
 │   │   ├── grower/      # Farm profiles, COA parsing, pesticide logs
-│   │   ├── notification/ # Push (FCM), SMS (Twilio)
+│   │   ├── notification/ # Expo Push + FCM + Twilio SMS
 │   │   └── payment/     # CanPay ACH integration, webhook handling, refunds
 │   └── shared/          # Types, JWT guard, roles decorator, request user
+├── assets/
+│   └── logo/            # SVG logo files (dark + light versions)
 ├── database/
-│   ├── schema.sql       # Full PostgreSQL schema
-│   ├── seed.sql         # Michigan compliance seed data
-│   └── migrations/      # Versioned migrations
+│   ├── schema.sql            # Full PostgreSQL schema
+│   ├── seed.sql              # Michigan compliance seed data
+│   ├── seed-demo-users.sql   # Demo accounts for all 5 roles
+│   └── migrations/           # Versioned migrations
 ├── docs/
 │   ├── architecture/    # Full platform architecture blueprint
-│   └── decisions/       # ADRs — payment, pilot state, business model, drivers, growers
+│   ├── decisions/       # ADRs — payment, pilot state, business model, drivers, growers
+│   └── domain-setup.md  # Custom domain configuration guide
 ├── wireframes/          # HTML wireframes for all 5 apps
 ├── docker-compose.yml   # Local development environment
 └── render.yaml          # Render Blueprint — deploys all 8 services + DB + Redis
@@ -63,55 +83,57 @@ cannaroute/
 | Grower Portal | Next.js 14 + Tailwind CSS |
 | Admin Panel | Next.js 14 + Tailwind CSS |
 | Backend Services | NestJS (TypeScript) — 8 microservices |
-| Database | PostgreSQL (Render managed) |
-| Real-time tracking | Redis + Socket.io (WebSockets) |
+| Database | PostgreSQL 18 (Render managed) |
+| Real-time tracking | Redis (Valkey 8) + Socket.io WebSockets |
 | File storage | AWS S3 |
 | Payments | CanPay ACH debit + Point of Banking + Cash |
 | Maps / Routing | Google Maps Platform |
-| Push notifications | Expo Push + Firebase Cloud Messaging |
+| Push notifications | Expo Push API + Firebase Cloud Messaging (optional) |
 | SMS | Twilio |
 | Seed-to-sale | Metrc API v2 |
-| Backend hosting | Render (Docker) |
+| Backend hosting | Render (Docker, Oregon region) |
 | Web portal hosting | Vercel |
 | Mobile builds | Expo EAS (cloud builds) |
+| Custom domain | canna-route.com (Squarespace DNS) |
 
 ---
 
 ## Architecture
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│                        Clients                           │
-│  Customer App   Driver App   Dispensary   Grower  Admin  │
-│  (React Native) (React Native) (Next.js) (Next.js)(Next) │
-└──────────┬──────────┬─────────────┬──────────┬──────────┘
-           │          │             │          │
-           └──────────┴─────────────┴──────────┘
-                              │
-                     REST API + WebSockets
-                              │
-          ┌───────────────────┼───────────────────┐
-          │                   │                   │
-     ┌────▼────┐        ┌─────▼─────┐      ┌─────▼──────┐
-     │  Auth   │        │   Order   │      │  Payment   │
-     │ Service │        │  Service  │      │  Service   │
-     └─────────┘        └─────┬─────┘      └─────┬──────┘
-                              │                   │
-          ┌───────────────────┼───────────────────┘
-          │                   │
-     ┌────▼──────┐    ┌───────▼────┐    ┌─────────────┐
-     │ Inventory │    │ Compliance │    │  Delivery   │
-     │  Service  │    │  Service   │    │   Service   │
-     └───────────┘    └────────────┘    └─────────────┘
-          │                                    │
-     ┌────▼──────┐    ┌──────────────┐   ┌────▼────────┐
-     │  Grower   │    │ Notification │   │    Redis    │
-     │  Service  │    │   Service    │   │  (GPS/cache)│
-     └───────────┘    └──────────────┘   └─────────────┘
-          │                   │
-     ┌────▼──────────────────▼────────────────────────┐
-     │              PostgreSQL (shared)               │
-     └────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                            Clients                              │
+│   Customer App    Driver App    Dispensary   Grower    Admin    │
+│  (React Native) (React Native)  (Next.js)  (Next.js) (Next.js) │
+│  customer.        driver.       app.         grow.    admin.    │
+│  (APK)           (APK)         canna-route.com                  │
+└────────────────────────────┬────────────────────────────────────┘
+                             │ REST + WebSockets
+                             │
+                  api.canna-route.com
+                             │
+          ┌──────────────────┼──────────────────┐
+          │                  │                  │
+     ┌────▼────┐       ┌─────▼─────┐     ┌─────▼──────┐
+     │  Auth   │       │   Order   │     │  Payment   │
+     │ :3001   │       │  :3002    │     │  :3008     │
+     └─────────┘       └─────┬─────┘     └─────┬──────┘
+                             │ notify           │ update status
+          ┌──────────────────┼──────────────────┘
+          │                  │
+     ┌────▼──────┐   ┌───────▼────┐   ┌─────────────┐
+     │ Inventory │   │ Compliance │   │  Delivery   │
+     │  :3003    │   │  :3005     │   │  :3004      │
+     └───────────┘   └────────────┘   └─────────────┘
+          │                                   │
+     ┌────▼──────┐   ┌──────────────┐   ┌────▼────────┐
+     │  Grower   │   │ Notification │   │    Redis    │
+     │  :3006    │   │  :3007       │   │ (GPS/cache) │
+     └───────────┘   └──────────────┘   └─────────────┘
+          │                  │
+     ┌────▼──────────────────▼──────────────────────────┐
+     │                PostgreSQL (shared)               │
+     └──────────────────────────────────────────────────┘
 ```
 
 ---
@@ -165,39 +187,45 @@ Full research docs with citations in `/docs/decisions/`.
 - All key business decisions researched and documented (6 ADRs)
 - HTML wireframes built for all 5 apps
 
-**Backend (all deployed to Render)**
-- 8 NestJS microservices: auth, order, delivery, inventory, compliance, grower, notification, payment
+**Backend — all 8 services deployed to Render**
+- Auth, Order, Delivery, Inventory, Compliance, Grower, Notification, Payment
 - Shared package: JWT strategy, auth guards, roles decorator, shared types
-- PostgreSQL schema + Michigan seed data
-- Redis for GPS pub/sub and caching
+- PostgreSQL schema + Michigan seed data + demo user accounts
+- Redis (Valkey 8) for GPS pub/sub and caching
 - WebSocket gateway for real-time order updates
+- Push notification service — Expo Push API, 11 order event templates, deep-link routing
 - Health check endpoints on all services
 - Docker + `render.yaml` Blueprint for one-click deploy
 
-**Web Portals (all deployed to Vercel)**
-- Dispensary Dashboard — orders, inventory, drivers, compliance, settings
-- Grower Portal — farm profile, lab tests/COAs, pesticide logs, compliance
-- Admin Panel — users, dispensaries, compliance rules, system health
-- All three: premium dark sidebar design, SVG icons, no icon library dependency
+**Web Portals — all deployed to Vercel with custom domain**
+- Dispensary Dashboard → app.canna-route.com
+- Grower Portal → grow.canna-route.com
+- Admin Panel → admin.canna-route.com
+- Premium dark sidebar design, SVG icons, no icon library dependency
+- Security headers via `vercel.json` on all three portals
 
-**Mobile Apps**
-- Customer app — full premium dark theme: auth, home/discover, cart, checkout (with CanPay), orders, account, product detail, order tracking
-- Driver app — full premium dark theme: auth, job queue, active delivery, navigation, earnings, history, profile
+**Mobile Apps — APKs built via Expo EAS**
+- Customer app — auth, home/discover, cart, checkout (CanPay), orders, account, tracking, push notifications
+- Driver app — auth, job queue, active delivery, navigation, earnings, history, profile, push notifications
+- Both apps: Expo Push token registration, deep-link tap handling, Android notification channels
 
-**Payment Processing**
-- CanPay ACH debit integration (webhook + HMAC signature verification)
-- Point of Banking support
-- Cash on delivery support
-- Checkout screen with payment method selection
-- Payment service → order service payment status sync
+**Payments**
+- CanPay ACH debit integration (webhook + HMAC-SHA256 verification)
+- Point of Banking + Cash on delivery
+- Checkout screen with payment method selector
 - Dev mock mode when CanPay credentials not set
 
-### 🔄 In Progress
-- APK builds via Expo EAS (customer + driver)
+**Domain**
+- canna-route.com registered and configured
+- 4 CNAME records in Squarespace DNS
+- CORS_ORIGINS set on all 8 Render services
 
-### 📋 Remaining
-- Push notifications (Expo Push + FCM)
-- Custom domain configuration (Vercel + Render)
+### 📋 Next Up
+- Google Play Store submission (Android APKs ready)
+- Apple App Store (requires $99/yr Apple Developer account)
+- CanPay merchant account (apply at canpay.com)
+- Metrc API credentials (per-state)
+- First dispensary pilot onboarding
 
 ---
 
@@ -227,31 +255,32 @@ cp .env.example .env
 npx expo start
 ```
 
-See each app's README for service-specific setup details.
+See `apps/README.md` and `backend/README.md` for detailed setup.
 
 ---
 
 ## Deployment
 
 **Backend → Render**
-The `render.yaml` Blueprint in the root deploys all 8 services, PostgreSQL, and Redis in one click.
+The `render.yaml` Blueprint deploys all 8 services, PostgreSQL, and Redis in one click.
 
 After first deploy:
-1. Set all `sync: false` env vars in the Render dashboard (JWT secret, CanPay credentials, Twilio, Firebase, etc.)
-2. Run `psql $DATABASE_URL < database/seed.sql` to seed Michigan compliance data
-3. Set `DB_SYNC=false` on all services once schema is stable
+1. Set all `sync: false` env vars in the Render dashboard (JWT secret, CanPay, Twilio, Firebase, AWS)
+2. Set `CORS_ORIGINS` on every service to your production domain list
+3. Run `psql $DATABASE_URL < database/seed.sql` to seed Michigan compliance data
+4. Run `psql $DATABASE_URL < database/seed-demo-users.sql` to create demo accounts
+5. Set `DB_SYNC=false` on all services once schema is stable
 
 **Web Portals → Vercel**
-Import each `apps/dispensary`, `apps/grower`, and `apps/admin` repo directory as a separate Vercel project. Set the `NEXT_PUBLIC_*` env vars for each.
+Import each `apps/dispensary`, `apps/grower`, and `apps/admin` directory as a separate Vercel project. Set `NEXT_PUBLIC_AUTH_SERVICE_URL=https://api.canna-route.com` and redeploy.
 
 **Mobile → Expo EAS**
 ```bash
-# Customer APK
-cd apps/customer && eas build --platform android --profile preview
-
-# Driver APK
-cd apps/driver && eas build --platform android --profile preview
+cd apps/customer && eas build --platform android --profile production
+cd apps/driver  && eas build --platform android --profile production
 ```
+
+See `docs/domain-setup.md` for the full custom domain configuration guide.
 
 ---
 
