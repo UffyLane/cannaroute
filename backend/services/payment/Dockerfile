@@ -1,29 +1,30 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Copy shared package first
-COPY backend/shared ./backend/shared
-COPY backend/services/payment/package.json ./backend/services/payment/package.json
+# 1. Install + build shared
+COPY backend/shared/package*.json ./backend/shared/
+RUN cd backend/shared && npm install --ignore-scripts --no-audit --no-fund --network-timeout=600000 --fetch-retries=5 --fetch-retry-mintimeout=20000 --fetch-retry-maxtimeout=120000
+COPY backend/shared/ ./backend/shared/
+RUN cd backend/shared && npm run build
 
-# Install deps
-WORKDIR /app/backend/services/payment
-RUN npm install --legacy-peer-deps
+# 2. Install service deps
+COPY backend/services/payment/package*.json ./backend/services/payment/
+RUN cd backend/services/payment && npm install --ignore-scripts --no-audit --no-fund --network-timeout=600000 --fetch-retries=5 --fetch-retry-mintimeout=20000 --fetch-retry-maxtimeout=120000
 
-# Copy source
-COPY backend/services/payment/src ./src
-COPY backend/services/payment/tsconfig.json ./tsconfig.json
+# 3. Wire shared into service node_modules
+RUN mkdir -p /app/backend/services/payment/node_modules/@cannaroute/shared && \
+    cp -r /app/backend/shared/dist /app/backend/services/payment/node_modules/@cannaroute/shared/dist && \
+    cp /app/backend/shared/package.json /app/backend/services/payment/node_modules/@cannaroute/shared/package.json
 
-# Build
-RUN npx nest build
+# 4. Copy source + build
+COPY backend/services/payment/ ./backend/services/payment/
+RUN cd backend/services/payment && npm run build
 
-# ── Runtime ──────────────────────────────────────────────────────────────────
-FROM node:20-alpine
+FROM node:20-alpine AS runner
+RUN apk add --no-cache curl
 WORKDIR /app
-
 COPY --from=builder /app/backend/services/payment/dist ./dist
 COPY --from=builder /app/backend/services/payment/node_modules ./node_modules
-COPY --from=builder /app/backend/shared ./backend/shared
-
-EXPOSE 3006
-
+COPY --from=builder /app/backend/services/payment/package.json ./
+EXPOSE 3008
 CMD ["node", "dist/main"]
