@@ -33,12 +33,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   login: async (email, password) => {
-    const { data } = await authApi.post<{ accessToken: string; refreshToken: string }>(
+    const { data } = await authApi.post<{ access_token: string; refresh_token: string }>(
       '/auth/login',
       { email, password },
     );
-    setAccessToken(data.accessToken);
-    localStorage.setItem('cr_refresh_token', data.refreshToken);
+    setAccessToken(data.access_token);
+    localStorage.setItem('cr_refresh_token', data.refresh_token);
     const { data: user } = await authApi.get<StaffUser>('/auth/me');
     set({ user, isAuthenticated: true });
   },

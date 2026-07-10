@@ -24,8 +24,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   login: async (email, password) => {
-    const { data } = await authApi.post<{ accessToken: string }>('/auth/login', { email, password });
-    setToken(data.accessToken);
+    const { data } = await authApi.post<{ access_token: string }>('/auth/login', { email, password });
+    setToken(data.access_token);
     const { data: user } = await authApi.get<AdminUser>('/auth/me');
     if (user.role !== 'admin') { clearToken(); throw new Error('Admin access required'); }
     set({ user, isAuthenticated: true });

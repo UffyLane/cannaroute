@@ -26,8 +26,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   login: async (email, password) => {
-    const { data } = await authApi.post<{ accessToken: string }>('/auth/login', { email, password });
-    setToken(data.accessToken);
+    const { data } = await authApi.post<{ access_token: string }>('/auth/login', { email, password });
+    setToken(data.access_token);
     const { data: user } = await authApi.get<GrowerUser>('/auth/me');
     set({ user, isAuthenticated: true });
   },
