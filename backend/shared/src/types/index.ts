@@ -138,15 +138,21 @@ export interface IComplianceCheckResult {
 export type NotificationType =
   | 'order_placed'
   | 'order_confirmed'
+  | 'order_preparing'
+  | 'order_picked_up'
+  | 'order_in_transit'
+  | 'order_delivered'
+  | 'order_cancelled'
   | 'driver_assigned'
   | 'driver_picked_up'
   | 'driver_nearby'
-  | 'order_delivered'
-  | 'order_cancelled'
+  | 'job_assigned'
+  | 'new_job'
+  | 'payment_captured'
+  | 'payment_failed'
   | 'medical_card_expiring'
   | 'coa_expiring'
-  | 'low_stock'
-  | 'new_job';
+  | 'low_stock';
 
 export type NotificationChannel = 'push' | 'sms' | 'email';
 
@@ -158,6 +164,7 @@ export interface ISendNotificationPayload {
   title?: string;
   body: string;
   data?: Record<string, string>;
+  expo_push_token?: string;
   fcm_token?: string;
   phone_number?: string;
 }
