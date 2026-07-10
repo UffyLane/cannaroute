@@ -6,11 +6,19 @@ export function getToken(): string | null {
 export function setToken(t: string): void { localStorage.setItem('cr_grower_token', t); }
 export function clearToken(): void { localStorage.removeItem('cr_grower_token'); }
 
-function createClient(baseURL: string): AxiosInstance {
-  const c = axios.create({ baseURL, timeout: 15_000 });
+function createClient(rawBase: string): AxiosInstance {
+  // Strip /api/v1 suffix — interceptor always prepends it to avoid axios
+  // dropping path segments when request paths start with a leading slash.
+  const origin = rawBase.replace(/\/api\/v1\/?$/, '').replace(/\/$/, '');
+
+  const c = axios.create({ baseURL: origin, timeout: 15_000 });
+
   c.interceptors.request.use((cfg) => {
     const t = getToken();
     if (t) cfg.headers.Authorization = `Bearer ${t}`;
+    if (cfg.url && !cfg.url.startsWith('/api/v1')) {
+      cfg.url = `/api/v1${cfg.url.startsWith('/') ? '' : '/'}${cfg.url}`;
+    }
     return cfg;
   });
   c.interceptors.response.use((r) => r, (err) => {
