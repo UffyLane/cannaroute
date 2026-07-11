@@ -232,6 +232,29 @@ export class OrdersService {
     }
   }
 
+  // ─── Weekly Stats (admin dashboard chart) ────────────────────────────────
+
+  async getWeeklyStats(): Promise<Array<{ date: string; orders: number }>> {
+    try {
+      const rows: Array<{ date: string; orders: string }> =
+        await this.ordersRepo.manager.query(`
+          SELECT
+            DATE(created_at AT TIME ZONE 'UTC')::text AS date,
+            COUNT(*)::int AS orders
+          FROM orders
+          WHERE created_at >= NOW() - INTERVAL '30 days'
+          GROUP BY DATE(created_at AT TIME ZONE 'UTC')
+          ORDER BY date ASC
+        `);
+      return rows.map((r) => ({
+        date: new Date(r.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        orders: Number(r.orders),
+      }));
+    } catch {
+      return [];
+    }
+  }
+
   // ─── Get Single Order ─────────────────────────────────────────────────────
 
   async findById(orderId: string): Promise<Order> {

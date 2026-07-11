@@ -34,6 +34,12 @@ export class OrdersController {
     return this.ordersService.getStatsToday(user);
   }
 
+  @Roles('platform_admin')
+  @Get('stats/weekly')
+  getWeeklyStats() {
+    return this.ordersService.getWeeklyStats();
+  }
+
   @Get()
   findAll(
     @CurrentUser() user: RequestUser,
