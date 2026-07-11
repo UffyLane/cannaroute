@@ -8,6 +8,7 @@ import { DeliveryModule } from './deliveries/delivery.module';
 import { Delivery } from './deliveries/delivery.entity';
 import { JwtAuthGuard, RolesGuard, JwtStrategy } from '@cannaroute/shared';
 import { HealthController } from './health.controller';
+import { DriversController } from './drivers/drivers.controller';
 
 @Module({
   imports: [
@@ -43,7 +44,7 @@ import { HealthController } from './health.controller';
 
     DeliveryModule,
   ],
-  controllers: [HealthController],
+  controllers: [HealthController, DriversController],
   providers: [
     JwtStrategy,
     { provide: APP_GUARD, useClass: JwtAuthGuard },

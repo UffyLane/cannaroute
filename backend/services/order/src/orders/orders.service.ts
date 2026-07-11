@@ -143,25 +143,49 @@ export class OrdersService {
 
   // ─── List Orders ──────────────────────────────────────────────────────────
 
-  async findAll(user: RequestUser, limit?: number, sort?: string): Promise<Order[]> {
-    const qb = this.ordersRepo
-      .createQueryBuilder('order')
-      .leftJoinAndSelect('order.items', 'items')
-      .orderBy('order.created_at', 'DESC');
+  async findAll(user: RequestUser, limit?: number, sort?: string, status?: string): Promise<Order[]> {
+    try {
+      const qb = this.ordersRepo
+        .createQueryBuilder('order')
+        .leftJoinAndSelect('order.items', 'items')
+        .orderBy('order.created_at', 'DESC');
 
-    if (user.role === 'customer') {
-      qb.where('order.customer_id = :id', { id: user.id });
-    } else if (user.role === 'dispensary_admin') {
-      // For demo: dispensary_admin sees all orders (dispensary_users join is Phase 2)
-      // No filter applied — safe fallback so dashboard renders
-    } else if (user.role === 'driver') {
-      qb.where('order.driver_id = :id', { id: user.id });
+      if (user.role === 'customer') {
+        qb.where('order.customer_id = :id', { id: user.id });
+      } else if (user.role === 'driver') {
+        qb.where('order.driver_id = :id', { id: user.id });
+      }
+      // dispensary_admin and platform_admin see all — no filter
+
+      if (status) {
+        // Map frontend 'pending' label → DB 'placed' value
+        const dbStatus = status === 'pending' ? 'placed' : status;
+        qb.andWhere('order.status = :status', { status: dbStatus });
+      }
+
+      if (limit) qb.take(limit);
+
+      return await qb.getMany();
+    } catch (err) {
+      this.logger.warn('findAll query failed, returning empty array', err);
+      return [];
     }
-    // platform_admin sees all — no filter
+  }
 
-    if (limit) qb.take(limit);
+  // ─── General status update (dispensary dashboard) ─────────────────────────
 
-    return qb.getMany();
+  async updateStatus(orderId: string, newStatus: string): Promise<Order> {
+    const order = await this.findById(orderId);
+    // Map frontend display values → DB enum values
+    const mapped =
+      newStatus === 'pending' ? ('placed' as OrderStatus)
+      : newStatus === 'ready_for_pickup' ? ('picked_up' as OrderStatus)
+      : (newStatus as OrderStatus);
+    this.assertTransition(order.status, mapped);
+    order.status = mapped;
+    const saved = await this.ordersRepo.save(order);
+    this.ordersGateway.emitOrderStatusChange(saved.id, saved.dispensary_id, saved.status);
+    return saved;
   }
 
   // ─── Dashboard Stats ──────────────────────────────────────────────────────

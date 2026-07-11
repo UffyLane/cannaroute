@@ -39,13 +39,29 @@ export class OrdersController {
     @CurrentUser() user: RequestUser,
     @Query('limit') limit?: string,
     @Query('sort') sort?: string,
+    @Query('status') status?: string,
   ) {
-    return this.ordersService.findAll(user, limit ? parseInt(limit, 10) : undefined, sort);
+    return this.ordersService.findAll(user, limit ? parseInt(limit, 10) : undefined, sort, status);
   }
 
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.ordersService.findById(id);
+  }
+
+  /**
+   * PATCH /orders/:id/status
+   * General status update used by the dispensary dashboard.
+   * Maps 'pending' → 'placed' and 'ready_for_pickup' → 'picked_up' for frontend compat.
+   */
+  @Roles('dispensary_admin', 'driver', 'platform_admin')
+  @Patch(':id/status')
+  @HttpCode(HttpStatus.OK)
+  updateStatus(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body('status') status: string,
+  ) {
+    return this.ordersService.updateStatus(id, status);
   }
 
   @Roles('dispensary_admin', 'platform_admin')

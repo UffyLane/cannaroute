@@ -10,19 +10,19 @@ import { formatCurrency, timeAgo } from '@/lib/utils';
 import { Order, OrderStatus } from '@/types';
 
 const STATUS_FILTERS: { key: OrderStatus | 'all'; label: string }[] = [
-  { key: 'all',            label: 'All' },
-  { key: 'pending',        label: 'Pending' },
-  { key: 'confirmed',      label: 'Confirmed' },
-  { key: 'preparing',      label: 'Preparing' },
-  { key: 'in_transit',     label: 'In Transit' },
-  { key: 'delivered',      label: 'Delivered' },
+  { key: 'all',        label: 'All' },
+  { key: 'placed',     label: 'Pending' },
+  { key: 'confirmed',  label: 'Confirmed' },
+  { key: 'preparing',  label: 'Preparing' },
+  { key: 'in_transit', label: 'In Transit' },
+  { key: 'delivered',  label: 'Delivered' },
 ];
 
 const NEXT_STATUS: Partial<Record<OrderStatus, OrderStatus>> = {
-  pending:          'confirmed',
-  confirmed:        'preparing',
-  preparing:        'ready_for_pickup',
-  ready_for_pickup: 'in_transit',
+  placed:     'confirmed',
+  confirmed:  'preparing',
+  preparing:  'picked_up',
+  picked_up:  'in_transit',
 };
 
 export default function OrdersPage() {

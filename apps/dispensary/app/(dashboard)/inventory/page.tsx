@@ -16,14 +16,14 @@ export default function InventoryPage() {
   const { data: products = [], isLoading } = useQuery<Product[]>({
     queryKey: ['products'],
     queryFn: async () => {
-      const { data } = await inventoryApi.get('/products?limit=100');
+      const { data } = await inventoryApi.get('/inventory/products?limit=100');
       return data.data ?? data;
     },
   });
 
   const { mutate: toggleActive } = useMutation({
     mutationFn: (product: Product) =>
-      inventoryApi.patch(`/products/${product.id}`, { isActive: !product.isActive }),
+      inventoryApi.patch(`/inventory/products/${product.id}`, { isActive: !product.isActive }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
       toast.success('Product updated');
