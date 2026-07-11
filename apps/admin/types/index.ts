@@ -3,7 +3,7 @@ export interface AdminUser {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'admin' | 'dispensary_staff' | 'driver' | 'grower' | 'customer';
+  role: 'platform_admin' | 'admin' | 'dispensary_admin' | 'dispensary_staff' | 'driver' | 'grower' | 'customer';
   isVerified: boolean;
   createdAt: string;
 }
