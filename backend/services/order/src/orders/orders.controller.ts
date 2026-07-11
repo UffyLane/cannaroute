@@ -5,6 +5,7 @@ import {
   Patch,
   Body,
   Param,
+  Query,
   ParseUUIDPipe,
   HttpCode,
   HttpStatus,
@@ -27,9 +28,19 @@ export class OrdersController {
     return this.ordersService.create(user.id, dto);
   }
 
+  @Roles('dispensary_admin', 'platform_admin')
+  @Get('stats/today')
+  getStatsToday(@CurrentUser() user: RequestUser) {
+    return this.ordersService.getStatsToday(user);
+  }
+
   @Get()
-  findAll(@CurrentUser() user: RequestUser) {
-    return this.ordersService.findAll(user);
+  findAll(
+    @CurrentUser() user: RequestUser,
+    @Query('limit') limit?: string,
+    @Query('sort') sort?: string,
+  ) {
+    return this.ordersService.findAll(user, limit ? parseInt(limit, 10) : undefined, sort);
   }
 
   @Get(':id')
