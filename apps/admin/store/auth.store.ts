@@ -18,7 +18,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       if (!getToken()) { set({ isLoading: false }); return; }
       const { data } = await authApi.get<AdminUser>('/auth/me');
-      if (data.role !== 'admin') { clearToken(); set({ isLoading: false }); return; }
+      if (data.role !== 'platform_admin') { clearToken(); set({ isLoading: false }); return; }
       set({ user: data, isAuthenticated: true, isLoading: false });
     } catch { clearToken(); set({ isLoading: false }); }
   },
