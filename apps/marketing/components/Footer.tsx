@@ -24,7 +24,7 @@ const nav = [
     heading: 'Company',
     links: [
       { label: 'Join the waitlist', href: '#waitlist' },
-      { label: 'Contact', href: 'mailto:hello@canna-route.com' },
+      { label: 'Contact', href: 'mailto:stuartgregoryclarkjr@gmail.com' },
     ],
   },
 ];

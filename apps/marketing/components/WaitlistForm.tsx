@@ -151,7 +151,7 @@ export default function WaitlistForm() {
 
             {status === 'error' && (
               <p className="text-xs text-center" style={{ color: '#f87171' }}>
-                Something went wrong. Email us at hello@canna-route.com instead.
+                Something went wrong. Email us at stuartgregoryclarkjr@gmail.com instead.
               </p>
             )}
           </form>
