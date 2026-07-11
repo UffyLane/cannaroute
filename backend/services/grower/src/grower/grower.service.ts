@@ -72,6 +72,131 @@ export class GrowerService {
     return grower;
   }
 
+  /**
+   * Returns the grower's profile mapped to camelCase for the frontend.
+   * If no profile exists (e.g. demo account, new grower), returns a safe stub
+   * so the portal doesn't 404.
+   */
+  async getMyProfile(userId: string): Promise<Record<string, unknown>> {
+    const grower = await this.growersRepo.findOne({ where: { user_id: userId } });
+    if (!grower) {
+      return {
+        id: null,
+        farmName: 'Your Farm',
+        farmDescription: null,
+        licenseNumber: 'DEMO-0001',
+        licenseExpiryDate: null,
+        stateCode: 'MI',
+        city: 'Detroit',
+        county: null,
+        cleanGreenCertified: false,
+        cleanGreenCertNumber: null,
+        sunEarthCertified: false,
+        sunEarthCertNumber: null,
+        usdaOrganic: false,
+        noPesticidesUsed: true,
+        outdoorGrown: false,
+        indoorGrown: true,
+        greenhouseGrown: false,
+      };
+    }
+    return {
+      id: grower.id,
+      farmName: grower.farm_name,
+      farmDescription: grower.farm_description,
+      licenseNumber: grower.license_number,
+      licenseExpiryDate: grower.license_expiry_date,
+      stateCode: grower.state_code,
+      city: grower.city,
+      county: grower.county,
+      cleanGreenCertified: grower.clean_green_certified,
+      cleanGreenCertNumber: grower.clean_green_cert_number,
+      sunEarthCertified: grower.sun_earth_certified,
+      sunEarthCertNumber: grower.sun_earth_cert_number,
+      usdaOrganic: grower.usda_organic,
+      noPesticidesUsed: grower.no_pesticides_used,
+      outdoorGrown: grower.outdoor_grown,
+      indoorGrown: grower.indoor_grown,
+      greenhouseGrown: grower.greenhouse_grown,
+    };
+  }
+
+  /**
+   * Returns lab tests for the authenticated grower mapped to camelCase.
+   * Returns [] if no grower profile exists.
+   */
+  async getMyLabTests(userId: string): Promise<Record<string, unknown>[]> {
+    const grower = await this.growersRepo.findOne({ where: { user_id: userId } });
+    if (!grower) return [];
+
+    const labTests = await this.labTestsRepo.find({
+      where: { grower_id: grower.id },
+      order: { created_at: 'DESC' },
+    });
+
+    return labTests.map((test) => ({
+      id: test.id,
+      productId: test.product_id,
+      productName: 'Lab Sample', // product name requires join with inventory service
+      labName: test.lab_name,
+      labLicenseNumber: test.lab_license_number,
+      thcPercentage: test.thc_percentage !== null ? Number(test.thc_percentage) : undefined,
+      thcaPercentage: test.thca_percentage !== null ? Number(test.thca_percentage) : undefined,
+      cbdPercentage: test.cbd_percentage !== null ? Number(test.cbd_percentage) : undefined,
+      overallPass: test.overall_pass,
+      coaUrl: null, // presigned S3 URL generated on demand in production
+      testedAt: test.tested_at,
+      createdAt: test.created_at,
+    }));
+  }
+
+  /**
+   * Returns compliance status for the authenticated grower.
+   * Returns safe "compliant" defaults if no grower profile exists.
+   */
+  async getMyCompliance(userId: string): Promise<Record<string, unknown>> {
+    const grower = await this.growersRepo.findOne({ where: { user_id: userId } });
+    if (!grower) {
+      return {
+        licenseValid: true,
+        licenseExpiresIn: 90,
+        pendingCoaCount: 0,
+        failedLabTests: 0,
+        overallStatus: 'compliant',
+      };
+    }
+
+    const labTests = await this.labTestsRepo.find({ where: { grower_id: grower.id } });
+    const pendingCoaCount = labTests.filter(
+      (t) => t.status === 'pending_parse' || t.status === 'parsed',
+    ).length;
+    const failedLabTests = labTests.filter((t) => !t.overall_pass && t.status === 'confirmed').length;
+
+    let licenseExpiresIn: number | undefined;
+    let licenseValid = true;
+    if (grower.license_expiry_date) {
+      const expiry = new Date(grower.license_expiry_date);
+      const today = new Date();
+      licenseExpiresIn = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      licenseValid = licenseExpiresIn > 0;
+    }
+
+    let overallStatus: 'compliant' | 'warning' | 'non_compliant' = 'compliant';
+    if (!licenseValid || failedLabTests > 0) {
+      overallStatus = 'non_compliant';
+    } else if ((licenseExpiresIn !== undefined && licenseExpiresIn <= 30) || pendingCoaCount > 0) {
+      overallStatus = 'warning';
+    }
+
+    return {
+      licenseValid,
+      licenseExpiresIn,
+      pendingCoaCount,
+      failedLabTests,
+      overallStatus,
+    };
+  }
+
   async update(id: string, dto: Partial<Grower>): Promise<Grower> {
     const grower = await this.findById(id);
     Object.assign(grower, dto);

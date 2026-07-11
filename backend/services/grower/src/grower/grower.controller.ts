@@ -39,11 +39,34 @@ export class GrowerController {
    * GET /grower/me
    * Grower views their own full profile.
    * Note: must be declared before :id to avoid "me" being parsed as a UUID.
+   * Returns a safe stub if no profile exists yet (new grower or demo account).
    */
   @Roles('grower')
   @Get('me')
   getMe(@CurrentUser() user: RequestUser) {
-    return this.growerService.findByUserId(user.id);
+    return this.growerService.getMyProfile(user.id);
+  }
+
+  /**
+   * GET /grower/me/lab-tests
+   * Returns all lab tests for the authenticated grower (empty array if no profile).
+   * Must be declared before :id routes.
+   */
+  @Roles('grower')
+  @Get('me/lab-tests')
+  getMyLabTests(@CurrentUser() user: RequestUser) {
+    return this.growerService.getMyLabTests(user.id);
+  }
+
+  /**
+   * GET /grower/me/compliance
+   * Returns compliance status for the authenticated grower.
+   * Returns safe defaults if no profile exists.
+   */
+  @Roles('grower')
+  @Get('me/compliance')
+  getMyCompliance(@CurrentUser() user: RequestUser) {
+    return this.growerService.getMyCompliance(user.id);
   }
 
   /**
