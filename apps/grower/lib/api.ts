@@ -29,8 +29,8 @@ function createClient(rawBase: string): AxiosInstance {
 }
 
 export const authApi = createClient(
-  `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL ?? 'http://localhost:3001'}/api/v1`,
+  `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL ?? 'https://cannaroute-auth.onrender.com'}/api/v1`,
 );
 export const growerApi = createClient(
-  `${process.env.NEXT_PUBLIC_GROWER_SERVICE_URL ?? 'http://localhost:3006'}/api/v1`,
+  `${process.env.NEXT_PUBLIC_GROWER_SERVICE_URL ?? 'https://cannaroute-grower.onrender.com'}/api/v1`,
 );

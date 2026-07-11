@@ -58,14 +58,14 @@ function createClient(baseURL: string): AxiosInstance {
 // ─── Clients ──────────────────────────────────────────────────────────────────
 
 export const authApi = createClient(
-  process.env.NEXT_PUBLIC_AUTH_SERVICE_URL ?? 'http://localhost:3001/api/v1',
+  process.env.NEXT_PUBLIC_AUTH_SERVICE_URL ?? 'https://cannaroute-auth.onrender.com/api/v1',
 );
 export const orderApi = createClient(
-  process.env.NEXT_PUBLIC_ORDER_SERVICE_URL ?? 'http://localhost:3002/api/v1',
+  process.env.NEXT_PUBLIC_ORDER_SERVICE_URL ?? 'https://cannaroute-order.onrender.com/api/v1',
 );
 export const inventoryApi = createClient(
-  process.env.NEXT_PUBLIC_INVENTORY_SERVICE_URL ?? 'http://localhost:3003/api/v1',
+  process.env.NEXT_PUBLIC_INVENTORY_SERVICE_URL ?? 'https://cannaroute-inventory.onrender.com/api/v1',
 );
 export const deliveryApi = createClient(
-  process.env.NEXT_PUBLIC_DELIVERY_SERVICE_URL ?? 'http://localhost:3004/api/v1',
+  process.env.NEXT_PUBLIC_DELIVERY_SERVICE_URL ?? 'https://cannaroute-delivery.onrender.com/api/v1',
 );

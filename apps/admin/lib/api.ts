@@ -31,9 +31,9 @@ function createClient(rawBase: string): AxiosInstance {
 const base = (env: string, fallback: string) =>
   `${process.env[env] ?? fallback}/api/v1`;
 
-export const authApi = createClient(base('NEXT_PUBLIC_AUTH_SERVICE_URL', 'http://localhost:3001'));
-export const orderApi = createClient(base('NEXT_PUBLIC_ORDER_SERVICE_URL', 'http://localhost:3002'));
-export const inventoryApi = createClient(base('NEXT_PUBLIC_INVENTORY_SERVICE_URL', 'http://localhost:3003'));
-export const deliveryApi = createClient(base('NEXT_PUBLIC_DELIVERY_SERVICE_URL', 'http://localhost:3004'));
-export const complianceApi = createClient(base('NEXT_PUBLIC_COMPLIANCE_SERVICE_URL', 'http://localhost:3005'));
-export const growerApi = createClient(base('NEXT_PUBLIC_GROWER_SERVICE_URL', 'http://localhost:3006'));
+export const authApi = createClient(base('NEXT_PUBLIC_AUTH_SERVICE_URL', 'https://cannaroute-auth.onrender.com'));
+export const orderApi = createClient(base('NEXT_PUBLIC_ORDER_SERVICE_URL', 'https://cannaroute-order.onrender.com'));
+export const inventoryApi = createClient(base('NEXT_PUBLIC_INVENTORY_SERVICE_URL', 'https://cannaroute-inventory.onrender.com'));
+export const deliveryApi = createClient(base('NEXT_PUBLIC_DELIVERY_SERVICE_URL', 'https://cannaroute-delivery.onrender.com'));
+export const complianceApi = createClient(base('NEXT_PUBLIC_COMPLIANCE_SERVICE_URL', 'https://cannaroute-compliance.onrender.com'));
+export const growerApi = createClient(base('NEXT_PUBLIC_GROWER_SERVICE_URL', 'https://cannaroute-grower.onrender.com'));
