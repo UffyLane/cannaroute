@@ -1,10 +1,12 @@
 // ─── Orders ───────────────────────────────────────────────────────────────────
 
 export type OrderStatus =
-  | 'pending'
+  | 'placed'      // backend canonical (shown as "Pending" in UI)
+  | 'pending'     // legacy alias kept for compat
   | 'confirmed'
   | 'preparing'
-  | 'ready_for_pickup'
+  | 'picked_up'   // backend canonical (shown as "Ready for Pickup" in UI)
+  | 'ready_for_pickup' // legacy alias kept for compat
   | 'in_transit'
   | 'delivered'
   | 'cancelled';
