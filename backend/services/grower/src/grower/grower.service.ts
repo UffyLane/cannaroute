@@ -203,6 +203,51 @@ export class GrowerService {
     return this.growersRepo.save(grower);
   }
 
+  /**
+   * Returns pesticide logs for the authenticated grower mapped to camelCase.
+   * Returns [] if no grower profile exists.
+   */
+  async getMyPesticideLogs(userId: string): Promise<Record<string, unknown>[]> {
+    const grower = await this.growersRepo.findOne({ where: { user_id: userId } });
+    if (!grower) return [];
+
+    const logs = await this.pesticideLogsRepo.find({
+      where: { grower_id: grower.id },
+      order: { applied_date: 'DESC' },
+    });
+
+    return logs.map((log) => ({
+      id: log.id,
+      productId: log.product_id,
+      noPesticidesUsed: log.no_pesticides_used,
+      pesticideName: log.pesticide_name,
+      epaRegNumber: log.epa_reg_number,
+      applicationRate: log.application_rate ?? undefined,
+      appliedDate: log.applied_date,
+      createdAt: log.created_at,
+    }));
+  }
+
+  /**
+   * Adds a pesticide log for the authenticated grower.
+   * Creates grower profile lookup from userId, then delegates to addPesticideLog.
+   */
+  async addMyPesticideLog(userId: string, dto: Partial<PesticideLog>): Promise<Record<string, unknown>> {
+    const grower = await this.growersRepo.findOne({ where: { user_id: userId } });
+    if (!grower) throw new NotFoundException('No grower profile found — create your profile first');
+
+    const log = await this.addPesticideLog(grower.id, dto);
+    return {
+      id: log.id,
+      noPesticidesUsed: log.no_pesticides_used,
+      pesticideName: log.pesticide_name,
+      epaRegNumber: log.epa_reg_number,
+      applicationRate: log.application_rate ?? undefined,
+      appliedDate: log.applied_date,
+      createdAt: log.created_at,
+    };
+  }
+
   // ─── COA upload and OCR parsing ───────────────────────────────────────────
 
   /**

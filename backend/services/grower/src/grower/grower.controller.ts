@@ -70,6 +70,29 @@ export class GrowerController {
   }
 
   /**
+   * GET /grower/me/pesticide-logs
+   * Returns pesticide logs for the authenticated grower (empty array if no profile).
+   * Must be declared before :id routes.
+   */
+  @Roles('grower')
+  @Get('me/pesticide-logs')
+  getMyPesticideLogs(@CurrentUser() user: RequestUser) {
+    return this.growerService.getMyPesticideLogs(user.id);
+  }
+
+  /**
+   * POST /grower/me/pesticide-logs
+   * Adds a pesticide log for the authenticated grower.
+   * Must be declared before :id routes.
+   */
+  @Roles('grower')
+  @Post('me/pesticide-logs')
+  @HttpCode(HttpStatus.CREATED)
+  addMyPesticideLog(@CurrentUser() user: RequestUser, @Body() dto: AddPesticideLogDto) {
+    return this.growerService.addMyPesticideLog(user.id, dto);
+  }
+
+  /**
    * GET /grower/:id
    * Public — customers see grower profiles on product detail pages.
    * Sensitive fields (user_id, license details) stripped for public view.
