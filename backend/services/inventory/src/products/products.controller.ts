@@ -10,7 +10,6 @@ import {
   ParseUUIDPipe,
   HttpCode,
   HttpStatus,
-  BadRequestException,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -45,11 +44,17 @@ export class ProductsController {
    */
   @Roles('dispensary_admin', 'platform_admin')
   @Get('products')
-  findAll(@CurrentUser() user: RequestUser, @Query('dispensary_id') dispensaryId: string) {
-    if (!dispensaryId) {
-      throw new BadRequestException('dispensary_id query param is required');
-    }
-    return this.productsService.findByDispensary(dispensaryId);
+  async findAll(
+    @CurrentUser() user: RequestUser,
+    @Query('dispensary_id') dispensaryId?: string,
+    @Query('limit') _limit?: string,
+  ) {
+    // dispensary_id is optional — fall back to looking up the user's own dispensary
+    const id =
+      dispensaryId ||
+      (await this.productsService.findDispensaryIdByUser(user.id));
+    if (!id) return [];
+    return this.productsService.findByDispensary(id);
   }
 
   /**

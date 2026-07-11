@@ -113,6 +113,19 @@ export class ProductsService {
     });
   }
 
+  /** Look up which dispensary a user belongs to via dispensary_users join table. */
+  async findDispensaryIdByUser(userId: string): Promise<string | null> {
+    try {
+      const result = await this.productsRepo.manager.query(
+        `SELECT dispensary_id FROM dispensary_users WHERE user_id = $1 LIMIT 1`,
+        [userId],
+      );
+      return result?.[0]?.dispensary_id ?? null;
+    } catch {
+      return null;
+    }
+  }
+
   async update(id: string, dto: Partial<CreateProductDto>): Promise<Product> {
     const product = await this.findById(id);
     Object.assign(product, dto);
