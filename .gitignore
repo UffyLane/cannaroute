@@ -74,3 +74,6 @@ stripe_secret*
 uploads/
 tmp/
 temp/
+google-service-account.json
+apps/customer/google-service-account.json
+apps/driver/google-service-account.json
